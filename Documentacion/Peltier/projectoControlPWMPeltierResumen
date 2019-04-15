@@ -1,0 +1,10 @@
+Resumen de caracteristicas relevantes del documento:
+*Control temperatura plato Alumnio
+*Cooler solo activo cuando enfria. Esto permite aumentar la velocidad de calentar y enfriar.(IMPORTANTE)
+*En el experimento tardo 100 segundos en ir de 35°C a 80°C.(Temperatura ambiente 25°C)
+*En el experimento tardo 80 segundos en ir de 40°C a 70°C.(Temperatura ambiente 25°C)
+*Control por corriente, 2 puentes H, uno para cada peltier.
+*Sensor de temperatura LM35DZ.->+-0.5°C de precision.
+*Frecuencia del pwm 976Hz + Filtro LC a 91.8Hz para sensar corriente con resistencia seria.
+*Corriente para calentar 3A, para enfriar 0A.
+*Variar entre 20 y 25 °C dura en el orden de 80 segundos.
