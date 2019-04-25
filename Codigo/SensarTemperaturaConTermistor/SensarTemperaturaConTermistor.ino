@@ -8,13 +8,19 @@
 #define R2 9770
 #define CeroKelvin -273.15
 #define T0Termistor 298.15 //kelvin
-#define BetaTermistor 4050 //kelvin
+#define BetaTermistor 3982 //kelvin
 #define R0Termistor 10000 //10k
+
+#define PinPwm 6
+#define PWM 255
+
 void setup() {
   Serial.begin(9600);
   while (!Serial) {
   }      
   pinMode(LED_BUILTIN, OUTPUT);//Led de control del arduino uno     
+  pinMode(PinPwm, OUTPUT);
+  analogWrite(PinPwm, PWM);
 }
 
 void loop() {
@@ -23,13 +29,18 @@ void loop() {
   static float DiferenciaTension=0;
   static float ResistenciaTermistor=0;
   static float TemperaturaTermistor=0;
-  delay(1500);
+  static float I=0;
+  static float VR=0;
+  delay(100);
   ValorLeidoAdc1=analogRead(PinAdc1);
   ValorLeidoAdc2=analogRead(PinAdc2);
   DiferenciaTension=ValorLeidoAdc1-ValorLeidoAdc2;
   DiferenciaTension=DiferenciaTension*ReferenciaAdc/MaximoValorAdc;
-  ResistenciaTermistor=R1*(ReferenciaAdc*R2-DiferenciaTension*(R1-R2));
-  ResistenciaTermistor=ResistenciaTermistor/(ReferenciaAdc*R1-DiferenciaTension*(R1+R2));
+//  ResistenciaTermistor=R1*(ReferenciaAdc*R2-DiferenciaTension*(R1-R2));
+//  ResistenciaTermistor=ResistenciaTermistor/(ReferenciaAdc*R1-DiferenciaTension*(R1+R2));
+  VR=float(ValorLeidoAdc2)*ReferenciaAdc/MaximoValorAdc;
+  I=VR/10000;
+  ResistenciaTermistor=(5-VR)/I;
   TemperaturaTermistor=(float(1)/T0Termistor+(float(1)/float(BetaTermistor))*log (ResistenciaTermistor/R0Termistor));
   TemperaturaTermistor=1/TemperaturaTermistor+CeroKelvin;
   
