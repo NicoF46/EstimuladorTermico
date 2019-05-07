@@ -9,8 +9,8 @@ class Plotter:
         plt.style.use(style)
         plt.ion()
         self.fig = plt.figure()
-        self.subplot = self.fig.add_subplot(111)
-        self.line, = self.subplot.plot([])
+        self.axes = self.fig.add_subplot(111)
+        self.line, = self.axes.plot([])
         plt.show()
 
         self.x_vec = []
@@ -21,11 +21,13 @@ class Plotter:
         self.x_margin = (x_lim[1] - x_lim[0])*x_margin_factor
         self.x_lim = x_lim
         self.x_len = x_lim[1] - x_lim[0]
+        plt.xlim(self.x_lim)
+
+        if len(y_lim) == 0:
+            y_lim = [0, 1]
         self.y_lim = y_lim
         self.y_len = y_lim[1] - y_lim[0]
-        plt.xlim(self.x_lim)
-        if len(self.y_lim) != 0:
-            plt.ylim(self.y_lim)
+        plt.ylim(self.y_lim)
 
     def add_data(self, x_data, y_data):
         if x_data[-1] > self.x_lim[-1] - self.x_margin:
@@ -40,8 +42,16 @@ class Plotter:
 if __name__ == "__main__":
 
     x_lim = [0, math.pi*2]
-    y_lim = [-1.1, 1.1]
-    p = Plotter(x_lim, y_lim)
-    x = [x/20 for x in range(500)]
+    p = Plotter(x_lim, [-1.1, 1.1])
+    x = [x/20 for x in range(200)]
+    max = 0
+    min = 0
     for t in x:
+        # if math.sin(t) > max:
+        #     max = math.sin(t)
+        #     plt.ylim([min,max])
+        # if math.sin(t) < min:
+        #     min = math.sin(t)
+        #     plt.ylim([min,max])
+
         p.add_data([t], [math.sin(t)])
