@@ -1,57 +1,73 @@
-import matplotlib.pyplot as plt
-import math
+#! /usr/bin/python
+import serial
+import struct
+from time import time
+import serial.tools.list_ports as ports_list
+from live_plot import Plotter
+import threading
+import csv
+import sys
 
 
-class Plotter:
+BAUD_RATE = 9600
+SEPARATOR_SIZE = 1
+SEPARATOR = b'-'
+DATA_SIZE = 4
+DATA_FORMAT = '<f'
 
-    def __init__(self, x_lim, y_lim = [], style = 'ggplot', x_margin_factor = 0.1, pause_interval = 0.001):
 
-        plt.style.use(style)
-        plt.ion()
-        self.fig = plt.figure()
-        self.axes = self.fig.add_subplot(111)
-        self.line, = self.axes.plot([])
-        plt.show()
+def find_arduino():
+	ports = list(ports_list.comports())
+	for p in ports:
+		if p.usb_description() == 'ttyACM0': # arduino found
+			print("Arduino found at " + p.device)
+			return serial.Serial(p.device, BAUD_RATE)
+	raise IOError("Could not find an arduino - is it plugged in?")
 
-        self.x_vec = []
-        self.y_vec = []
 
-        self.pause_interval = pause_interval
+def get_data(find_arduino_event, stop_event):
+	ser = find_arduino()
+	find_arduino_event.set()
+	p = Plotter([0,1], [20,30])
+	start_time = time()
+	data = []
+	times = []
+	while not stop_event.isSet():
+		raw_separator = ser.read(SEPARATOR_SIZE)
+		if raw_separator == SEPARATOR:
 
-        self.x_margin = (x_lim[1] - x_lim[0])*x_margin_factor
-        self.x_lim = x_lim
-        self.x_len = x_lim[1] - x_lim[0]
-        plt.xlim(self.x_lim)
+			raw_data = ser.read(DATA_SIZE)
+			current_data, = struct.unpack(DATA_FORMAT,raw_data)
+			current_time = time()-start_time
 
-        if len(y_lim) == 0:
-            y_lim = [0, 1]
-        self.y_lim = y_lim
-        self.y_len = y_lim[1] - y_lim[0]
-        plt.ylim(self.y_lim)
+			p.add_data([current_time], [current_data])
 
-    def add_data(self, x_data, y_data):
-        if x_data[-1] > self.x_lim[-1] - self.x_margin:
-            plt.xlim([x_data[-1] - self.x_len + self.x_margin, x_data[-1] + self.x_margin])
+			times.append(current_time)
+			data.append(current_data)
 
-        self.x_vec = self.x_vec + x_data
-        self.y_vec = self.y_vec + y_data
-        self.line.set_data(self.x_vec, self.y_vec)
-        plt.pause(self.pause_interval)
+	ser.close()
+	p.close()
+	if len(sys.argv) > 1:
+		with open(sys.argv[1], 'w') as dataFile:
+				wr = csv.writer(dataFile)
+				wr.writerows([times,data])
+
+
+def ask_stop(wait_event, stop_event):
+	wait_event.wait()
+	input("Press Enter to continue...")
+	stop_event.set()
+	print("Closing plot")
 
 
 if __name__ == "__main__":
 
-    x_lim = [0, math.pi*2]
-    p = Plotter(x_lim, [-1.1, 1.1])
-    x = [x/20 for x in range(200)]
-    max = 0
-    min = 0
-    for t in x:
-        # if math.sin(t) > max:
-        #     max = math.sin(t)
-        #     plt.ylim([min,max])
-        # if math.sin(t) < min:
-        #     min = math.sin(t)
-        #     plt.ylim([min,max])
+	arduino_search = threading.Event()
+	stop_event = threading.Event()
 
-        p.add_data([t], [math.sin(t)])
+	t = threading.Thread(name = 'ask_for_stop', \
+						target=ask_stop, \
+						args = (arduino_search, stop_event))
+	t.start()
+	get_data(arduino_search, stop_event)
+	t.join()
