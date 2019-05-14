@@ -24,11 +24,19 @@ def find_arduino():
 			return serial.Serial(p.device, BAUD_RATE)
 	raise IOError("Could not find an arduino - is it plugged in?")
 
+def ask_stop(stop_event):
+	input("Press Enter to continue...")
+	stop_event.set()
+	print("Closing plot")
 
-def get_data(find_arduino_event, stop_event):
+def get_data():
 	ser = find_arduino()
-	find_arduino_event.set()
-	p = Plotter([0,1], [20,30])
+
+	stop_event = threading.Event()
+	t = threading.Thread(name = 'ask_stop', target=ask_stop, args = (stop_event,))
+	t.start()
+
+	p = Plotter([0,30], [-20,40])
 	start_time = time()
 	data = []
 	times = []
@@ -47,27 +55,12 @@ def get_data(find_arduino_event, stop_event):
 
 	ser.close()
 	p.close()
+	t.join()
 	if len(sys.argv) > 1:
 		with open(sys.argv[1], 'w') as dataFile:
 				wr = csv.writer(dataFile)
 				wr.writerows([times,data])
 
 
-def ask_stop(wait_event, stop_event):
-	wait_event.wait()
-	input("Press Enter to continue...")
-	stop_event.set()
-	print("Closing plot")
-
-
 if __name__ == "__main__":
-
-	arduino_search = threading.Event()
-	stop_event = threading.Event()
-
-	t = threading.Thread(name = 'ask_for_stop', \
-						target=ask_stop, \
-						args = (arduino_search, stop_event))
-	t.start()
-	get_data(arduino_search, stop_event)
-	t.join()
+	get_data()
