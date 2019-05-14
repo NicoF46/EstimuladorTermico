@@ -30,7 +30,11 @@ def ask_stop(stop_event):
 	print("Closing plot")
 
 def get_data():
-	ser = find_arduino()
+	try:
+		ser = find_arduino()
+	except IOError as e:
+		print(e)
+		return
 
 	stop_event = threading.Event()
 	t = threading.Thread(name = 'ask_stop', target=ask_stop, args = (stop_event,))
