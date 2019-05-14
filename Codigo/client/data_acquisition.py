@@ -11,7 +11,7 @@ import sys
 
 BAUD_RATE = 9600
 SEPARATOR_SIZE = 1
-SEPARATOR = b'-'
+SEPARATOR = b't'
 DATA_SIZE = 4
 DATA_FORMAT = '<f'
 
@@ -46,8 +46,8 @@ def get_data():
 	times = []
 	while not stop_event.isSet():
 		raw_separator = ser.read(SEPARATOR_SIZE)
-		if raw_separator == SEPARATOR:
 
+		if raw_separator == SEPARATOR:
 			raw_data = ser.read(DATA_SIZE)
 			current_data, = struct.unpack(DATA_FORMAT,raw_data)
 			current_time = time()-start_time
@@ -57,13 +57,19 @@ def get_data():
 			times.append(current_time)
 			data.append(current_data)
 
+		elif raw_separator == b'p':
+			raw_data = ser.read(1)
+			current_data, = struct.unpack('<B',raw_data)
+			print(current_data)
+
+
 	ser.close()
 	p.close()
 	t.join()
 	if len(sys.argv) > 1:
 		with open(sys.argv[1], 'w') as dataFile:
-				wr = csv.writer(dataFile)
-				wr.writerows([times,data])
+			wr = csv.writer(dataFile)
+			wr.writerows([times,data])
 
 
 if __name__ == "__main__":
