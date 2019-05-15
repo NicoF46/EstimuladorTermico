@@ -1,55 +1,83 @@
 //Sensor de temperatura NTC 10K con divisor resistivo
 #include <math.h>
-
-#define PinAdc1 A0
-#define PinAdc2 A1
-#define ReferenciaAdc 5 //5v
-#define MaximoValorAdc 1023
+#include "modo.h"
+#define PINADC2 A1
+#define REFERENCIAADC 5 //5v
+#define MAXIMOVALORADC 1023
 #define R1 9750
 #define R2 9770
-#define CeroKelvin -273.15
-#define T0Termistor 298.15 //kelvin
-#define BetaTermistor 3982 //kelvin
-#define R0Termistor 10000 //10k
-#define PinPwm 6
-#define SalidaMaxima 0
-#define SalidaMinima -255
-#define ResistenciaDivisorResistivo 10000
-#define DelayValue 100
+#define CEROKELVIN -273.15
+#define T0TERMISTOR 298.15 //kelvin
+#define BETATERMISTOR 3982 //kelvin
+#define R0TERMISTOR 10000 //10k
+#define PINPWM 6
+#define SALIDAMAXIMAMODOCALOR 255
+#define SALIDAMINIMAMODOCALOR 0
+#define SALIDAMAXIMAMODOFRIO 0
+#define SALIDAMINIMAMODOFRIO -255
+#define RESISTENCIADIVISORRESISTIVO 10000
+#define DELAYVALUE 100
 #define TEMPERATURA_MAXIMA 49.0
 #define TEMPERATURA_MINIMA -10.0
+
+
+
+
 
 void setup() {
   Serial.begin(9600);
   while (!Serial) {
   }
   pinMode(LED_BUILTIN, OUTPUT);//Led de control del arduino uno
-  pinMode(PinPwm, OUTPUT);
+  pinMode(PINPWM, OUTPUT);
 }
 
 void loop() {
   static float TemperaturaTermistor=0;
   static uint8_t ValorPWM=0;
-
+  static modo_t Modo=CALIBRACION;
   static float Kp=7.559;
   static float Ki=0.127;
   static float Kd=1.959;
-  static float TemperaturaReferencia=0;
-  static float SignoRealimentacion=0;
-
+  static float TemperaturaReferencia=5;
+  static float Realimentacion=0;
+  static float TemperaturaAmbiente=25;
   TemperaturaTermistor=SensarTemperatura();
-  SignoRealimentacion = ControladorPID(TemperaturaReferencia,TemperaturaTermistor, Kp, Ki, Kd,20,0);
-  ValorPWM=SignoRealimentacion*(-1);
-  analogWrite(PinPwm,ValorPWM);
+//  TemperaturaTermistor=24;
+  if(TemperaturaReferencia<=TemperaturaAmbiente)
+    Modo=FRIO;
+  else if (TemperaturaReferencia>TemperaturaAmbiente)
+    Modo=CALOR;
+  Realimentacion = ControladorPID(TemperaturaReferencia,TemperaturaTermistor, Kp, Ki, Kd,20,0,Modo);
+  if(Modo==FRIO)
+    ValorPWM=Realimentacion*(-1);
+  else if (Modo==CALOR)
+    ValorPWM=Realimentacion;
 
-  Serial.print('t');
-  Serial.write((const char *)&TemperaturaTermistor, sizeof(float));
+  analogWrite(PINPWM,ValorPWM);
 
-  Serial.print('p');
-  Serial.write((const char *)&ValorPWM, sizeof(uint8_t));
+//  Serial.print('t');
+//  Serial.write((const char *)&TemperaturaTermistor, sizeof(float));
+
+//  Serial.print('p');
+//  Serial.write((const char *)&ValorPWM, sizeof(uint8_t));
 
 
-  delay(DelayValue);
+
+//DEBUG MODO
+//    Serial.print(TemperaturaTermistor);
+//    Serial.print('\t');
+//    Serial.print(TemperaturaReferencia);
+//    Serial.print('\t');
+//    if(Modo==FRIO)
+//      Serial.print("FRIO");
+//    if(Modo==CALOR)
+//      Serial.print("CALOR");
+//    Serial.print('\t');
+//    Serial.print(ValorPWM);
+//    Serial.print('\n');
+
+  delay(DELAYVALUE);
 }
 
 float SensarTemperatura(){
@@ -60,21 +88,20 @@ float SensarTemperatura(){
   static float VR=0;
 
   // Tension sensada
-  ValorLeidoAdc2=analogRead(PinAdc2);
+  ValorLeidoAdc2=analogRead(PINADC2);
 
   // calculos divisor
-  VR=float(ValorLeidoAdc2)*ReferenciaAdc/MaximoValorAdc;
-  I=VR/ResistenciaDivisorResistivo;
+  VR=float(ValorLeidoAdc2)*REFERENCIAADC/MAXIMOVALORADC;
+  I=VR/RESISTENCIADIVISORRESISTIVO;
   ResistenciaTermistor=(5-VR)/I;
 
   // calculos termistor
-  TemperaturaTermistor=(float(1)/T0Termistor+(float(1)/float(BetaTermistor))*log (ResistenciaTermistor/R0Termistor));
-  TemperaturaTermistor=1/TemperaturaTermistor+CeroKelvin;
+  TemperaturaTermistor=(float(1)/T0TERMISTOR+(float(1)/float(BETATERMISTOR))*log (ResistenciaTermistor/R0TERMISTOR));
+  TemperaturaTermistor=1/TemperaturaTermistor+CEROKELVIN;
   return TemperaturaTermistor;
 }
 
-
-uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, float Ki, float Kd,float N,float bias){
+uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, float Ki, float Kd,float N,float bias,modo_t modo){
   // Creo que las variables que necesito almacenar la proxima iteracion
   static float SalidaPrevia=0;
   static float ReferenciaPrevia=0;
@@ -86,8 +113,20 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
   float Salida;
   float gamma;
   float  h;
-
-  h= (float(DelayValue)*pow(10,-3));// Ts
+  float SalidaMaxima=0;
+  float SalidaMinima=0;
+  if(modo==FRIO){ 
+    SalidaMaxima=SALIDAMAXIMAMODOFRIO;
+    SalidaMinima=SALIDAMINIMAMODOFRIO;
+                 }
+  else if(modo==CALOR){ 
+    SalidaMaxima=SALIDAMAXIMAMODOCALOR;
+    SalidaMinima=SALIDAMINIMAMODOCALOR;
+                 }               
+  
+  
+  
+  h= (float(DELAYVALUE)*pow(10,-3));// Ts
 
   if (!N){
      N=1;
@@ -124,3 +163,8 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
   else {Ik_previo=Ik;}
 
   return Salida;}
+  
+  
+  int funciongenerica(modo_t modo){
+    return 0;
+  }
