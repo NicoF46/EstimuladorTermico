@@ -34,7 +34,7 @@ void loop() {
   static float Kp=7.559;
   static float Ki=0.127;
   static float Kd=1.959;
-  static float TemperaturaReferencia=10;
+  static float TemperaturaReferencia=0;
   static float SignoRealimentacion=0;
 
   TemperaturaTermistor=SensarTemperatura();
@@ -42,8 +42,11 @@ void loop() {
   ValorPWM=SignoRealimentacion*(-1);
   analogWrite(PinPwm,ValorPWM);
 
-  Serial.print('-');
+  Serial.print('t');
   Serial.write((const char *)&TemperaturaTermistor, sizeof(float));
+
+  Serial.print('p');
+  Serial.write((const char *)&ValorPWM, sizeof(uint8_t));
 
 
   delay(DelayValue);
