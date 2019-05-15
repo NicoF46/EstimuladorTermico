@@ -16,7 +16,8 @@
 #define SalidaMinima -255
 #define ResistenciaDivisorResistivo 10000
 #define DelayValue 100
-
+#define TEMPERATURA_MAXIMA 49.0
+#define TEMPERATURA_MINIMA -10.0
 
 void setup() {
   Serial.begin(9600);
@@ -37,17 +38,13 @@ void loop() {
   static float SignoRealimentacion=0;
 
   TemperaturaTermistor=SensarTemperatura();
-
   SignoRealimentacion = ControladorPID(TemperaturaReferencia,TemperaturaTermistor, Kp, Ki, Kd,20,0);
   ValorPWM=SignoRealimentacion*(-1);
   analogWrite(PinPwm,ValorPWM);
-  // analogWrite(PinPwm,255);
 
-  Serial.print('t');
+  Serial.print('-');
   Serial.write((const char *)&TemperaturaTermistor, sizeof(float));
 
-  Serial.print('p');
-  Serial.write((const char *)&ValorPWM, sizeof(uint8_t));
 
   delay(DelayValue);
 }
@@ -94,21 +91,13 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
          }
   gamma=Kd/N;
 
-  // factor proporcional
   Pk= Kp*(ReferenciaControl-SalidaMedida);
-
-  // factor ingtegral
   Ik = Ik_previo+Ki*Kp*h*(ReferenciaPrevia-SalidaPrevia);
-
-  // factor derivativo
   Dk =gamma/(gamma+h)*Dk_previo-Kp*Kd/(gamma+h)*(SalidaMedida-SalidaPrevia);
 
   // Emito la salida
   if(Kp!=0)
     Salida  = Ik + Dk + Pk +bias;
-  if(ReferenciaControl==0){
-    Salida=0;
-    Ik=0;}
   // Actualizo las variables la proxima iteracion
   SalidaPrevia=SalidaMedida;
   ReferenciaPrevia=ReferenciaControl;
@@ -117,10 +106,18 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
   // Trunco la salida si se va de rango
   if (Salida>SalidaMaxima){
       Salida=SalidaMaxima;
-      Ik_previo=0;}
+      }
   else if(Salida <= SalidaMinima){
       Salida=SalidaMinima;
-      Ik_previo=0;}
+      }
+
+  // Anulo el termino integral si mi sistema satura;
+  if(SalidaMedida>=TEMPERATURA_MAXIMA && Salida==SalidaMaxima){
+    Ik_previo=0;
+   }
+  else if (SalidaMedida<=TEMPERATURA_MINIMA && Salida==SalidaMinima){
+    Ik_previo=0;
+   }
   else {Ik_previo=Ik;}
 
   return Salida;}
