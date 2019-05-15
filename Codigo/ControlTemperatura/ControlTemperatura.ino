@@ -37,7 +37,7 @@ void loop() {
   static uint8_t ValorPWM=0;
   static modo_t Modo=CALIBRACION;
   static float Kp=7.559;
-  static float Ki=0.127;
+  static float Ki=0.127/2;
   static float Kd=1.959;
   static float TemperaturaReferencia=5;
   static float Realimentacion=0;
@@ -48,7 +48,7 @@ void loop() {
     Modo=FRIO;
   else if (TemperaturaReferencia>TemperaturaAmbiente)
     Modo=CALOR;
-  Realimentacion = ControladorPID(TemperaturaReferencia,TemperaturaTermistor, Kp, Ki, Kd,20,0,Modo);
+  Realimentacion = ControladorPID(TemperaturaReferencia,TemperaturaTermistor, Kp, Ki, Kd,20,100,Modo);
   if(Modo==FRIO)
     ValorPWM=Realimentacion*(-1);
   else if (Modo==CALOR)
@@ -56,11 +56,11 @@ void loop() {
 
   analogWrite(PINPWM,ValorPWM);
 
-//  Serial.print('t');
-//  Serial.write((const char *)&TemperaturaTermistor, sizeof(float));
+  Serial.print('t');
+  Serial.write((const char *)&TemperaturaTermistor, sizeof(float));
 
-//  Serial.print('p');
-//  Serial.write((const char *)&ValorPWM, sizeof(uint8_t));
+  Serial.print('p');
+  Serial.write((const char *)&ValorPWM, sizeof(uint8_t));
 
 
 
@@ -152,6 +152,10 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
   else if(Salida <= SalidaMinima){
       Salida=SalidaMinima;
       }
+  if(Ik<SalidaMinima)
+    Ik_previo=SalidaMinima;
+  if(Ik>SalidaMaxima)
+    Ik_previo=SalidaMaxima;
 
   // Anulo el termino integral si mi sistema satura;
   if(SalidaMedida>=TEMPERATURA_MAXIMA && Salida==SalidaMaxima){
