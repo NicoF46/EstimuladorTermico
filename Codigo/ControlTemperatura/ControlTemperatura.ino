@@ -10,7 +10,6 @@
 #define T0TERMISTOR 298.15 //kelvin
 #define BETATERMISTOR 3982 //kelvin
 #define R0TERMISTOR 10000 //10k
-#define PINPWM 6
 #define SALIDAMAXIMAMODOCALOR 255
 #define SALIDAMINIMAMODOCALOR 0
 #define SALIDAMAXIMAMODOFRIO 0
@@ -20,7 +19,10 @@
 #define TEMPERATURA_MAXIMA 49.0
 #define TEMPERATURA_MINIMA -10.0
 
-
+#define PINPWM_FRIO 6
+#define PINPWM_CALOR 5
+#define PIN_PMOS_CALOR 7
+#define PIN_PMOS_FRIO 8
 
 
 
@@ -29,7 +31,18 @@ void setup() {
   while (!Serial) {
   }
   pinMode(LED_BUILTIN, OUTPUT);//Led de control del arduino uno
-  pinMode(PINPWM, OUTPUT);
+  pinMode(PINPWM_FRIO, OUTPUT);
+  pinMode(PINPWM_CALOR, OUTPUT);
+  pinMode(PIN_PMOS_CALOR, OUTPUT);
+  pinMode(PIN_PMOS_FRIO, OUTPUT);
+
+  digitalWrite(PINPWM_FRIO, LOW);
+  digitalWrite(PINPWM_CALOR, LOW);
+  digitalWrite(PIN_PMOS_CALOR, LOW);
+  digitalWrite(PIN_PMOS_FRIO, LOW);
+
+  
+  digitalWrite(PIN_PMOS_FRIO, HIGH);
 }
 
 void loop() {
@@ -39,9 +52,10 @@ void loop() {
   static float Kp=7.8;
   static float Ki=0.127*0.6;
   static float Kd=1.959;
-  static float TemperaturaReferencia=45;
+  static float TemperaturaReferencia=10;
   static float Realimentacion=0;
   static float TemperaturaAmbiente=25;
+  
   TemperaturaTermistor=SensarTemperatura();
 //  TemperaturaTermistor=24;
   if(TemperaturaReferencia<=TemperaturaAmbiente)
@@ -53,7 +67,7 @@ void loop() {
     ValorPWM=Realimentacion*(-1);
   else if (Modo==CALOR)
     ValorPWM=Realimentacion;
-  analogWrite(PINPWM,ValorPWM);
+  analogWrite(PINPWM_FRIO,ValorPWM);
 
   Serial.print('t');
   Serial.write((const char *)&TemperaturaTermistor, sizeof(float));
