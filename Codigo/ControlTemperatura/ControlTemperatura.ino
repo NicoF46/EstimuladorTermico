@@ -20,9 +20,10 @@
 #define TEMPERATURA_MINIMA -10.0
 
 #define PINPWM_FRIO 6
+#define PIN_PMOS_FRIO 8
+
 #define PINPWM_CALOR 5
 #define PIN_PMOS_CALOR 7
-#define PIN_PMOS_FRIO 8
 
 
 
@@ -42,7 +43,6 @@ void setup() {
   digitalWrite(PIN_PMOS_FRIO, LOW);
 
   
-  digitalWrite(PIN_PMOS_FRIO, HIGH);
 }
 
 void loop() {
@@ -52,43 +52,48 @@ void loop() {
   static float Kp=7.8;
   static float Ki=0.127*0.6;
   static float Kd=1.959;
-  static float TemperaturaReferencia=10;
   static float Realimentacion=0;
   static float TemperaturaAmbiente=25;
-  
-  TemperaturaTermistor=SensarTemperatura();
-//  TemperaturaTermistor=24;
-  if(TemperaturaReferencia<=TemperaturaAmbiente)
+  static int PINPWM = 0;
+  static float TemperaturaReferencia=10;
+
+
+  // ESTO DEBERIA IR EN LA FUNCION DE LA INTERRUPCION POR PUERTO SERIE
+  if (Modo == CALIBRACION){
+    TemperaturaAmbiente = SensarTemperatura();
+  }
+  if(TemperaturaReferencia<=TemperaturaAmbiente){
     Modo=FRIO;
-  else if (TemperaturaReferencia>TemperaturaAmbiente)
+    digitalWrite(PIN_PMOS_CALOR, LOW);
+    digitalWrite(PINPWM_CALOR, LOW);
+    
+    digitalWrite(PIN_PMOS_FRIO, HIGH);
+    PINPWM = PINPWM_FRIO;
+  }
+  else if (TemperaturaReferencia>TemperaturaAmbiente){
     Modo=CALOR;
+    digitalWrite(PIN_PMOS_FRIO, LOW);
+    digitalWrite(PINPWM_FRIO, LOW);
+    
+    digitalWrite(PIN_PMOS_CALOR, HIGH);
+    PINPWM = PINPWM_CALOR;
+  }
+
+
+  TemperaturaTermistor=SensarTemperatura(); 
   Realimentacion = ControladorPID(TemperaturaReferencia,TemperaturaTermistor, Kp, Ki, Kd,0,0,Modo);
   if(Modo==FRIO)
     ValorPWM=Realimentacion*(-1);
   else if (Modo==CALOR)
     ValorPWM=Realimentacion;
-  analogWrite(PINPWM_FRIO,ValorPWM);
+    
+  analogWrite(PINPWM,ValorPWM);
 
   Serial.print('t');
   Serial.write((const char *)&TemperaturaTermistor, sizeof(float));
 
   Serial.print('p');
   Serial.write((const char *)&ValorPWM, sizeof(uint8_t));
-
-
-
-//DEBUG MODO
-//    Serial.print(TemperaturaTermistor);
-//    Serial.print('\t');
-//    Serial.print(TemperaturaReferencia);
-//    Serial.print('\t');
-//    if(Modo==FRIO)
-//      Serial.print("FRIO");
-//    if(Modo==CALOR)
-//      Serial.print("CALOR");
-//    Serial.print('\t');
-//    Serial.print(ValorPWM);
-//    Serial.print('\n');
 
   delay(DELAYVALUE);
 }
@@ -182,3 +187,5 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
   int funciongenerica(modo_t modo){
     return 0;
   }
+
+  
