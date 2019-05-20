@@ -40,7 +40,8 @@ def get_data():
 	t = threading.Thread(name = 'ask_stop', target=ask_stop, args = (stop_event,))
 	t.start()
 
-	p = Plotter([0,30], [-20,60])
+	p = Plotter([0,30], [-10,60])
+	p.set_ticks('y',[y for y in range(-10,61,5)])
 	start_time = time()
 	data = []
 	times = []

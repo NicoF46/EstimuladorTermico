@@ -10,10 +10,12 @@
 #define T0TERMISTOR 298.15 //kelvin
 #define BETATERMISTOR 3982 //kelvin
 #define R0TERMISTOR 10000 //10k
+
 #define SALIDAMAXIMAMODOCALOR 255
 #define SALIDAMINIMAMODOCALOR 0
 #define SALIDAMAXIMAMODOFRIO 0
 #define SALIDAMINIMAMODOFRIO -255
+
 #define RESISTENCIADIVISORRESISTIVO 10000
 #define DELAYVALUE 100
 #define TEMPERATURA_MAXIMA 49.0
@@ -49,19 +51,29 @@ void loop() {
   static float TemperaturaTermistor=0;
   static uint8_t ValorPWM=0;
   static modo_t Modo=CALIBRACION;
-  static float Kp=7.8;
-  static float Ki=0.127*0.6;
-  static float Kd=1.959;
+  
+//  static float Kp = 7.8*1.2;
+//  static float Ki = 0.127*0.6;
+//  static float Kd = 1.959;
+
+  static float Kp = 100;
+  static float Ki = 0;
+  static float Kd = 0;
+  
   static float Realimentacion=0;
   static float TemperaturaAmbiente=25;
   static int PINPWM = 0;
-  static float TemperaturaReferencia=10;
+  
+  static float TemperaturaReferencia=15;
 
 
   // ESTO DEBERIA IR EN LA FUNCION DE LA INTERRUPCION POR PUERTO SERIE
   if (Modo == CALIBRACION){
     TemperaturaAmbiente = SensarTemperatura();
   }
+  
+  TemperaturaReferencia = TemperaturaTriangular(10,30);
+  
   if(TemperaturaReferencia<=TemperaturaAmbiente){
     Modo=FRIO;
     digitalWrite(PIN_PMOS_CALOR, LOW);
@@ -86,6 +98,8 @@ void loop() {
     ValorPWM=Realimentacion*(-1);
   else if (Modo==CALOR)
     ValorPWM=Realimentacion;
+
+  ValorPWM = ValorPWM/1.31 + 60;
     
   analogWrite(PINPWM,ValorPWM);
 
@@ -96,6 +110,26 @@ void loop() {
   Serial.write((const char *)&ValorPWM, sizeof(uint8_t));
 
   delay(DELAYVALUE);
+}
+
+float TemperaturaTriangular(float temp_min, float temp_max){
+  static modo_t modo = FRIO;
+  
+  if (modo == FRIO){
+    if(SensarTemperatura() <= temp_min){
+      modo = CALOR;
+      return temp_max;
+    }
+    return temp_min;
+  }
+  
+  if (modo == CALOR){
+    if(SensarTemperatura() >= temp_max){
+      modo = FRIO;
+      return temp_min;
+    }
+    return temp_max;
+  }
 }
 
 float SensarTemperatura(){
@@ -133,22 +167,21 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
   float  h;
   float SalidaMaxima=0;
   float SalidaMinima=0;
+  
   if(modo==FRIO){ 
     SalidaMaxima=SALIDAMAXIMAMODOFRIO;
     SalidaMinima=SALIDAMINIMAMODOFRIO;
-                 }
+  }
   else if(modo==CALOR){ 
     SalidaMaxima=SALIDAMAXIMAMODOCALOR;
     SalidaMinima=SALIDAMINIMAMODOCALOR;
-                 }               
-  
-  
-  
+  }               
+    
   h= (float(DELAYVALUE)*pow(10,-3));// Ts
 
   if (!N){
      N=1;
-         }
+  }
   gamma=Kd/N;
 
   Pk= Kp*(ReferenciaControl-SalidaMedida);
@@ -158,6 +191,7 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
   // Emito la salida
   if(Kp!=0)
     Salida  = Ik + Dk + Pk +bias;
+  
   // Actualizo las variables la proxima iteracion
   SalidaPrevia=SalidaMedida;
   ReferenciaPrevia=ReferenciaControl;
@@ -166,26 +200,29 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
   // Trunco la salida si se va de rango
   if (Salida>SalidaMaxima){
       Salida=SalidaMaxima;
-      }
+  }
   else if(Salida <= SalidaMinima){
       Salida=SalidaMinima;
-      }
+  }
+      
   if(modo==FRIO && Ik<=SalidaMinima)
     Ik_previo=SalidaMinima;
   // Anulo el termino integral si mi sistema satura;
-  if(SalidaMedida>=TEMPERATURA_MAXIMA && Salida==SalidaMaxima){
+  else if(SalidaMedida>=TEMPERATURA_MAXIMA && Salida==SalidaMaxima){
     Ik_previo=0;
-   }
+  }
+  else if (modo == CALOR && Ik > SalidaMaxima){
+    Ik_previo = SalidaMaxima;
+  }
   else if (SalidaMedida<=TEMPERATURA_MINIMA && Salida==SalidaMinima){
     Ik_previo=0;
-   }
-  else {Ik_previo=Ik;}
-
-  return Salida;}
-  
-  
-  int funciongenerica(modo_t modo){
-    return 0;
   }
+  else {
+    Ik_previo=Ik;
+  }
+
+  return Salida;
+  }
+  
 
   
