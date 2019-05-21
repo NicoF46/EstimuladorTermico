@@ -27,6 +27,7 @@
 #define PINPWM_CALOR 5
 #define PIN_PMOS_CALOR 7
 
+volatile int TemperaturaReferencia = 255;
 
 
 void setup() {
@@ -42,75 +43,109 @@ void setup() {
   digitalWrite(PINPWM_FRIO, LOW);
   digitalWrite(PINPWM_CALOR, LOW);
   digitalWrite(PIN_PMOS_CALOR, LOW);
-  digitalWrite(PIN_PMOS_FRIO, LOW);
+  digitalWrite(PIN_PMOS_FRIO, LOW);  
 
+  TemperaturaReferencia = 255;
+}
+
+
+
+void loop() {
+  
+  static float TemperaturaTermistor=0;
+  static modo_t modo = CALIBRACION;
+  static uint8_t ValorPWM=0;
+  
+  static float Kp = 7.8*1.2;
+  static float Ki = 0.127*0.6;
+  static float Kd = 1.959;
+
+//  static float Kp = 100;
+//  static float Ki = 0;
+//  static float Kd = 0;
+  
+  static float Realimentacion=0;
+  static float TemperaturaAmbiente=SensarTemperatura();
+  static int pin_pwm = 0;
+
+
+  TemperaturaTermistor = SensarTemperatura();
+  Serial.print('t');
+  Serial.write((const char *)&TemperaturaTermistor , sizeof(float));
+
+
+  delay(DELAYVALUE);
+
+
+  if (TemperaturaReferencia != 255){
+    modo = definir_modo(TemperaturaAmbiente, TemperaturaReferencia);
+
+    TemperaturaTermistor = SensarTemperatura(); 
+    Realimentacion = ControladorPID(TemperaturaReferencia,TemperaturaTermistor, Kp, Ki, Kd,0,0,modo);
+    if(modo == FRIO){
+      ValorPWM=Realimentacion*(-1);
+      pin_pwm = PINPWM_FRIO;
+    }
+    else if (modo == CALOR){
+      ValorPWM=Realimentacion;
+      pin_pwm = PINPWM_CALOR;
+    }
+      
+    ValorPWM = ValorPWM/1.31 + 60;      
+    analogWrite(pin_pwm,ValorPWM);
+
+    Serial.print('p');
+    Serial.write((const char *)&ValorPWM, sizeof(uint8_t));
+  }
   
 }
 
-void loop() {
-  static float TemperaturaTermistor=0;
-  static uint8_t ValorPWM=0;
-  static modo_t Modo=CALIBRACION;
-  
-//  static float Kp = 7.8*1.2;
-//  static float Ki = 0.127*0.6;
-//  static float Kd = 1.959;
-
-  static float Kp = 100;
-  static float Ki = 0;
-  static float Kd = 0;
-  
-  static float Realimentacion=0;
-  static float TemperaturaAmbiente=25;
-  static int PINPWM = 0;
-  
-  static float TemperaturaReferencia=15;
 
 
-  // ESTO DEBERIA IR EN LA FUNCION DE LA INTERRUPCION POR PUERTO SERIE
-  if (Modo == CALIBRACION){
-    TemperaturaAmbiente = SensarTemperatura();
+void serialEvent(){
+  while (Serial.available() > 0){
+    
+    char modo = Serial.read();
+    switch(modo){
+      case('r'):
+        TemperaturaReferencia = Serial.read();
+    }
   }
   
-  TemperaturaReferencia = TemperaturaTriangular(10,30);
-  
-  if(TemperaturaReferencia<=TemperaturaAmbiente){
-    Modo=FRIO;
+  Serial.print('x');
+  Serial.write((const char *)&TemperaturaReferencia, sizeof(int));
+}
+
+
+
+modo_t definir_modo(float Tamb, int Tref){
+  if (Tamb > Tref){
+    modo_frio();
+    return FRIO;
+  }
+  modo_calor();
+  return CALOR;
+}
+
+
+
+void modo_frio(){
     digitalWrite(PIN_PMOS_CALOR, LOW);
     digitalWrite(PINPWM_CALOR, LOW);
     
     digitalWrite(PIN_PMOS_FRIO, HIGH);
-    PINPWM = PINPWM_FRIO;
-  }
-  else if (TemperaturaReferencia>TemperaturaAmbiente){
-    Modo=CALOR;
-    digitalWrite(PIN_PMOS_FRIO, LOW);
-    digitalWrite(PINPWM_FRIO, LOW);
-    
-    digitalWrite(PIN_PMOS_CALOR, HIGH);
-    PINPWM = PINPWM_CALOR;
-  }
-
-
-  TemperaturaTermistor=SensarTemperatura(); 
-  Realimentacion = ControladorPID(TemperaturaReferencia,TemperaturaTermistor, Kp, Ki, Kd,0,0,Modo);
-  if(Modo==FRIO)
-    ValorPWM=Realimentacion*(-1);
-  else if (Modo==CALOR)
-    ValorPWM=Realimentacion;
-
-  ValorPWM = ValorPWM/1.31 + 60;
-    
-  analogWrite(PINPWM,ValorPWM);
-
-  Serial.print('t');
-  Serial.write((const char *)&TemperaturaTermistor, sizeof(float));
-
-  Serial.print('p');
-  Serial.write((const char *)&ValorPWM, sizeof(uint8_t));
-
-  delay(DELAYVALUE);
 }
+
+
+
+void modo_calor(){
+  digitalWrite(PIN_PMOS_FRIO, LOW);
+  digitalWrite(PINPWM_FRIO, LOW);
+  
+  digitalWrite(PIN_PMOS_CALOR, HIGH);
+}
+
+
 
 float TemperaturaTriangular(float temp_min, float temp_max){
   static modo_t modo = FRIO;
@@ -132,6 +167,8 @@ float TemperaturaTriangular(float temp_min, float temp_max){
   }
 }
 
+
+
 float SensarTemperatura(){
   static float ValorLeidoAdc2=0;
   static float ResistenciaTermistor=0;
@@ -152,6 +189,8 @@ float SensarTemperatura(){
   TemperaturaTermistor=1/TemperaturaTermistor+CEROKELVIN;
   return TemperaturaTermistor;
 }
+
+
 
 uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, float Ki, float Kd,float N,float bias,modo_t modo){
   // Creo que las variables que necesito almacenar la proxima iteracion
@@ -222,7 +261,8 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
   }
 
   return Salida;
-  }
+ }
+
   
 
   

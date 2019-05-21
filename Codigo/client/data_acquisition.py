@@ -16,12 +16,12 @@ DATA_SIZE = 4
 DATA_FORMAT = '<f'
 
 
-def find_arduino():
+def find_arduino(baud_rate):
 	ports = list(ports_list.comports())
 	for p in ports:
 		if p.usb_description() == 'ttyACM0': # arduino found
 			print("Arduino found at " + p.device)
-			return serial.Serial(p.device, BAUD_RATE)
+			return serial.Serial(p.device, baud_rate)
 	raise IOError("Could not find an arduino - is it plugged in?")
 
 def ask_stop(stop_event):
@@ -31,7 +31,7 @@ def ask_stop(stop_event):
 
 def get_data():
 	try:
-		ser = find_arduino()
+		ser = find_arduino(BAUD_RATE)
 	except IOError as e:
 		print(e)
 		return
@@ -45,7 +45,16 @@ def get_data():
 	start_time = time()
 	data = []
 	times = []
+
+	temp_min = 10;
+	temp_max = 30;
+
+	temp = temp_min;
 	while not stop_event.isSet():
+
+		raw_data = struct.pack('<cb',b'r',temp)
+		ser.write(raw_data)
+
 		raw_separator = ser.read(SEPARATOR_SIZE)
 
 		if raw_separator == SEPARATOR:
@@ -58,11 +67,20 @@ def get_data():
 			times.append(current_time)
 			data.append(current_data)
 
+			if current_data > temp_max-3:
+				temp = temp_min
+			elif current_data < temp_min+3:
+				temp = temp_max
+
 		elif raw_separator == b'p':
 			raw_data = ser.read(1)
 			current_data, = struct.unpack('<B',raw_data)
-			print(current_data)
+			print("PWM :" + str(current_data))
 
+		elif raw_separator == b'x':
+			raw_data = ser.read(1)
+			current_data, = struct.unpack('<b',raw_data)
+			print("Temperatura Referencia:" + str(current_data))
 
 	ser.close()
 	p.close()

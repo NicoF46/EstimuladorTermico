@@ -52,6 +52,11 @@ class Plotter:
     def close(self):
         plt.close('all')
 
+    def  set_ticks(self, array, sticks):
+        if array == 'x':
+            plt.xticks(sticks)
+        if array == 'y':
+            plt.yticks(sticks)
 
 if __name__ == "__main__":
 
