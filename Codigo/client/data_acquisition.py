@@ -19,12 +19,19 @@ DATA_FORMAT = '<f'
 DEBUG = False
 
 class EnviarDatos(cmd.Cmd):
-    def do_temperatura(self, dato):
-        """ Modo de uso: temperatura [temperatura]
-        Envia la temperatura que se desea en la celda peltier. La temperatura debe un numero entre -10 C y 56 C """
-        print("temperatura raw " + str(dato) + " de len " + str(len(dato)))
-        for x in dato:
-            print(x)
+    ser = None
+
+    def do_temp(self, dato):
+        try:
+            temp = int(dato)
+        except ValueError(e):
+            print("temperature must be an integer")
+
+        raw_data = struct.pack('<cb',b'r',temp)
+        EnviarDatos.ser.write(raw_data)
+
+    def do_stop(self, data):
+        EnviarDatos.ser.write(b's')
 
     def do_exit(self,data):
         return True
@@ -46,66 +53,56 @@ def ask_stop(stop_event):
 	print("Closing plot")
 
 def get_data():
-	try:
-		ser = find_arduino(BAUD_RATE)
-	except IOError as e:
-		print(e)
-		return
+    try:
+        ser = find_arduino(BAUD_RATE)
+    except IOError as e:
+        print(e)
+        return
 
-	stop_event = threading.Event()
-	t = threading.Thread(name = 'ask_stop', target=ask_stop, args = (stop_event,))
-	t.start()
+    stop_event = threading.Event()
+    EnviarDatos.ser = ser
+    t = threading.Thread(name = 'ask_stop', target=ask_stop, args = (stop_event,))
+    t.start()
 
-	p = Plotter([0,30], [-10,60])
-	p.set_ticks('y',[y for y in range(-10,61,5)])
-	start_time = time()
-	data = []
-	times = []
+    p = Plotter([0,30], [-10,60])
+    p.set_ticks('y',[y for y in range(-10,61,5)])
+    start_time = time()
+    data = []
+    times = []
 
-	temp_min = 10;
-	temp_max = 30;
+    while not stop_event.isSet():
 
-	temp = temp_min;
-	while not stop_event.isSet():
+        raw_separator = ser.read(SEPARATOR_SIZE)
 
-		raw_data = struct.pack('<cb',b'r',temp)
-		ser.write(raw_data)
+        if raw_separator == SEPARATOR:
+            raw_data = ser.read(DATA_SIZE)
+            current_data, = struct.unpack(DATA_FORMAT,raw_data)
+            current_time = time()-start_time
 
-		raw_separator = ser.read(SEPARATOR_SIZE)
+            p.add_data([current_time], [current_data])
 
-		if raw_separator == SEPARATOR:
-			raw_data = ser.read(DATA_SIZE)
-			current_data, = struct.unpack(DATA_FORMAT,raw_data)
-			current_time = time()-start_time
+            times.append(current_time)
+            data.append(current_data)
 
-			p.add_data([current_time], [current_data])
 
-			times.append(current_time)
-			data.append(current_data)
+        if DEBUG:
+            if raw_separator == b'p':
+                raw_data = ser.read(1)
+                current_data, = struct.unpack('<B',raw_data)
+                print("PWM :" + str(current_data))
 
-			if current_data > temp_max-3:
-				temp = temp_min
-			elif current_data < temp_min+3:
-				temp = temp_max
+            elif raw_separator == b'x':
+                raw_data = ser.read(1)
+                current_data, = struct.unpack('<b',raw_data)
+                print("Temperatura Referencia:" + str(current_data))
 
-		if DEBUG:
-			if raw_separator == b'p':
-				raw_data = ser.read(1)
-				current_data, = struct.unpack('<B',raw_data)
-				print("PWM :" + str(current_data))
-
-			elif raw_separator == b'x':
-				raw_data = ser.read(1)
-				current_data, = struct.unpack('<b',raw_data)
-				print("Temperatura Referencia:" + str(current_data))
-
-	ser.close()
-	p.close()
-	t.join()
-	if len(sys.argv) > 1:
-		with open(sys.argv[1], 'w') as dataFile:
-			wr = csv.writer(dataFile)
-			wr.writerows([times,data])
+    ser.close()
+    p.close()
+    t.join()
+    if len(sys.argv) > 1:
+        with open(sys.argv[1], 'w') as dataFile:
+            wr = csv.writer(dataFile)
+            wr.writerows([times,data])
 
 
 if __name__ == "__main__":

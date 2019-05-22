@@ -40,11 +40,14 @@ void setup() {
   pinMode(PIN_PMOS_CALOR, OUTPUT);
   pinMode(PIN_PMOS_FRIO, OUTPUT);
 
+  apagar();
+}
+
+void apagar(){
   digitalWrite(PINPWM_FRIO, LOW);
   digitalWrite(PINPWM_CALOR, LOW);
   digitalWrite(PIN_PMOS_CALOR, LOW);
-  digitalWrite(PIN_PMOS_FRIO, LOW);  
-
+  digitalWrite(PIN_PMOS_FRIO, LOW);
   TemperaturaReferencia = 255;
 }
 
@@ -109,6 +112,10 @@ void serialEvent(){
     switch(modo){
       case('r'):
         TemperaturaReferencia = Serial.read();
+        break;
+      case('s'):
+        apagar();
+        break;
     }
   }
   
