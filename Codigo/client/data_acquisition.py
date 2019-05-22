@@ -7,6 +7,7 @@ from live_plot import Plotter
 import threading
 import csv
 import sys
+import cmd
 
 
 BAUD_RATE = 9600
@@ -15,6 +16,21 @@ SEPARATOR = b't'
 DATA_SIZE = 4
 DATA_FORMAT = '<f'
 
+DEBUG = False
+
+class EnviarDatos(cmd.Cmd):
+    def do_temperatura(self, dato):
+        """ Modo de uso: temperatura [temperatura]
+        Envia la temperatura que se desea en la celda peltier. La temperatura debe un numero entre -10 C y 56 C """
+        print("temperatura raw " + str(dato) + " de len " + str(len(dato)))
+        for x in dato:
+            print(x)
+
+    def do_exit(self,data):
+        return True
+
+    def do_EOF(self, data):
+        return True
 
 def find_arduino(baud_rate):
 	ports = list(ports_list.comports())
@@ -25,7 +41,7 @@ def find_arduino(baud_rate):
 	raise IOError("Could not find an arduino - is it plugged in?")
 
 def ask_stop(stop_event):
-	input("Press Enter to continue...")
+	EnviarDatos().cmdloop()
 	stop_event.set()
 	print("Closing plot")
 
@@ -72,15 +88,16 @@ def get_data():
 			elif current_data < temp_min+3:
 				temp = temp_max
 
-		elif raw_separator == b'p':
-			raw_data = ser.read(1)
-			current_data, = struct.unpack('<B',raw_data)
-			print("PWM :" + str(current_data))
+		if DEBUG:
+			if raw_separator == b'p':
+				raw_data = ser.read(1)
+				current_data, = struct.unpack('<B',raw_data)
+				print("PWM :" + str(current_data))
 
-		elif raw_separator == b'x':
-			raw_data = ser.read(1)
-			current_data, = struct.unpack('<b',raw_data)
-			print("Temperatura Referencia:" + str(current_data))
+			elif raw_separator == b'x':
+				raw_data = ser.read(1)
+				current_data, = struct.unpack('<b',raw_data)
+				print("Temperatura Referencia:" + str(current_data))
 
 	ser.close()
 	p.close()
