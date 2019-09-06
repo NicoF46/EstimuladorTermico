@@ -270,6 +270,7 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
   return Salida;
  }
 
-  
+
+
 
   
