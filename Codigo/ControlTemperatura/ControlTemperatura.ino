@@ -36,16 +36,21 @@ void loop() {
   static float Kd=1.959;
   static float TemperaturaReferencia=10;
   static float SignoRealimentacion=0;
-
-  TemperaturaTermistor=SensarTemperatura();
+//
+//  TemperaturaTermistor=SensarTemperatura();
+  TemperaturaTermistor=25.5;
   SignoRealimentacion = ControladorPID(TemperaturaReferencia,TemperaturaTermistor, Kp, Ki, Kd,20,0);
   ValorPWM=SignoRealimentacion*(-1);
   analogWrite(PinPwm,ValorPWM);
 
-  Serial.print('-');
-  Serial.write((const char *)&TemperaturaTermistor, sizeof(float));
-
-
+//  Serial.print('-');
+//  Serial.write((const char *)&TemperaturaTermistor, sizeof(float));
+Serial.print(TemperaturaTermistor);
+Serial.print('\t');
+Serial.print(TemperaturaReferencia);
+Serial.print('\t');
+Serial.print(ValorPWM);
+Serial.print('\n');
   delay(DelayValue);
 }
 
@@ -106,18 +111,15 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
   // Trunco la salida si se va de rango
   if (Salida>SalidaMaxima){
       Salida=SalidaMaxima;
+      if(Ik_previo<Ik)
+        Ik_previo=Ik_previo;  
       }
   else if(Salida <= SalidaMinima){
       Salida=SalidaMinima;
+      if(Ik_previo>Ik)
+        Ik_previo=Ik_previo; 
       }
 
-  // Anulo el termino integral si mi sistema satura;
-  if(SalidaMedida>=TEMPERATURA_MAXIMA && Salida==SalidaMaxima){
-    Ik_previo=0;
-   }
-  else if (SalidaMedida<=TEMPERATURA_MINIMA && Salida==SalidaMinima){
-    Ik_previo=0;
-   }
   else {Ik_previo=Ik;}
 
   return Salida;}
