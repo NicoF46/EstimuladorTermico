@@ -1,2 +1,5 @@
 matplotlib
 pyserial
+numpy
+pyserial
+cloudmesh-cmd5
