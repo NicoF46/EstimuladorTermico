@@ -8,7 +8,7 @@ void usart_configuration_init(){
   /* Configuro 8 bits de datos, 1 bit de stop */
   UCSR0C= (3<<UCSZ00);
   /*  Habilito para enviar y recibir por interrupcion */
-  UCSR0B = (1<<RXEN0)|(1<<TXEN0)|(1<<RXCIE0);
+  UCSR0B = ((1<<RXEN0)|(1<<TXEN0)|(1<<RXCIE0));
 
 }
 
@@ -28,6 +28,6 @@ void usart_Buffer_transmit(void* dato,int size){
 
 
 int8_t receive(void){
-	while ( !(UCSR0A & (1<<RXC0)) ){}
+	while ( !(UCSR0A & (1<<RXC0)) ){};
 	return UDR0;
 }

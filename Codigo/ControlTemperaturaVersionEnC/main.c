@@ -6,7 +6,7 @@
 #include "funciones.h"
 #include <avr/interrupt.h>
 
-int TemperaturaReferencia = 255;
+int TemperaturaReferencia = 12;
 
 int main(void)
 {
@@ -23,14 +23,19 @@ int main(void)
     PWM_configuration_init();
     usart_configuration_init();
     ADC_configuration_init();
-
+    sei();
 
     while(1){
       TemperaturaAmbiente=SensarTemperatura();
       TemperaturaTermistor = SensarTemperatura();
       usart_transmit('t');
       usart_Buffer_transmit(&TemperaturaTermistor,sizeof(TemperaturaTermistor));
-      _delay_ms(10);
+/*
+      char cadena[4];
+      sprintf(cadena,"%d\n",TemperaturaReferencia);
+      usart_Buffer_transmit(cadena,sizeof(cadena));
+*/
+      _delay_ms(100);
       if (TemperaturaReferencia != 255){
         modo = definir_modo(TemperaturaAmbiente, TemperaturaReferencia);
         TemperaturaTermistor = SensarTemperatura();
@@ -42,7 +47,7 @@ int main(void)
         PWM_set_modo(ValorPWM,modo);
         usart_transmit('p');
         usart_transmit(ValorPWM);
-}
+        }
     }
 
     return(0);
@@ -50,16 +55,17 @@ int main(void)
 
 
 
-ISR(USART_RXC_vect){
+ISR(USART_RX_vect){
   uint8_t modo = receive();
   switch(modo){
       case('r'):
         TemperaturaReferencia = receive();
-        break;
+  /*      char cadena[4];
+        sprintf(cadena,"%d\n",TemperaturaReferencia);
+        usart_Buffer_transmit(cadena,sizeof(cadena));
+  */      break;
       case('s'):
         apagar(&TemperaturaReferencia);
         break;
     }
-
-
 }

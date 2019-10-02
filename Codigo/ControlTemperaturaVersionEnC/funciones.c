@@ -1,10 +1,13 @@
 #include "funciones.h"
 #include "ConfiguracionADC.h"
+
 void apagar(int* TemperaturaReferencia){
 /*Pongo en LOW las salidas que controlan el puente H*/
 /*PD5 PWM CALOR-PD6 PWM FRIO-PD7 PMOS CALOR-PB0 PMOS FRIO*/
 PORTB &= ~(1<<PB0);
-PORTD &= ~((1<<PD5)|(1<<PD6)|(1<<PD7));
+PORTD &= ~(1<<PD7);
+OCR0B=0;
+OCR0A=0;
 (*TemperaturaReferencia) = 255;
 }
 
@@ -22,7 +25,6 @@ float SensarTemperatura(){
     static float VR=0;
     /* Tension sensada*/
     ValorLeidoAdc=ReadADC();
-    char cadena[40];
     /* calculos divisor*/
     VR=((float)(ValorLeidoAdc))*REFERENCIAADC/MAXIMOVALORADC;
     I=VR/RESISTENCIADIVISORRESISTIVO;
@@ -30,10 +32,7 @@ float SensarTemperatura(){
     // calculos termistor
     TemperaturaTermistor=((float)(1)/T0TERMISTOR+((float)(1)/(float)(BETATERMISTOR))*log (ResistenciaTermistor/R0TERMISTOR));
     TemperaturaTermistor=((float)1)/TemperaturaTermistor+CEROKELVIN;
-/*    dtostrf( TemperaturaTermistor, 6, 8, cadena );
-    usart_Buffer_transmit(cadena,15);
-    usart_transmit('\n');
-  */  return TemperaturaTermistor;
+    return TemperaturaTermistor;
 }
 
 
