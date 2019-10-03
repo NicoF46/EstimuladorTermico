@@ -46,15 +46,15 @@ modo_t definir_modo(float Tamb, int Tref){
 }
 
 void modo_frio(){
-    PORTD&=~(1<<PD5);
+    PORTD&=~(1<<PD7);
     OCR0B=0;
-    PORTD|=(1<<PD6);
+    PORTB|=(1<<PB0);
 }
 
 void modo_calor(){
-  PORTD&=~(1<<PD6);
+  PORTB&=~(1<<PB0);
   OCR0A=0;
-  PORTD|=(1<<PD5);
+  PORTD|=(1<<PD7);
 }
 
 uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, float Ki, float Kd,float N,float bias,modo_t modo){

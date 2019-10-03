@@ -24,7 +24,7 @@
 #define TEMPERATURA_MINIMA -10.0
 #define DELAYVALUE 100.00
 
-void apagar(int*);
+void apagar();
 void Pin_SetUp();
 float SensarTemperatura();
 modo_t definir_modo(float, int );
