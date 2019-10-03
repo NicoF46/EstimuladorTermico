@@ -39,7 +39,6 @@ void setup() {
   pinMode(PINPWM_CALOR, OUTPUT);
   pinMode(PIN_PMOS_CALOR, OUTPUT);
   pinMode(PIN_PMOS_FRIO, OUTPUT);
-
   apagar();
 }
 
@@ -59,8 +58,8 @@ void loop() {
   static modo_t modo = CALIBRACION;
   static uint8_t ValorPWM=0;
   
-  static float Kp = 7.8*1.2;
-  static float Ki = 0.127*0.6;
+  static float Kp = 7.8*1.1;
+  static float Ki = 0.127;
   static float Kd = 1.959;
 
 //  static float Kp = 100;
@@ -93,8 +92,7 @@ void loop() {
       ValorPWM=Realimentacion;
       pin_pwm = PINPWM_CALOR;
     }
-      
-    ValorPWM = ValorPWM/1.31 + 60;      
+         
     analogWrite(pin_pwm,ValorPWM);
 
     Serial.print('p');
@@ -218,7 +216,7 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
     SalidaMaxima=SALIDAMAXIMAMODOFRIO;
     SalidaMinima=SALIDAMINIMAMODOFRIO;
   }
-  else if(modo==CALOR){ 
+  else if (modo==CALOR){ 
     SalidaMaxima=SALIDAMAXIMAMODOCALOR;
     SalidaMinima=SALIDAMINIMAMODOCALOR;
   }               
@@ -271,6 +269,25 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
  }
 
 
+void PWM_configuration_init(){
+/*PIN PWM FRIO PD6*/
+  DDRD = 1<<DDD5;
+  DDRD|=(1<<DDD6);
+  OCR0A=0;
+  OCR0B=0;
+  TCCR0A |= ((1<<COM0A1)|(1<<COM0B1)|(1<<WGM01)|(1<<WGM00));
+  TCCR0B |= ((1<<CS00));
 
+}
+
+
+void PWM_set(uint8_t pin,uint8_t pwm){
+  if(pin==PINPWM_FRIO){
+      OCR0B=pwm;
+      OCR0A=0;}
+  else 
+      {OCR0B=0;
+      OCR0A=pwm;}
+  }
 
   
