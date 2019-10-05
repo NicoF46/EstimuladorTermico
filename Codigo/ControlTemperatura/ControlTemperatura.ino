@@ -10,7 +10,9 @@
 #define T0TERMISTOR 298.15 //kelvin
 #define BETATERMISTOR 3982 //kelvin
 #define R0TERMISTOR 10000 //10k
-
+#define CANTIDAD_COMBINACIONES_PWM_DIFFTEMP 5
+#define TOLERANCIA_DELAY 0.5
+#define TAU 0.63
 #define SALIDAMAXIMAMODOCALOR 255
 #define SALIDAMINIMAMODOCALOR 0
 #define SALIDAMAXIMAMODOFRIO 0
@@ -61,15 +63,14 @@ void loop() {
   static float Kp = 7.8*1.1;
   static float Ki = 0.127;
   static float Kd = 1.959;
-
-//  static float Kp = 100;
-//  static float Ki = 0;
-//  static float Kd = 0;
+  static float bias = 0;
+  static float N=10;
   
   static float Realimentacion=0;
   static float TemperaturaAmbiente=SensarTemperatura();
   static int pin_pwm = 0;
 
+  CalibracionPID(5,&Kp, &Ki,& Kd,&N,& bias);
 
   TemperaturaTermistor = SensarTemperatura();
   Serial.print('t');
@@ -269,25 +270,75 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
  }
 
 
-void PWM_configuration_init(){
-/*PIN PWM FRIO PD6*/
-  DDRD = 1<<DDD5;
-  DDRD|=(1<<DDD6);
-  OCR0A=0;
-  OCR0B=0;
-  TCCR0A |= ((1<<COM0A1)|(1<<COM0B1)|(1<<WGM01)|(1<<WGM00));
-  TCCR0B |= ((1<<CS00));
+ void CalibracionPID(float ReferenciaControl,float* Kp,float* Ki,float* Kd,float* N,float* bias){
+   /*Para la calibracion genero un escalon correspondiente a la temperatura deseada
+   Para esto necesito relacionar la corriente en el peltier con la diferencia de temperatura que necesito*/
+   float TablaPWMvsDiffTemperatura[CANTIDAD_COMBINACIONES_PWM_DIFFTEMP][2]={{-255,-7.5},
+                    {-220, -4},
+                    {-175,3},
+                    {-152,5},
+                    {255,50}
+                  };
+  modo_t modo;
+  int pin_pwm = 0;
+  float TemperaturaInicial=SensarTemperatura();
+  float TiempoDelay=0;
+  float TiempoTotalTau=0;
+  float DiferenciaTemperatura=TemperaturaInicial-ReferenciaControl;
+  float ContadorCicloDelayMs=0;
+  float ContadorCicloExpMs=0;
+  /*En base al diferencial busco en la tabla el pwm que necesito*/
+  float ValorPWM=BuscarPWMRequerido(TablaPWMvsDiffTemperatura,CANTIDAD_COMBINACIONES_PWM_DIFFTEMP,DiferenciaTemperatura);
+  /*Genero un escalon en el controlador segun el modo*/
+  modo=definir_modo(TemperaturaInicial,ReferenciaControl);
 
-}
+  if(modo == FRIO){
+      pin_pwm = PINPWM_FRIO;
+    }
+  else if (modo == CALOR){
+      pin_pwm = PINPWM_CALOR;
+    }      
+    analogWrite(pin_pwm,ValorPWM);
 
+  
+  /*Marco el tiempo de inicio*/
+  while(fabs(TemperaturaInicial-SensarTemperatura())<TOLERANCIA_DELAY){
+    _delay_ms(10);
+    ContadorCicloDelayMs++;}
+    int temp=0;
+    if(modo==FRIO){
+      while((temp=SensarTemperatura())>(TemperaturaInicial+TAU*(ReferenciaControl-TemperaturaInicial))){
+        _delay_ms(10);
+        ContadorCicloExpMs++;
+        }}
+    else{
+      while(SensarTemperatura()<(TemperaturaInicial+TAU*(ReferenciaControl-TemperaturaInicial))){
+        _delay_ms(10);
+        ContadorCicloExpMs++;}}
 
-void PWM_set(uint8_t pin,uint8_t pwm){
-  if(pin==PINPWM_FRIO){
-      OCR0B=pwm;
-      OCR0A=0;}
-  else 
-      {OCR0B=0;
-      OCR0A=pwm;}
+  TiempoDelay=ContadorCicloDelayMs*10;
+  TiempoTotalTau=ContadorCicloExpMs*10;
+  digitalWrite(PINPWM_FRIO, LOW);
+  digitalWrite(PINPWM_CALOR, LOW);
+  digitalWrite(PIN_PMOS_CALOR, LOW);
+  digitalWrite(PIN_PMOS_FRIO, LOW);
+  (*Kp)=1.2*TiempoTotalTau/TiempoDelay;
+  (*Ki)=0.5/TiempoTotalTau;
+  (*Kp)=0.5*TiempoTotalTau;
+ }
+
+float BuscarPWMRequerido(float TablaPWMvsDiffTemperatura[][2],int CantidadCombinaciones,float DiferenciaTemperatura){
+  int i=0;
+  float DistanciaMinima=DiferenciaTemperatura;
+  float PWMRequerido=0;
+  for (i=0;i<CantidadCombinaciones;i++){
+    if(fabs(DiferenciaTemperatura-TablaPWMvsDiffTemperatura[i][1])<DistanciaMinima){
+      DistanciaMinima=fabs(DiferenciaTemperatura-TablaPWMvsDiffTemperatura[i][1]);
+      PWMRequerido=TablaPWMvsDiffTemperatura[i][0];}
   }
+  return PWMRequerido;
+  }
+
+
 
   

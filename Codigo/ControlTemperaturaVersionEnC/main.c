@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <avr/io.h>
-#include <util/delay.h>
 #include <math.h>
 #include "funciones.h"
 #include <avr/interrupt.h>
@@ -17,21 +16,23 @@ int main(void)
     static float Kp = 7.8*1.1;
     static float Ki = 0.127;
     static float Kd = 1.959;
+    static float bias = 0;
+    static float N=10;
     static float Realimentacion=0;
     Pin_SetUp();
-    apagar();
+    apagar(&TemperaturaReferencia);
     PWM_configuration_init();
     usart_configuration_init();
     ADC_configuration_init();
     sei();
 
+    CalibracionPID(5,&Kp, &Ki,& Kd,&N,& bias);
+
     while(1){
       TemperaturaAmbiente=SensarTemperatura();
       TemperaturaTermistor = SensarTemperatura();
-/*      float temp=TemperaturaReferencia;*/
       usart_transmit('t');
       usart_Buffer_transmit(&TemperaturaTermistor,sizeof(TemperaturaTermistor));
- /*   usart_Buffer_transmit(&temp,sizeof(temp));*/
 
       _delay_ms(100);
       if (TemperaturaReferencia != 255){
@@ -42,10 +43,6 @@ int main(void)
           ValorPWM=Realimentacion*(-1);
         else if (modo == CALOR)
           ValorPWM=Realimentacion;
-
-        /*modo=FRIO;
-        modo_frio();
-        PWM_set_modo(180,modo);*/
         PWM_set_modo(ValorPWM,modo);
         usart_transmit('p');
         usart_transmit(ValorPWM);
