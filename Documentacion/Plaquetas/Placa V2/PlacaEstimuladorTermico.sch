@@ -988,10 +988,8 @@ F 3 "" H 3450 1450 50  0001 C CNN
 $EndComp
 Text GLabel 3450 700  1    50   Input ~ 0
 VCC
-Text GLabel 2900 1250 0    50   Input ~ 0
+Text GLabel 2550 1250 0    50   Input ~ 0
 PMOS_FRIO
-Wire Wire Line
-	2900 1250 3150 1250
 $Comp
 L Transistor_BJT:BC337 Q6
 U 1 1 5DD8DA09
@@ -1032,7 +1030,7 @@ F 3 "" H 8100 1450 50  0001 C CNN
 $EndComp
 Text GLabel 8100 700  1    50   Input ~ 0
 VCC
-Text GLabel 8400 1250 2    50   Input ~ 0
+Text GLabel 8850 1250 2    50   Input ~ 0
 PMOS_CALOR
 Text GLabel 950  950  0    50   Input ~ 0
 VCC
@@ -1126,4 +1124,34 @@ Wire Wire Line
 	3400 5300 3400 5550
 Wire Wire Line
 	3400 5550 3050 5550
+$Comp
+L Device:R R14
+U 1 1 5DA61BA5
+P 2900 1250
+F 0 "R14" V 2693 1250 50  0000 C CNN
+F 1 "R" V 2784 1250 50  0000 C CNN
+F 2 "" V 2830 1250 50  0001 C CNN
+F 3 "~" H 2900 1250 50  0001 C CNN
+	1    2900 1250
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	2750 1250 2550 1250
+Wire Wire Line
+	3050 1250 3150 1250
+$Comp
+L Device:R R15
+U 1 1 5DA8E2C9
+P 8600 1250
+F 0 "R15" V 8393 1250 50  0000 C CNN
+F 1 "R" V 8484 1250 50  0000 C CNN
+F 2 "" V 8530 1250 50  0001 C CNN
+F 3 "~" H 8600 1250 50  0001 C CNN
+	1    8600 1250
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	8450 1250 8400 1250
+Wire Wire Line
+	8750 1250 8850 1250
 $EndSCHEMATC
