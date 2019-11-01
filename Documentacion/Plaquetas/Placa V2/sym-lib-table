@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name mcp1407)(type Legacy)(uri ${KIPRJMOD}/mcp1407.lib)(options "")(descr ""))
+  (lib (name irfz44n)(type Legacy)(uri ${KIPRJMOD}/irfz44n.lib)(options "")(descr ""))
+)
