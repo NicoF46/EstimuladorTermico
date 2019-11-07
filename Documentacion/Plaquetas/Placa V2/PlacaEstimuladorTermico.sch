@@ -368,8 +368,6 @@ F 3 "" H 10570 3670 50  0001 C CNN
 	1    10570 3670
 	-1   0    0    -1  
 $EndComp
-Wire Wire Line
-	9670 2070 9670 2290
 Text GLabel 11370 3020 2    50   Input ~ 0
 PWM_FRIO
 Text GLabel 4670 2970 0    50   Input ~ 0
@@ -955,17 +953,6 @@ Wire Notes Line
 Wire Notes Line
 	6850 7200 6850 11100
 $Comp
-L Relay:FINDER-34.51 K1
-U 1 1 5DBADF90
-P 1950 8650
-F 0 "K1" V 2517 8650 50  0000 C CNN
-F 1 "FINDER-34.51" V 2426 8650 50  0000 C CNN
-F 2 "Relay_THT:Relay_SPDT_Finder_34.51_Vertical" H 3090 8610 50  0001 C CNN
-F 3 "https://gfinder.findernet.com/public/attachments/34/EN/S34USAEN.pdf" H 1950 8650 50  0001 C CNN
-	1    1950 8650
-	0    1    -1   0   
-$EndComp
-$Comp
 L Device:R_POT RV1
 U 1 1 5DBB5534
 P 4250 9350
@@ -978,8 +965,6 @@ F 3 "~" H 4250 9350 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	4100 9350 3500 9350
-Wire Wire Line
-	2250 8350 3700 8350
 Wire Wire Line
 	4250 8350 4250 9200
 $Comp
@@ -1006,7 +991,6 @@ F 3 "~" H 3700 8750 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	3700 8600 3700 8350
-Connection ~ 3700 8350
 Wire Wire Line
 	3700 8350 4250 8350
 Wire Wire Line
@@ -1053,21 +1037,9 @@ F 3 "" H 3700 10290 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	2250 9250 2250 8850
-$Comp
-L power:GND #PWR0104
-U 1 1 5DBFFF00
-P 1590 8850
-F 0 "#PWR0104" H 1590 8600 50  0001 C CNN
-F 1 "GND" H 1595 8677 50  0000 C CNN
-F 2 "" H 1590 8850 50  0001 C CNN
-F 3 "" H 1590 8850 50  0001 C CNN
-	1    1590 8850
-	1    0    0    -1  
-$EndComp
 Text GLabel 4250 8350 1    50   Input ~ 0
 VCC
-NoConn ~ 2250 8550
-Text GLabel 1650 8450 0    50   Input ~ 0
+Text GLabel 1350 8600 0    50   Input ~ 0
 inPowerSupply
 Text Notes 800  7900 0    50   ~ 0
 la red inPowerSupply es el conector que va directo a la fuente de alimentacion.\nEl rele posiblemente convenga comprar un modulo de arduino, que trae el optoacoplador integrado,\nporque es posible que el opamp no pueda entregar corriente como para encender el rele\nEl interruptor seria un pulsador de encendido. Cuando se lo presiona, se enciende el rele y el \nopamp lo mantiene activado despues que se suelta el interruptor. Hasta que la tension baje 10%\n\n
@@ -1439,8 +1411,6 @@ Wire Wire Line
 Wire Wire Line
 	3700 10250 3700 10290
 Wire Wire Line
-	1650 8850 1590 8850
-Wire Wire Line
 	10420 3470 10570 3470
 Wire Wire Line
 	10570 3670 10570 3470
@@ -1479,8 +1449,6 @@ NoConn ~ 3200 5100
 NoConn ~ 3200 5000
 NoConn ~ 2900 4600
 Wire Wire Line
-	6370 2070 6370 2350
-Wire Wire Line
 	6170 2870 6370 2870
 Connection ~ 6370 2870
 Wire Wire Line
@@ -1518,34 +1486,6 @@ F 3 "~" H 1560 1180 50  0001 C CNN
 	1    1560 1180
 	-1   0    0    1   
 $EndComp
-$Comp
-L power:PWR_FLAG #FLG0103
-U 1 1 5DEABF05
-P 6370 2350
-F 0 "#FLG0103" H 6370 2425 50  0001 C CNN
-F 1 "PWR_FLAG" V 6370 2477 50  0000 L CNN
-F 2 "" H 6370 2350 50  0001 C CNN
-F 3 "~" H 6370 2350 50  0001 C CNN
-	1    6370 2350
-	0    -1   -1   0   
-$EndComp
-Connection ~ 6370 2350
-Wire Wire Line
-	6370 2350 6370 2870
-$Comp
-L power:PWR_FLAG #FLG0104
-U 1 1 5DEACECF
-P 9670 2290
-F 0 "#FLG0104" H 9670 2365 50  0001 C CNN
-F 1 "PWR_FLAG" V 9670 2418 50  0000 L CNN
-F 2 "" H 9670 2290 50  0001 C CNN
-F 3 "~" H 9670 2290 50  0001 C CNN
-	1    9670 2290
-	0    1    1    0   
-$EndComp
-Connection ~ 9670 2290
-Wire Wire Line
-	9670 2290 9670 2970
 Wire Wire Line
 	4490 3610 4830 3610
 Wire Wire Line
@@ -1762,4 +1702,44 @@ Wire Wire Line
 Wire Wire Line
 	2440 9250 2400 9250
 Connection ~ 2400 9250
+NoConn ~ 1350 8850
+Wire Wire Line
+	2250 8600 2900 8600
+Wire Wire Line
+	2900 8600 2900 8350
+Wire Wire Line
+	2900 8350 3700 8350
+Connection ~ 3700 8350
+$Comp
+L power:GND #PWR017
+U 1 1 5E3E5CAB
+P 2400 8350
+F 0 "#PWR017" H 2400 8100 50  0001 C CNN
+F 1 "GND" V 2405 8222 50  0000 R CNN
+F 2 "" H 2400 8350 50  0001 C CNN
+F 3 "" H 2400 8350 50  0001 C CNN
+	1    2400 8350
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	2250 8350 2400 8350
+Text GLabel 1210 8350 0    50   Input ~ 0
+VCC
+Wire Wire Line
+	1350 8350 1210 8350
+$Comp
+L custom_symbols:Modulo_Relé K1
+U 1 1 5E40A870
+P 1800 9050
+F 0 "K1" H 1800 8035 50  0000 C CNN
+F 1 "Modulo_Relé" H 1800 8126 50  0000 C CNN
+F 2 "" H 1800 9050 50  0001 C CNN
+F 3 "" H 1800 9050 50  0001 C CNN
+	1    1800 9050
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	6370 2070 6370 2870
+Wire Wire Line
+	9670 2070 9670 2970
 $EndSCHEMATC
