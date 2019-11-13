@@ -16,12 +16,10 @@ Comment4 ""
 $EndDescr
 Wire Wire Line
 	10420 2420 10670 2420
-Text GLabel 10520 2420 1    50   Input ~ 0
+Text GLabel 10670 2420 1    50   Input ~ 0
 VCC
 Wire Wire Line
 	10670 2420 10670 2570
-Text GLabel 7620 770  1    50   Input ~ 0
-VCC
 Wire Wire Line
 	7620 1570 7920 1570
 Connection ~ 7620 1570
@@ -41,25 +39,6 @@ F 3 "~" H 7920 1370 50  0001 C CNN
 	1    7920 1370
 	0    -1   -1   0   
 $EndComp
-Wire Wire Line
-	7970 2420 8270 2420
-Connection ~ 7970 2420
-Wire Wire Line
-	7970 2620 7970 2420
-$Comp
-L power:GND #PWR09
-U 1 1 5DA5A71B
-P 7970 2620
-F 0 "#PWR09" H 7970 2370 50  0001 C CNN
-F 1 "GND" H 7975 2447 50  0000 C CNN
-F 2 "" H 7970 2620 50  0001 C CNN
-F 3 "" H 7970 2620 50  0001 C CNN
-	1    7970 2620
-	1    0    0    -1  
-$EndComp
-Connection ~ 7620 2420
-Wire Wire Line
-	7620 2420 7970 2420
 Wire Wire Line
 	8270 2070 8270 2420
 Wire Wire Line
@@ -256,7 +235,7 @@ U 1 1 5DA7830A
 P 4830 3380
 F 0 "C3" H 4945 3426 50  0000 L CNN
 F 1 "2.2n" H 4945 3335 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm" H 4868 3230 50  0001 C CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 4868 3230 50  0001 C CNN
 F 3 "~" H 4830 3380 50  0001 C CNN
 	1    4830 3380
 	1    0    0    -1  
@@ -269,7 +248,7 @@ U 1 1 5DA77ABB
 P 4490 3380
 F 0 "R1" H 4560 3426 50  0000 L CNN
 F 1 "391 ohm" H 4560 3335 50  0000 L CNN
-F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal" V 4420 3380 50  0001 C CNN
+F 2 "Resistor_SMD:R_1206_3216Metric" V 4420 3380 50  0001 C CNN
 F 3 "~" H 4490 3380 50  0001 C CNN
 	1    4490 3380
 	1    0    0    -1  
@@ -319,7 +298,7 @@ U 1 1 5DA9A525
 P 11370 3470
 F 0 "R2" H 11300 3516 50  0000 R CNN
 F 1 "391 ohm" H 11300 3425 50  0000 R CNN
-F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal" V 11300 3470 50  0001 C CNN
+F 2 "Resistor_SMD:R_1206_3216Metric" V 11300 3470 50  0001 C CNN
 F 3 "~" H 11370 3470 50  0001 C CNN
 	1    11370 3470
 	-1   0    0    -1  
@@ -343,7 +322,7 @@ U 1 1 5DA9A519
 P 11120 3400
 F 0 "C4" H 11235 3446 50  0000 L CNN
 F 1 "2.2n" H 11235 3355 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm" H 11158 3250 50  0001 C CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 11158 3250 50  0001 C CNN
 F 3 "~" H 11120 3400 50  0001 C CNN
 	1    11120 3400
 	-1   0    0    -1  
@@ -372,9 +351,9 @@ Text GLabel 11370 3020 2    50   Input ~ 0
 PWM_FRIO
 Text GLabel 4670 2970 0    50   Input ~ 0
 PWM_CALOR
-Text GLabel 1750 5600 0    50   Input ~ 0
+Text GLabel 1750 5900 0    50   Input ~ 0
 PWM_FRIO
-Text GLabel 1700 5450 0    50   Input ~ 0
+Text GLabel 1700 5750 0    50   Input ~ 0
 PWM_CALOR
 Wire Wire Line
 	1750 5600 2200 5600
@@ -384,9 +363,9 @@ Wire Wire Line
 	1750 5450 1750 5500
 Wire Wire Line
 	1750 5500 2200 5500
-Text GLabel 1700 5750 0    50   Input ~ 0
+Text GLabel 1750 5600 0    50   Input ~ 0
 PMOS_CALOR
-Text GLabel 1750 5900 0    50   Input ~ 0
+Text GLabel 1700 5450 0    50   Input ~ 0
 PMOS_FRIO
 Wire Wire Line
 	2200 5700 1700 5700
@@ -407,7 +386,7 @@ F 3 "" H 3200 6700 50  0001 C CNN
 	1    3200 6700
 	1    0    0    -1  
 $EndComp
-Text GLabel 3500 5700 2    50   Input ~ 0
+Text GLabel 3500 5850 2    50   Input ~ 0
 PIN_SENSOR_TEMPERATURA_SUPERFICIAL
 Wire Wire Line
 	3200 5700 3500 5700
@@ -417,7 +396,7 @@ U 1 1 5DB6759D
 P 11000 6900
 F 0 "U1" H 11000 7267 50  0000 C CNN
 F 1 "LM2902" H 11000 7176 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_LongPads" H 10950 7000 50  0001 C CNN
+F 2 "Package_DIP:DIP-14_W8.89mm_SMDSocket_LongPads" H 10950 7000 50  0001 C CNN
 F 3 "http://www.ti.com/lit/ds/symlink/lm2902-n.pdf" H 11050 7100 50  0001 C CNN
 	1    11000 6900
 	1    0    0    -1  
@@ -428,7 +407,7 @@ U 2 1 5DB680CD
 P 3200 9250
 F 0 "U1" H 3200 9617 50  0000 C CNN
 F 1 "LM2902" H 3200 9526 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_LongPads" H 3150 9350 50  0001 C CNN
+F 2 "Package_DIP:DIP-14_W8.89mm_SMDSocket_LongPads" H 3150 9350 50  0001 C CNN
 F 3 "http://www.ti.com/lit/ds/symlink/lm2902-n.pdf" H 3250 9450 50  0001 C CNN
 	2    3200 9250
 	-1   0    0    1   
@@ -439,7 +418,7 @@ U 3 1 5DB69274
 P 7990 8150
 F 0 "U1" H 7990 8517 50  0000 C CNN
 F 1 "LM2902" H 7990 8426 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_LongPads" H 7940 8250 50  0001 C CNN
+F 2 "Package_DIP:DIP-14_W8.89mm_SMDSocket_LongPads" H 7940 8250 50  0001 C CNN
 F 3 "http://www.ti.com/lit/ds/symlink/lm2902-n.pdf" H 8040 8350 50  0001 C CNN
 	3    7990 8150
 	1    0    0    -1  
@@ -450,7 +429,7 @@ U 4 1 5DB6A558
 P 9190 8700
 F 0 "U1" H 9190 9067 50  0000 C CNN
 F 1 "LM2902" H 9190 8976 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_LongPads" H 9140 8800 50  0001 C CNN
+F 2 "Package_DIP:DIP-14_W8.89mm_SMDSocket_LongPads" H 9140 8800 50  0001 C CNN
 F 3 "http://www.ti.com/lit/ds/symlink/lm2902-n.pdf" H 9240 8900 50  0001 C CNN
 	4    9190 8700
 	1    0    0    -1  
@@ -491,7 +470,7 @@ U 1 1 5DBBEB07
 P 9340 4750
 F 0 "R13" V 9133 4750 50  0000 C CNN
 F 1 "1k" V 9224 4750 50  0000 C CNN
-F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal" V 9270 4750 50  0001 C CNN
+F 2 "Resistor_SMD:R_1206_3216Metric" V 9270 4750 50  0001 C CNN
 F 3 "~" H 9340 4750 50  0001 C CNN
 	1    9340 4750
 	0    1    1    0   
@@ -716,7 +695,7 @@ Wire Wire Line
 	9490 9000 9490 8700
 Text GLabel 9490 9000 3    50   Input ~ 0
 PIN_SENSOR_TEMPERATURA_PUNTUAL
-Text GLabel 3500 5850 2    50   Input ~ 0
+Text GLabel 3500 5700 2    50   Input ~ 0
 PIN_SENSOR_TEMPERATURA_PUNTUAL
 Wire Wire Line
 	3200 5800 3450 5800
@@ -741,7 +720,7 @@ U 1 1 5DD46258
 P 5570 920
 F 0 "R11" H 5640 966 50  0000 L CNN
 F 1 "1K" H 5640 875 50  0000 L CNN
-F 2 "Resistor_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P15.24mm_Horizontal" V 5500 920 50  0001 C CNN
+F 2 "Resistor_SMD:R_1206_3216Metric" V 5500 920 50  0001 C CNN
 F 3 "~" H 5570 920 50  0001 C CNN
 	1    5570 920 
 	1    0    0    -1  
@@ -783,7 +762,7 @@ U 1 1 5DD8DA0F
 P 10220 920
 F 0 "R12" H 10150 966 50  0000 R CNN
 F 1 "1K" H 10150 875 50  0000 R CNN
-F 2 "Resistor_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P15.24mm_Horizontal" V 10150 920 50  0001 C CNN
+F 2 "Resistor_SMD:R_1206_3216Metric" V 10150 920 50  0001 C CNN
 F 3 "~" H 10220 920 50  0001 C CNN
 	1    10220 920 
 	-1   0    0    -1  
@@ -827,7 +806,7 @@ U 1 1 5DDEF386
 P 1320 1030
 F 0 "C8" H 1435 1076 50  0000 L CNN
 F 1 "1u" H 1435 985 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D12.0mm_W4.4mm_P7.75mm" H 1358 880 50  0001 C CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 1358 880 50  0001 C CNN
 F 3 "~" H 1320 1030 50  0001 C CNN
 	1    1320 1030
 	1    0    0    -1  
@@ -847,17 +826,6 @@ F 3 "" H 1120 1180 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Connection ~ 1120 1180
-$Comp
-L Connector:Screw_Terminal_01x02 J4
-U 1 1 5DE0CFDA
-P 1820 880
-F 0 "J4" H 1900 872 50  0000 L CNN
-F 1 "BORNERA_VCC" H 1900 781 50  0000 L CNN
-F 2 "TerminalBlock:TerminalBlock_bornier-2_P5.08mm" H 1820 880 50  0001 C CNN
-F 3 "~" H 1820 880 50  0001 C CNN
-	1    1820 880 
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	1320 880  1550 880 
 Connection ~ 1320 880 
@@ -874,7 +842,7 @@ U 1 1 5DE3A5E4
 P 3800 5300
 F 0 "C9" H 3915 5346 50  0000 L CNN
 F 1 "100n" H 3915 5255 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm" H 3838 5150 50  0001 C CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 3838 5150 50  0001 C CNN
 F 3 "~" H 3800 5300 50  0001 C CNN
 	1    3800 5300
 	1    0    0    -1  
@@ -902,7 +870,7 @@ U 1 1 5DA61BA5
 P 5020 1320
 F 0 "R14" V 4813 1320 50  0000 C CNN
 F 1 "4k7" V 4904 1320 50  0000 C CNN
-F 2 "Resistor_SMD:R_0805_2012Metric" V 4950 1320 50  0001 C CNN
+F 2 "Resistor_SMD:R_1206_3216Metric" V 4950 1320 50  0001 C CNN
 F 3 "~" H 5020 1320 50  0001 C CNN
 	1    5020 1320
 	0    1    1    0   
@@ -917,7 +885,7 @@ U 1 1 5DA8E2C9
 P 10720 1320
 F 0 "R15" V 10513 1320 50  0000 C CNN
 F 1 "4k7" V 10604 1320 50  0000 C CNN
-F 2 "Resistor_SMD:R_0805_2012Metric" V 10650 1320 50  0001 C CNN
+F 2 "Resistor_SMD:R_1206_3216Metric" V 10650 1320 50  0001 C CNN
 F 3 "~" H 10720 1320 50  0001 C CNN
 	1    10720 1320
 	0    1    1    0   
@@ -936,7 +904,7 @@ U 1 1 5DBB5534
 P 4250 9350
 F 0 "RV1" H 4180 9304 50  0000 R CNN
 F 1 "R_POT" H 4180 9395 50  0000 R CNN
-F 2 "Potentiometer_THT:Potentiometer_ACP_CA14-H2,5_Horizontal" H 4250 9350 50  0001 C CNN
+F 2 "Potentiometer_THT:Potentiometer_Bourns_3266Y_Vertical" H 4250 9350 50  0001 C CNN
 F 3 "~" H 4250 9350 50  0001 C CNN
 	1    4250 9350
 	-1   0    0    1   
@@ -1052,21 +1020,7 @@ Wire Wire Line
 Text GLabel 1800 9800 0    50   Input ~ 0
 inPowerSupply
 Connection ~ 8670 1570
-Connection ~ 7120 770 
-Connection ~ 8670 770 
 Connection ~ 8670 2420
-Connection ~ 8270 2420
-$Comp
-L Device:L L2
-U 1 1 5DA42AEC
-P 8520 1570
-F 0 "L2" V 8339 1570 50  0000 C CNN
-F 1 "22uH" V 8430 1570 50  0000 C CNN
-F 2 "Inductor_THT:L_Radial_D10.0mm_P5.00mm_Neosid_SD12k_style3" H 8520 1570 50  0001 C CNN
-F 3 "~" H 8520 1570 50  0001 C CNN
-	1    8520 1570
-	0    1    1    0   
-$EndComp
 $Comp
 L Diode:1N5822 D3
 U 1 1 5DA4F4D5
@@ -1089,17 +1043,13 @@ F 3 "http://www.vishay.com/docs/88526/1n5820.pdf" H 8670 2020 50  0001 C CNN
 	1    8670 2020
 	0    1    1    0   
 $EndComp
-Wire Wire Line
-	7120 770  8670 770 
-Wire Wire Line
-	8270 2420 8670 2420
 $Comp
 L Device:C C10
 U 1 1 5DC34274
 P 9900 7150
 F 0 "C10" H 10015 7196 50  0000 L CNN
 F 1 "4.7n" H 10015 7105 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D9.0mm_W5.0mm_P10.00mm" H 9938 7000 50  0001 C CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 9938 7000 50  0001 C CNN
 F 3 "~" H 9900 7150 50  0001 C CNN
 	1    9900 7150
 	1    0    0    -1  
@@ -1117,7 +1067,7 @@ Text GLabel 1700 4950 0    50   Input ~ 0
 PIN-WARNING-LED-RED
 Text GLabel 1800 5100 0    50   Input ~ 0
 PIN-CAUTION-LED-YELLOW
-Text GLabel 1650 6400 0    50   Input ~ 0
+Text GLabel 2200 5400 0    50   Input ~ 0
 PIN-READY-LED-GREEN
 Wire Wire Line
 	1700 4950 2000 4950
@@ -1129,10 +1079,6 @@ Wire Wire Line
 	1800 5100 1800 5300
 Wire Wire Line
 	1800 5300 2200 5300
-Wire Wire Line
-	2200 6200 1650 6200
-Wire Wire Line
-	1650 6200 1650 6400
 Text GLabel 5460 5550 1    50   Input ~ 0
 PIN-WARNING-LED-RED
 Text GLabel 6420 5630 1    50   Input ~ 0
@@ -1307,7 +1253,7 @@ U 1 1 5DCCB55D
 P 8240 8900
 F 0 "C11" H 8355 8946 50  0000 L CNN
 F 1 "4.7n" H 8355 8855 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D9.0mm_W5.0mm_P10.00mm" H 8278 8750 50  0001 C CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 8278 8750 50  0001 C CNN
 F 3 "~" H 8240 8900 50  0001 C CNN
 	1    8240 8900
 	1    0    0    -1  
@@ -1390,8 +1336,6 @@ Wire Wire Line
 	3700 10250 3700 10290
 Wire Wire Line
 	10420 3470 10570 3470
-Wire Wire Line
-	10570 3670 10570 3470
 Connection ~ 10570 3470
 Wire Wire Line
 	10570 3470 10670 3470
@@ -1416,7 +1360,7 @@ NoConn ~ 2200 6100
 NoConn ~ 2600 4600
 NoConn ~ 2800 4600
 NoConn ~ 2200 6300
-NoConn ~ 2200 5400
+NoConn ~ 2200 6200
 NoConn ~ 3200 6300
 NoConn ~ 3200 6200
 NoConn ~ 3200 6100
@@ -1554,7 +1498,7 @@ U 1 1 5DB9E92A
 P 1510 2300
 F 0 "C6" H 1625 2346 50  0000 L CNN
 F 1 "0.1u" H 1625 2255 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm" H 1548 2150 50  0001 C CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 1548 2150 50  0001 C CNN
 F 3 "~" H 1510 2300 50  0001 C CNN
 	1    1510 2300
 	1    0    0    -1  
@@ -1565,7 +1509,7 @@ U 1 1 5DB9E1BA
 P 810 2300
 F 0 "C5" H 925 2346 50  0000 L CNN
 F 1 "0.33u" H 925 2255 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm" H 848 2150 50  0001 C CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 848 2150 50  0001 C CNN
 F 3 "~" H 810 2300 50  0001 C CNN
 	1    810  2300
 	1    0    0    -1  
@@ -1604,7 +1548,7 @@ U 5 1 5DB6B7EE
 P 1970 2250
 F 0 "U1" H 1928 2296 50  0000 L CNN
 F 1 "LM2902" H 1928 2205 50  0000 L CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_LongPads" H 1920 2350 50  0001 C CNN
+F 2 "Package_DIP:DIP-14_W8.89mm_SMDSocket_LongPads" H 1920 2350 50  0001 C CNN
 F 3 "http://www.ti.com/lit/ds/symlink/lm2902-n.pdf" H 2020 2450 50  0001 C CNN
 	5    1970 2250
 	1    0    0    -1  
@@ -1681,26 +1625,18 @@ Wire Wire Line
 	2440 9250 2400 9250
 Connection ~ 2400 9250
 NoConn ~ 1350 8850
-Wire Wire Line
-	2250 8600 2900 8600
-Wire Wire Line
-	2900 8600 2900 8350
-Wire Wire Line
-	2900 8350 3700 8350
 Connection ~ 3700 8350
 $Comp
 L power:GND #PWR017
 U 1 1 5E3E5CAB
-P 2400 8350
-F 0 "#PWR017" H 2400 8100 50  0001 C CNN
-F 1 "GND" V 2405 8222 50  0000 R CNN
-F 2 "" H 2400 8350 50  0001 C CNN
-F 3 "" H 2400 8350 50  0001 C CNN
-	1    2400 8350
+P 2250 8600
+F 0 "#PWR017" H 2250 8350 50  0001 C CNN
+F 1 "GND" V 2255 8472 50  0000 R CNN
+F 2 "" H 2250 8600 50  0001 C CNN
+F 3 "" H 2250 8600 50  0001 C CNN
+	1    2250 8600
 	0    -1   -1   0   
 $EndComp
-Wire Wire Line
-	2250 8350 2400 8350
 Text GLabel 1210 8350 0    50   Input ~ 0
 VCC
 Wire Wire Line
@@ -1754,8 +1690,6 @@ F 3 "" H 840 3390 50  0001 C CNN
 $EndComp
 Text GLabel 1040 3190 2    50   Input ~ 0
 fan_1
-Text GLabel 1040 3390 2    50   Input ~ 0
-fan_2
 Wire Wire Line
 	840  3190 1040 3190
 Wire Wire Line
@@ -1772,10 +1706,8 @@ Wire Notes Line
 	530  2970 530  3530
 Text Notes 2700 1640 0    50   ~ 0
 Conector hacia peltier
-Text GLabel 3530 2350 3    50   Input ~ 0
+Text GLabel 3430 2350 3    50   Input ~ 0
 fan_1
-Text GLabel 2830 2350 3    50   Input ~ 0
-fan_2
 Text GLabel 2730 2350 3    50   Input ~ 0
 term_pelt_1
 Text GLabel 2930 2350 3    50   Input ~ 0
@@ -1786,7 +1718,7 @@ Text GLabel 3330 2350 3    50   Input ~ 0
 term_disip_2
 NoConn ~ 3030 2350
 NoConn ~ 3230 2350
-NoConn ~ 3430 2350
+NoConn ~ 2830 2440
 $Comp
 L power:GND #PWR019
 U 1 1 5DEEA194
@@ -1810,4 +1742,98 @@ Wire Notes Line
 	4000 2970 2540 2970
 Wire Notes Line
 	2540 2970 2540 1530
+$Comp
+L Device:L L2
+U 1 1 5DA42AEC
+P 8520 1570
+F 0 "L2" V 8339 1570 50  0000 C CNN
+F 1 "22uH" V 8430 1570 50  0000 C CNN
+F 2 "Inductor_THT:L_Radial_D10.0mm_P5.00mm_Neosid_SD12k_style3" H 8520 1570 50  0001 C CNN
+F 3 "~" H 8520 1570 50  0001 C CNN
+	1    8520 1570
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	2830 2440 2830 2350
+Text Label 3530 2350 3    50   ~ 0
+fan_2
+Text Label 1040 3390 0    50   ~ 0
+fan_2
+Text GLabel 6670 770  0    50   Input ~ 0
+VCC_P_1
+Text GLabel 8670 775  0    50   Input ~ 0
+VCC_P_2
+Wire Wire Line
+	7620 2420 7735 2420
+Connection ~ 7620 2420
+Connection ~ 8270 2420
+Wire Wire Line
+	8270 2420 8670 2420
+Wire Wire Line
+	10570 3470 10570 3670
+Text GLabel 6885 770  1    50   Input ~ 0
+VCC
+Text GLabel 8800 770  1    50   Input ~ 0
+VCC
+$Comp
+L power:GND #PWR0104
+U 1 1 5DE4CA6E
+P 7735 2420
+F 0 "#PWR0104" H 7735 2170 50  0001 C CNN
+F 1 "GND" H 7740 2247 50  0000 C CNN
+F 2 "" H 7735 2420 50  0001 C CNN
+F 3 "" H 7735 2420 50  0001 C CNN
+	1    7735 2420
+	1    0    0    -1  
+$EndComp
+Connection ~ 7735 2420
+Wire Wire Line
+	7735 2420 8270 2420
+$Comp
+L Connector_Generic:Conn_01x02 J5
+U 1 1 5DD0A7B8
+P 880 3930
+F 0 "J5" H 960 3922 50  0000 L CNN
+F 1 "Conn_01x02" H 960 3831 50  0000 L CNN
+F 2 "custom_footprints:disipadorFETS" H 880 3930 50  0001 C CNN
+F 3 "~" H 880 3930 50  0001 C CNN
+	1    880  3930
+	1    0    0    -1  
+$EndComp
+Text Notes 695  3755 0    50   ~ 0
+Disipador mosfets
+NoConn ~ 680  3930
+NoConn ~ 680  4030
+Wire Notes Line
+	535  3570 1460 3570
+Wire Notes Line
+	1460 3570 1460 4260
+Wire Notes Line
+	1460 4260 530  4260
+Wire Notes Line
+	530  4260 530  3570
+$Comp
+L Connector_Generic:Conn_01x01 J3
+U 1 1 5DE8D97F
+P 1820 880
+F 0 "J3" H 1900 922 50  0000 L CNN
+F 1 "Conn_01x01" H 1900 831 50  0000 L CNN
+F 2 "Connector:Banana_Jack_1Pin" H 1820 880 50  0001 C CNN
+F 3 "~" H 1820 880 50  0001 C CNN
+	1    1820 880 
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector_Generic:Conn_01x01 J4
+U 1 1 5DE8DB48
+P 1820 980
+F 0 "J4" H 1900 1022 50  0000 L CNN
+F 1 "Conn_01x01" H 1900 931 50  0000 L CNN
+F 2 "Connector:Banana_Jack_1Pin" H 1820 980 50  0001 C CNN
+F 3 "~" H 1820 980 50  0001 C CNN
+	1    1820 980 
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2250 8350 3700 8350
 $EndSCHEMATC
