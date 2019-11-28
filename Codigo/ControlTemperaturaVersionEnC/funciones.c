@@ -3,40 +3,41 @@
 
 void apagar(volatile int* TemperaturaReferencia){
 /*Pongo en LOW las salidas que controlan el puente H*/
-/*PD5 PWM CALOR-PD6 PWM FRIO-PD7 PMOS CALOR-PB0 PMOS FRIO*/
-PORTB &= ~(1<<PB0);
-PORTD &= ~(1<<PD7);
-OCR0B=0;
-OCR0A=0;
+/*PB2 PWM CALOR-PB1 PWM FRIO-PD6 PMOS CALOR-PD5 PMOS FRIO*/
+PORTD &= ~(1<<PD5);
+PORTD &= ~(1<<PD6);
+OCR1B=0;
+OCR1A=0;
 (*TemperaturaReferencia) = 255;
 }
 
 void apagarPuenteH(){
-PORTB &= ~(1<<PB0);
-PORTD &= ~(1<<PD7);
-OCR0B=0;
-OCR0A=0;
+  PORTD &= ~(1<<PD5);
+  PORTD &= ~(1<<PD6);
+  OCR1B=0;
+  OCR1A=0;
 }
 
 
 void Pin_SetUp(){
-  /*Configuro los pines PD5, PD6, PD7 y PB0 como salidas*/
-  DDRB|=(1<<PB0);
-  DDRD|=((1<<PD5)|(1<<PD6)|(1<<PD7));
+  /*Configuro los pines PD5, PD6, PB1 y PB2 como salidas, estas corresponden puente H*/
+  /*Configuro los leds de control como salidas PD*/
+  DDRB|=((1<<PB1)|(1<<PB2));
+  DDRD|=((1<<PD5)|(1<<PD6)|(1<<PD2)|(1<<PD3)|(1<<PD4));
+
 }
 
-float SensarTemperatura(){
+float SensarTemperaturaSuperficial(){
     static uint16_t ValorLeidoAdc=0;
     static float ResistenciaTermistor=0;
     static float TemperaturaTermistor=0;
-    static float I=0;
-    static float VR=0;
+    static float Vout=0;
     /* Tension sensada*/
     ValorLeidoAdc=ReadADC();
     /* calculos divisor*/
-    VR=((float)(ValorLeidoAdc))*REFERENCIAADC/MAXIMOVALORADC;
-    I=VR/RESISTENCIADIVISORRESISTIVO;
-    ResistenciaTermistor=(5-VR)/I;
+    Vout=((float)(ValorLeidoAdc))*REFERENCIAADC/MAXIMOVALORADC;
+    ResistenciaTermistor=TENSION_REFERENCIA_OPAMPS*RESISTENCIA_R3/Vout*(1+RESISTENCIA_R4/RESISTENCIA_R5)-RESISTENCIA_R3;
+    ResistenciaTermistor=ResistenciaTermistor/4;
     // calculos termistor
     TemperaturaTermistor=((float)(1)/T0TERMISTOR+((float)(1)/(float)(BETATERMISTOR))*log (ResistenciaTermistor/R0TERMISTOR));
     TemperaturaTermistor=((float)1)/TemperaturaTermistor+CEROKELVIN;
@@ -54,15 +55,15 @@ modo_t definir_modo(float Tamb, int Tref){
 }
 
 void modo_frio(){
-    PORTD&=~(1<<PD7);
-    OCR0B=0;
-    PORTB|=(1<<PB0);
+    PORTD&=~(1<<PD6);
+    OCR1B=0;
+    PORTD|=(1<<PD5);
 }
 
 void modo_calor(){
-  PORTB&=~(1<<PB0);
-  OCR0A=0;
-  PORTD|=(1<<PD7);
+  PORTD&=~(1<<PD5);
+  OCR1A=0;
+  PORTD|=(1<<PD6);
 }
 
 uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, float Ki, float Kd,float N,float bias,modo_t modo){
@@ -139,36 +140,43 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
  void CalibracionPID(float ReferenciaControl,float* Kp,float* Ki,float* Kd,float* N,float* bias){
    /*Para la calibracion genero un escalon correspondiente a la temperatura deseada
    Para esto necesito relacionar la corriente en el peltier con la diferencia de temperatura que necesito*/
-   float TablaPWMvsDiffTemperatura[CANTIDAD_COMBINACIONES_PWM_DIFFTEMP][2]={{-255,-7.5},
-                    {-220, -4},
-                    {-175,3},
-                    {-152,5},
+   float TablaPWMvsDiffTemperatura[CANTIDAD_COMBINACIONES_PWM_DIFFTEMP][2]={{-255,-20},
+                   /*{-230, -18},
+                    {-205,-16},
+                    {-180,-13},
+                    {-155,-11},
+                    {-130,-9},
+                    {-105,-7},
+                    {-80,-5},*/
+                    /*{-55,-3},*/
                     {255,50}
                   };
   modo_t modo;
-  float TemperaturaInicial=SensarTemperatura();
+  float TemperaturaInicial=SensarTemperaturaSuperficial();
   float TiempoDelay=0;
   float TiempoTotalTau=0;
-  float DiferenciaTemperatura=TemperaturaInicial-ReferenciaControl;
+  float DiferenciaTemperatura=(-1)*(TemperaturaInicial-ReferenciaControl);
   float ContadorCicloDelayMs=0;
   float ContadorCicloExpMs=0;
+
+
   /*En base al diferencial busco en la tabla el pwm que necesito*/
   float ValorPWM=BuscarPWMRequerido(TablaPWMvsDiffTemperatura,CANTIDAD_COMBINACIONES_PWM_DIFFTEMP,DiferenciaTemperatura);
   /*Genero un escalon en el controlador segun el modo*/
   modo=definir_modo(TemperaturaInicial,ReferenciaControl);
   PWM_set_modo(fabs(ValorPWM),modo);
   /*Marco el tiempo de inicio*/
-  while(fabs(TemperaturaInicial-SensarTemperatura())<TOLERANCIA_DELAY){
+  while(fabs((TemperaturaInicial-SensarTemperaturaSuperficial())/TemperaturaInicial)<TOLERANCIA_DELAY){
     _delay_ms(10);
     ContadorCicloDelayMs++;}
     int temp=0;
     if(modo==FRIO){
-      while((temp=SensarTemperatura())>(TemperaturaInicial+TAU*(ReferenciaControl-TemperaturaInicial))){
+      while((temp=SensarTemperaturaSuperficial())>(TemperaturaInicial+TAU*(ReferenciaControl-TemperaturaInicial))){
         _delay_ms(10);
         ContadorCicloExpMs++;
         }}
     else{
-      while(SensarTemperatura()<(TemperaturaInicial+TAU*(ReferenciaControl-TemperaturaInicial))){
+      while(SensarTemperaturaSuperficial()<(TemperaturaInicial+TAU*(ReferenciaControl-TemperaturaInicial))){
         _delay_ms(10);
         ContadorCicloExpMs++;}}
 
@@ -176,18 +184,23 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
   TiempoTotalTau=ContadorCicloExpMs*10;
   apagarPuenteH();
   (*Kp)=1.2*TiempoTotalTau/TiempoDelay;
-  (*Ki)=0.5/TiempoTotalTau;
-  (*Kp)=0.5*TiempoTotalTau;
- }
+  (*Ki)=0.5/(TiempoTotalTau*0.001);
+  (*Kp)=0.5*TiempoTotalTau*0.001;
+  }
 
 float BuscarPWMRequerido(float TablaPWMvsDiffTemperatura[][2],int CantidadCombinaciones,float DiferenciaTemperatura){
   int i=0;
-  float DistanciaMinima=DiferenciaTemperatura;
+  float DistanciaMinima=100;
   float PWMRequerido=0;
   for (i=0;i<CantidadCombinaciones;i++){
     if(fabs(DiferenciaTemperatura-TablaPWMvsDiffTemperatura[i][1])<DistanciaMinima){
       DistanciaMinima=fabs(DiferenciaTemperatura-TablaPWMvsDiffTemperatura[i][1]);
-      PWMRequerido=TablaPWMvsDiffTemperatura[i][0];}
+      PWMRequerido=TablaPWMvsDiffTemperatura[i][0];
+      }
   }
   return PWMRequerido;
   }
+
+void ApagarLedsIndicacion(){
+PORTD &= ~((1<<PD2)|(1<<PD3)|(1<<PD4));
+}

@@ -26,18 +26,26 @@ int main(void)
     ADC_configuration_init();
     sei();
 
-    CalibracionPID(5,&Kp, &Ki,& Kd,&N,& bias);
+    PORTD|=(1<<PD4);
 
+/*
+    CalibracionPID(10,&Kp, &Ki,& Kd,&N,& bias);
+
+    TemperaturaAmbiente=SensarTemperaturaSuperficial();
+
+*/  PORTD|=(1<<PD5);
+    PWM_set_modo(0,FRIO);
     while(1){
-      TemperaturaAmbiente=SensarTemperatura();
-      TemperaturaTermistor = SensarTemperatura();
+
+
+
+      TemperaturaTermistor = SensarTemperaturaSuperficial();
       usart_transmit('t');
       usart_Buffer_transmit(&TemperaturaTermistor,sizeof(TemperaturaTermistor));
 
-      _delay_ms(100);
-      if (TemperaturaReferencia != 255){
+      _delay_ms(DELAYVALUE);
+/*      if (TemperaturaReferencia != 255){
         modo = definir_modo(TemperaturaAmbiente, TemperaturaReferencia);
-        TemperaturaTermistor = SensarTemperatura();
         Realimentacion = ControladorPID(TemperaturaReferencia,TemperaturaTermistor, Kp, Ki, Kd,0,0,modo);
         if(modo == FRIO)
           ValorPWM=Realimentacion*(-1);
@@ -46,8 +54,9 @@ int main(void)
         PWM_set_modo(ValorPWM,modo);
         usart_transmit('p');
         usart_transmit(ValorPWM);
+
         }
-    }
+  */  }
 
     return(0);
 }
@@ -59,10 +68,7 @@ ISR(USART_RX_vect){
   switch(modo){
       case('r'):
         TemperaturaReferencia = receive();
-  /*      char cadena[4];
-        sprintf(cadena,"%d\n",TemperaturaReferencia);
-        usart_Buffer_transmit(cadena,sizeof(cadena));
-  */      break;
+        break;
       case('s'):
         apagar(&TemperaturaReferencia);
         break;

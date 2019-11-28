@@ -2,7 +2,7 @@
 #include <math.h>
 void ADC_configuration_init(){
   /*Configuro el ADC1 PC1 con AVCC de referencia*/
-  ADMUX |= ((1<<REFS0)|(1<<MUX0));
+  ADMUX |= ((1<<REFS0)|(1<<MUX1));
   ADCSRA |= ((1<<ADEN)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0));
 
 }

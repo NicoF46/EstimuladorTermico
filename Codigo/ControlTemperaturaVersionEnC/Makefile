@@ -7,8 +7,8 @@ CPPFLAGS    = -mmcu=$(MCU)
 CFLAGS      = -Os -g -Wall -I. -DF_CPU=16000000
 CPLUSFLAGS  = -Os -g -Wall -I. -DF_CPU=16000000
 LDFLAGS     = -g -mmcu=$(MCU) -lm -Wl,--gc-sections -Os
-PGMER       = -c arduino -b 115200 -P /dev/ttyACM0
-PGMERISP    = -c avrispv2 -P /dev/ttyACM0
+PGMER       = -c arduino -b 115200 -P /dev/ttyUSB0
+PGMERISP    = -c avrispv2 -P /dev/ttyUSB0
 DUDE        = /usr/bin/avrdude -V -p $(MCU)
 
 OBJ_FILES   = \
