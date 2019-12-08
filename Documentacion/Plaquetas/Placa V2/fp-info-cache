@@ -1,4 +1,4 @@
-16310471235634278
+16320923058186591
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -56909,6 +56909,13 @@ THT DIP DIL PDIP 2.54mm 26.669999999999998mm 1050mil SMDSocket LongPads
 0
 64
 64
+Package_DIP
+DoublePin
+8-lead though-hole mounted DIP package, row spacing 7.62 mm (300 mils), LongPads
+THT DIP DIL PDIP 2.54mm 7.62mm 300mil LongPads
+0
+8
+8
 Package_DIP
 Fairchild_LSOP-8
 8-Lead, 300\" Wide, Surface Mount Package (https://www.fairchildsemi.com/package-drawings/ML/MLSOP08A.pdf)
