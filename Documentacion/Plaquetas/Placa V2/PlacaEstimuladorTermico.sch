@@ -348,30 +348,14 @@ Text GLabel 11370 3020 2    50   Input ~ 0
 PWM_FRIO
 Text GLabel 4670 2970 0    50   Input ~ 0
 PWM_CALOR
-Text GLabel 1750 5900 0    50   Input ~ 0
+Text GLabel 1550 6100 0    50   Input ~ 0
 PWM_FRIO
-Text GLabel 1700 5750 0    50   Input ~ 0
+Text GLabel 1550 5950 0    50   Input ~ 0
 PWM_CALOR
-Wire Wire Line
-	1750 5600 2200 5600
-Wire Wire Line
-	1700 5450 1750 5450
-Wire Wire Line
-	1750 5450 1750 5500
-Wire Wire Line
-	1750 5500 2200 5500
-Text GLabel 1750 5600 0    50   Input ~ 0
+Text GLabel 1450 5750 0    50   Input ~ 0
 PMOS_CALOR
-Text GLabel 1700 5450 0    50   Input ~ 0
+Text GLabel 1450 5550 0    50   Input ~ 0
 PMOS_FRIO
-Wire Wire Line
-	2200 5700 1700 5700
-Wire Wire Line
-	1700 5700 1700 5750
-Wire Wire Line
-	2200 5800 1750 5800
-Wire Wire Line
-	1750 5800 1750 5900
 $Comp
 L power:GND #PWR04
 U 1 1 5DB35EB1
@@ -926,7 +910,7 @@ L Device:R R17
 U 1 1 5DBD19E0
 P 5150 8650
 F 0 "R17" H 5220 8696 50  0000 L CNN
-F 1 "R" H 5220 8605 50  0000 L CNN
+F 1 "1.5k" H 5220 8605 50  0000 L CNN
 F 2 "Resistor_SMD:R_1206_3216Metric" V 5080 8650 50  0001 C CNN
 F 3 "~" H 5150 8650 50  0001 C CNN
 	1    5150 8650
@@ -1299,8 +1283,6 @@ Wire Wire Line
 	2940 1000 3140 1000
 NoConn ~ 2200 5000
 NoConn ~ 2200 5100
-NoConn ~ 2200 5900
-NoConn ~ 2200 6000
 NoConn ~ 2200 6100
 NoConn ~ 2600 4600
 NoConn ~ 2800 4600
@@ -2083,4 +2065,22 @@ Wire Wire Line
 	5150 9800 5150 9900
 Wire Wire Line
 	5150 10100 5150 10650
+Wire Wire Line
+	2200 5500 1450 5500
+Wire Wire Line
+	1450 5500 1450 5550
+Wire Wire Line
+	1450 5750 1450 5600
+Wire Wire Line
+	1450 5600 2200 5600
+Wire Wire Line
+	2200 5900 1550 5900
+Wire Wire Line
+	1550 5900 1550 5950
+Wire Wire Line
+	1550 6100 1800 6100
+Wire Wire Line
+	1800 6100 1800 6000
+Wire Wire Line
+	1800 6000 2200 6000
 $EndSCHEMATC
