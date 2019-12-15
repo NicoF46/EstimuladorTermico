@@ -636,7 +636,7 @@ L Device:R R10
 U 1 1 5DCE03B3
 P 9140 9000
 F 0 "R10" V 8933 9000 50  0000 C CNN
-F 1 "82k" V 9024 9000 50  0000 C CNN
+F 1 "68k" V 9024 9000 50  0000 C CNN
 F 2 "Resistor_SMD:R_1206_3216Metric" V 9070 9000 50  0001 C CNN
 F 3 "~" H 9140 9000 50  0001 C CNN
 	1    9140 9000
@@ -1022,9 +1022,9 @@ Wire Wire Line
 	1800 5300 2200 5300
 Text GLabel 5460 5550 1    50   Input ~ 0
 PIN-WARNING-LED-RED
-Text GLabel 6420 5630 1    50   Input ~ 0
+Text GLabel 6415 5705 3    50   Input ~ 0
 PIN-CAUTION-LED-YELLOW
-Text GLabel 7330 5680 1    50   Input ~ 0
+Text GLabel 7295 5760 3    50   Input ~ 0
 PIN-READY-LED-GREEN
 $Comp
 L Transistor_BJT:BC548 Q7
@@ -1059,17 +1059,6 @@ F 3 "" H 5870 6350 50  0001 C CNN
 	1    5870 6350
 	1    0    0    -1  
 $EndComp
-$Comp
-L Device:LED D7
-U 1 1 5DD74EC2
-P 5870 5050
-F 0 "D7" V 5909 4933 50  0000 R CNN
-F 1 "LED" V 5818 4933 50  0000 R CNN
-F 2 "TerminalBlock:TerminalBlock_bornier-2_P5.08mm" H 5870 5050 50  0001 C CNN
-F 3 "~" H 5870 5050 50  0001 C CNN
-	1    5870 5050
-	0    -1   -1   0   
-$EndComp
 Wire Wire Line
 	5870 5200 5870 5350
 Text GLabel 5870 4750 1    50   Input ~ 0
@@ -1099,23 +1088,6 @@ F 3 "" H 7720 6330 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:LED D9
-U 1 1 5DDA6B61
-P 7720 5180
-F 0 "D9" V 7759 5063 50  0000 R CNN
-F 1 "LED" V 7668 5063 50  0000 R CNN
-F 2 "TerminalBlock:TerminalBlock_bornier-2_P5.08mm" H 7720 5180 50  0001 C CNN
-F 3 "~" H 7720 5180 50  0001 C CNN
-	1    7720 5180
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	7720 5330 7720 5480
-Text GLabel 7720 4880 1    50   Input ~ 0
-VCC
-Wire Wire Line
-	7720 5030 7720 4880
-$Comp
 L Transistor_BJT:BC548 Q9
 U 1 1 5DDBD08D
 P 6720 5630
@@ -1126,23 +1098,6 @@ F 3 "http://www.fairchildsemi.com/ds/BC/BC547.pdf" H 6720 5630 50  0001 L CNN
 	1    6720 5630
 	1    0    0    -1  
 $EndComp
-$Comp
-L Device:LED D8
-U 1 1 5DDBD0A1
-P 6820 5130
-F 0 "D8" V 6859 5013 50  0000 R CNN
-F 1 "LED" V 6768 5013 50  0000 R CNN
-F 2 "TerminalBlock:TerminalBlock_bornier-2_P5.08mm" H 6820 5130 50  0001 C CNN
-F 3 "~" H 6820 5130 50  0001 C CNN
-	1    6820 5130
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	6820 5280 6820 5430
-Text GLabel 6820 4830 1    50   Input ~ 0
-VCC
-Wire Wire Line
-	6820 4980 6820 4830
 $Comp
 L Device:R R19
 U 1 1 5DE483A4
@@ -1501,10 +1456,6 @@ Wire Notes Line
 	650  4380 650  6960
 Wire Wire Line
 	5460 5550 5570 5550
-Wire Wire Line
-	6520 5630 6420 5630
-Wire Wire Line
-	7420 5680 7330 5680
 Text GLabel 2300 1950 3    50   Input ~ 0
 VCC_OPAMPS
 Wire Wire Line
@@ -1517,12 +1468,6 @@ Text Notes 5320 4500 0    50   ~ 0
 LEDs indicadores
 Wire Notes Line
 	5290 4390 8150 4390
-Wire Notes Line
-	8150 4390 8150 6660
-Wire Notes Line
-	8150 6660 5290 6660
-Wire Notes Line
-	5290 6660 5290 4390
 Wire Notes Line
 	7150 7210 9590 7210
 Wire Notes Line
@@ -1769,242 +1714,34 @@ Wire Wire Line
 	3400 8650 3400 8350
 Wire Wire Line
 	3400 8750 3400 9150
-$Comp
-L Connector_Generic:Conn_02x04_Counter_Clockwise J7
-U 1 1 5E177EB3
-P 3235 3400
-F 0 "J7" H 3285 3717 50  0000 C CNN
-F 1 "Conn_02x04_Counter_Clockwise" H 3285 3626 50  0000 C CNN
-F 2 "Package_DIP:DIP-8_W7.62mm_LongPads" H 3235 3400 50  0001 C CNN
-F 3 "~" H 3235 3400 50  0001 C CNN
-	1    3235 3400
-	1    0    0    -1  
-$EndComp
-Text GLabel 2435 3275 0    50   Input ~ 0
-term_pelt_1
-Wire Wire Line
-	3035 3300 2435 3300
-Wire Wire Line
-	2435 3300 2435 3275
-Text GLabel 2410 3425 0    50   Input ~ 0
-term_pelt_2
-Wire Wire Line
-	2410 3425 2460 3425
-Wire Wire Line
-	2460 3425 2460 3400
-Wire Wire Line
-	2460 3400 3035 3400
-Text GLabel 2385 3575 0    50   Input ~ 0
-term_disip_1
-Wire Wire Line
-	2385 3575 2485 3575
-Wire Wire Line
-	2485 3575 2485 3500
-Wire Wire Line
-	2485 3500 3035 3500
-Text GLabel 2410 3725 0    50   Input ~ 0
-term_disip_2
-Wire Wire Line
-	3035 3600 2410 3600
-Wire Wire Line
-	2410 3600 2410 3725
-Text GLabel 3260 3800 0    50   Input ~ 0
-fan_1
-Wire Wire Line
-	3535 3600 3635 3600
-Wire Wire Line
-	3635 3600 3635 3800
-Wire Wire Line
-	3635 3800 3260 3800
-$Comp
-L power:GND #PWR0105
-U 1 1 5E23DDFE
-P 3910 3375
-F 0 "#PWR0105" H 3910 3125 50  0001 C CNN
-F 1 "GND" H 3915 3202 50  0000 C CNN
-F 2 "" H 3910 3375 50  0001 C CNN
-F 3 "" H 3910 3375 50  0001 C CNN
-	1    3910 3375
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	3535 3300 3685 3300
-Wire Wire Line
-	3910 3300 3910 3375
-Wire Wire Line
-	3535 3400 3685 3400
-Wire Wire Line
-	3685 3400 3685 3300
-Connection ~ 3685 3300
-Wire Wire Line
-	3685 3300 3910 3300
-Text GLabel 3735 3925 0    50   Input ~ 0
-fan_2
-Wire Wire Line
-	3785 3500 3785 3925
-Wire Wire Line
-	3785 3925 3735 3925
-Wire Wire Line
-	3685 3400 3685 3500
-Wire Wire Line
-	3535 3500 3685 3500
-Connection ~ 3685 3400
-Connection ~ 3685 3500
-Wire Wire Line
-	3685 3500 3785 3500
 Wire Notes Line
 	15245 1930 13785 1930
-$Comp
-L Connector_Generic:Conn_02x04_Counter_Clockwise J8
-U 1 1 5E2A5971
-P 14345 1310
-F 0 "J8" H 14395 1627 50  0000 C CNN
-F 1 "Conn_02x04_Counter_Clockwise" H 14395 1536 50  0000 C CNN
-F 2 "Package_DIP:DIP-8_W7.62mm_LongPads" H 14345 1310 50  0001 C CNN
-F 3 "~" H 14345 1310 50  0001 C CNN
-	1    14345 1310
-	1    0    0    -1  
-$EndComp
-Text GLabel 13545 1185 0    50   Input ~ 0
+Text GLabel 14975 1165 2    50   Input ~ 0
 term_pelt_1C
-Wire Wire Line
-	14145 1210 13545 1210
-Wire Wire Line
-	13545 1210 13545 1185
-Text GLabel 13520 1335 0    50   Input ~ 0
+Text GLabel 13855 1205 0    50   Input ~ 0
 term_pelt_2C
-Wire Wire Line
-	13520 1335 13570 1335
-Wire Wire Line
-	13570 1335 13570 1310
-Wire Wire Line
-	13570 1310 14145 1310
-Text GLabel 13495 1485 0    50   Input ~ 0
+Text GLabel 14985 1315 2    50   Input ~ 0
 term_disip_1C
-Wire Wire Line
-	13495 1485 13595 1485
-Wire Wire Line
-	13595 1485 13595 1410
-Wire Wire Line
-	13595 1410 14145 1410
-Text GLabel 13520 1635 0    50   Input ~ 0
+Text GLabel 13985 1330 0    50   Input ~ 0
 term_disip_2C
-Wire Wire Line
-	14145 1510 13520 1510
-Wire Wire Line
-	13520 1510 13520 1635
-Text GLabel 14370 1710 0    50   Input ~ 0
+Text GLabel 15070 1675 2    50   Input ~ 0
 fan_1C
-Wire Wire Line
-	14645 1510 14745 1510
-Wire Wire Line
-	14745 1510 14745 1710
-Wire Wire Line
-	14745 1710 14370 1710
-Wire Wire Line
-	14645 1210 14795 1210
 Wire Wire Line
 	14645 1310 14795 1310
-Wire Wire Line
-	14795 1310 14795 1210
-Text GLabel 14845 1835 0    50   Input ~ 0
+Text GLabel 13970 1750 0    50   Input ~ 0
 fan_2C
-Wire Wire Line
-	14895 1410 14895 1835
 Wire Wire Line
 	14895 1835 14845 1835
-Wire Wire Line
-	14795 1310 14795 1410
-Wire Wire Line
-	14645 1410 14795 1410
-Connection ~ 14795 1310
-Connection ~ 14795 1410
-Wire Wire Line
-	14795 1410 14895 1410
-Wire Wire Line
-	13725 3200 13725 3110
-NoConn ~ 14125 3110
-NoConn ~ 13925 3110
 Text Notes 13595 2400 0    50   ~ 0
 Conector hacia peltier
-$Comp
-L Connector:DB9_Female_MountingHoles J2
-U 1 1 5DD9E45B
-P 14025 2810
-F 0 "J2" V 14255 2770 50  0000 L CNN
-F 1 "DB9_Female_MountingHoles" V 14365 2290 50  0000 L CNN
-F 2 "Connector_Dsub:DSUB-9_Female_Horizontal_P2.77x2.84mm_EdgePinOffset7.70mm_Housed_MountingHolesOffset9.12mm" H 14025 2810 50  0001 C CNN
-F 3 " ~" H 14025 2810 50  0001 C CNN
-	1    14025 2810
-	0    -1   -1   0   
-$EndComp
-Text GLabel 14235 3500 3    50   Input ~ 0
-term_pelt_1C
-Text GLabel 14080 3495 3    50   Input ~ 0
+Text GLabel 13890 3370 3    50   Input ~ 0
 term_pelt_2C
-Text GLabel 13865 3460 3    50   Input ~ 0
+Text GLabel 14130 3405 3    50   Input ~ 0
 term_disip_1C
-Text GLabel 13610 3375 3    50   Input ~ 0
+Text GLabel 14345 3420 3    50   Input ~ 0
 term_disip_2C
-Text GLabel 13745 3485 3    50   Input ~ 0
+Text GLabel 14895 3165 3    50   Input ~ 0
 fan_1C
-Text GLabel 14765 3280 3    50   Input ~ 0
-fan_2C
-Wire Wire Line
-	14230 3500 14225 3500
-Wire Wire Line
-	13820 3460 13865 3460
-Wire Wire Line
-	13615 3395 13635 3395
-Wire Wire Line
-	14625 3120 14620 3120
-Wire Wire Line
-	14325 3085 14325 3110
-Wire Wire Line
-	14225 3070 14225 3110
-Wire Wire Line
-	13610 3395 13610 3105
-Wire Wire Line
-	13610 3105 13625 3105
-Wire Wire Line
-	13625 3105 13625 3110
-Wire Wire Line
-	13820 3460 13820 3110
-Wire Wire Line
-	13820 3110 13825 3110
-Wire Wire Line
-	14025 3110 14025 3495
-Wire Wire Line
-	14025 3495 14085 3495
-Wire Wire Line
-	14235 3500 14235 3070
-Wire Wire Line
-	14235 3070 14225 3070
-Wire Wire Line
-	13705 3485 13745 3485
-Wire Wire Line
-	14620 3110 14620 3120
-Wire Wire Line
-	14325 3110 14325 3200
-Wire Wire Line
-	14325 3200 14625 3200
-Wire Wire Line
-	14625 2810 14625 3120
-Connection ~ 14325 3110
-Connection ~ 14625 3120
-Wire Wire Line
-	14625 3120 14625 3200
-Wire Wire Line
-	14625 3200 14765 3200
-Wire Wire Line
-	14765 3200 14765 3280
-Connection ~ 14625 3200
-Wire Wire Line
-	14425 3105 14425 3110
-Wire Wire Line
-	13705 3485 13705 3200
-Wire Wire Line
-	13705 3200 13725 3200
 Wire Notes Line
 	2540 2950 1695 2950
 Wire Notes Line
@@ -2083,4 +1820,365 @@ Wire Wire Line
 	1800 6100 1800 6000
 Wire Wire Line
 	1800 6000 2200 6000
+$Comp
+L Connector_Generic:Conn_02x05_Counter_Clockwise J8
+U 1 1 5DFE2CB4
+P 14345 1410
+F 0 "J8" H 14395 1827 50  0000 C CNN
+F 1 "Conn_02x05_Counter_Clockwise" H 14395 1736 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x05_P2.54mm_Vertical" H 14345 1410 50  0001 C CNN
+F 3 "~" H 14345 1410 50  0001 C CNN
+	1    14345 1410
+	1    0    0    -1  
+$EndComp
+Text GLabel 14590 3365 3    50   Input ~ 0
+fan_2C
+Text GLabel 13765 3350 3    50   Input ~ 0
+term_pelt_1C
+$Comp
+L Connector:DB9_Female_MountingHoles J2
+U 1 1 5DD9E45B
+P 14155 2850
+F 0 "J2" V 14385 2810 50  0000 L CNN
+F 1 "DB9_Female_MountingHoles" V 14495 2330 50  0000 L CNN
+F 2 "Connector_Dsub:DSUB-9_Female_Horizontal_P2.77x2.84mm_EdgePinOffset7.70mm_Housed_MountingHolesOffset9.12mm" H 14155 2850 50  0001 C CNN
+F 3 " ~" H 14155 2850 50  0001 C CNN
+	1    14155 2850
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	14355 3150 14365 3150
+Wire Wire Line
+	14055 3150 14055 3365
+Wire Wire Line
+	14255 3145 14255 3150
+Wire Wire Line
+	14055 3365 14255 3365
+Connection ~ 14255 3365
+Connection ~ 14255 3150
+Wire Wire Line
+	14255 3150 14255 3365
+Wire Wire Line
+	14455 3150 14455 3295
+Wire Wire Line
+	14255 3365 14455 3365
+Connection ~ 14455 3365
+Wire Wire Line
+	14455 3365 14590 3365
+Wire Wire Line
+	13755 3150 13755 3310
+Wire Wire Line
+	13755 3310 13765 3310
+Wire Wire Line
+	13765 3310 13765 3350
+Wire Wire Line
+	13955 3145 13955 3150
+Wire Wire Line
+	13955 3370 13890 3370
+Connection ~ 13955 3150
+Wire Wire Line
+	13955 3150 13955 3370
+Wire Wire Line
+	14155 3150 14155 3325
+Wire Wire Line
+	14155 3325 14130 3325
+Wire Wire Line
+	14130 3325 14130 3405
+Wire Wire Line
+	14355 3150 14355 3420
+Wire Wire Line
+	14355 3420 14345 3420
+Connection ~ 14355 3150
+Wire Wire Line
+	14555 3150 14785 3150
+Wire Wire Line
+	14785 3150 14785 3115
+Wire Wire Line
+	14785 3115 14895 3115
+Wire Wire Line
+	14895 3115 14895 3165
+Wire Wire Line
+	14755 2850 14755 3295
+Wire Wire Line
+	14755 3295 14455 3295
+Connection ~ 14455 3295
+Wire Wire Line
+	14455 3295 14455 3365
+Wire Wire Line
+	14645 1210 14915 1210
+Wire Wire Line
+	14915 1210 14915 1165
+Wire Wire Line
+	14915 1165 14975 1165
+Wire Wire Line
+	13855 1205 14145 1205
+Wire Wire Line
+	14145 1205 14145 1210
+Wire Wire Line
+	14985 1315 14795 1315
+Wire Wire Line
+	14795 1315 14795 1310
+Wire Wire Line
+	14640 1410 14645 1410
+Wire Wire Line
+	14900 1410 14900 1675
+Wire Wire Line
+	14900 1675 15070 1675
+Connection ~ 14645 1410
+Wire Wire Line
+	14645 1410 14900 1410
+Wire Wire Line
+	14145 1310 13985 1310
+Wire Wire Line
+	13985 1310 13985 1330
+Wire Wire Line
+	14145 1510 13970 1510
+Wire Wire Line
+	13970 1510 13970 1750
+Wire Wire Line
+	13970 1750 14645 1750
+Wire Wire Line
+	14645 1750 14645 1610
+Wire Wire Line
+	14645 1610 14645 1510
+Wire Wire Line
+	14645 1510 14640 1510
+Connection ~ 14645 1610
+Connection ~ 14645 1510
+Text GLabel 3365 3225 2    50   Input ~ 0
+term_pelt_1
+Text GLabel 2245 3265 0    50   Input ~ 0
+term_pelt_2
+Text GLabel 3375 3375 2    50   Input ~ 0
+term_disip_1
+Text GLabel 2375 3390 0    50   Input ~ 0
+term_disip_2
+Text GLabel 3460 3735 2    50   Input ~ 0
+fan_1
+Wire Wire Line
+	3035 3370 3185 3370
+$Comp
+L Connector_Generic:Conn_02x05_Counter_Clockwise J7
+U 1 1 5E576CF9
+P 2735 3470
+F 0 "J7" H 2785 3887 50  0000 C CNN
+F 1 "Conn_02x05_Counter_Clockwise" H 2785 3796 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x05_P2.54mm_VerticalNico" H 2735 3470 50  0001 C CNN
+F 3 "~" H 2735 3470 50  0001 C CNN
+	1    2735 3470
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3035 3270 3305 3270
+Wire Wire Line
+	3305 3270 3305 3225
+Wire Wire Line
+	3305 3225 3365 3225
+Wire Wire Line
+	2245 3265 2535 3265
+Wire Wire Line
+	2535 3265 2535 3270
+Wire Wire Line
+	3375 3375 3185 3375
+Wire Wire Line
+	3185 3375 3185 3370
+Wire Wire Line
+	3030 3470 3035 3470
+Wire Wire Line
+	3290 3470 3290 3735
+Wire Wire Line
+	3290 3735 3460 3735
+Connection ~ 3035 3470
+Wire Wire Line
+	3035 3470 3290 3470
+Wire Wire Line
+	2535 3370 2375 3370
+Wire Wire Line
+	2375 3370 2375 3390
+Wire Wire Line
+	2535 3570 2360 3570
+Wire Wire Line
+	2360 3570 2360 3810
+Wire Wire Line
+	2360 3810 2695 3810
+Wire Wire Line
+	3035 3810 3035 3670
+Wire Wire Line
+	3035 3670 3035 3570
+Wire Wire Line
+	3035 3570 3030 3570
+Connection ~ 3035 3670
+Connection ~ 3035 3570
+$Comp
+L power:GND #PWR0105
+U 1 1 5E5C39F8
+P 2695 3955
+F 0 "#PWR0105" H 2695 3705 50  0001 C CNN
+F 1 "GND" H 2700 3782 50  0000 C CNN
+F 2 "" H 2695 3955 50  0001 C CNN
+F 3 "" H 2695 3955 50  0001 C CNN
+	1    2695 3955
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2695 3960 2695 3955
+Connection ~ 2695 3810
+Wire Wire Line
+	2695 3810 3035 3810
+Connection ~ 2695 3955
+Wire Wire Line
+	2695 3955 2695 3810
+$Comp
+L Connector:Conn_01x04_Male J9
+U 1 1 5E5ED426
+P 6395 4640
+F 0 "J9" V 6457 4784 50  0000 L CNN
+F 1 "Conn_01x04_Male" V 6548 4784 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 6395 4640 50  0001 C CNN
+F 3 "~" H 6395 4640 50  0001 C CNN
+	1    6395 4640
+	0    1    1    0   
+$EndComp
+Wire Notes Line
+	8150 4390 8150 6935
+Wire Notes Line
+	5290 6935 8150 6935
+Wire Notes Line
+	5290 4390 5290 6935
+Wire Wire Line
+	7295 5680 7295 5760
+Wire Wire Line
+	7295 5680 7420 5680
+Wire Wire Line
+	6415 5705 6415 5630
+Wire Wire Line
+	6415 5630 6520 5630
+Wire Wire Line
+	6195 4835 6195 4840
+Wire Wire Line
+	6195 4900 5870 4900
+Connection ~ 6195 4840
+Wire Wire Line
+	6195 4840 6195 4900
+Wire Wire Line
+	5870 5200 6295 5200
+Wire Wire Line
+	6395 4840 6395 5200
+Wire Wire Line
+	6395 5200 6820 5200
+Wire Wire Line
+	6820 5200 6820 5430
+Wire Wire Line
+	7720 5140 7720 5480
+Wire Wire Line
+	6495 4840 6495 5045
+Wire Wire Line
+	6495 5045 6295 5045
+Wire Wire Line
+	6295 5045 6295 5200
+Wire Wire Line
+	6340 5140 6340 4890
+Wire Wire Line
+	6340 4890 6295 4890
+Wire Wire Line
+	6295 4830 6295 4840
+Wire Wire Line
+	6340 5140 7720 5140
+Connection ~ 6295 4840
+Wire Wire Line
+	6295 4840 6295 4890
+$Comp
+L Connector:Conn_01x04_Male J10
+U 1 1 5E8E758A
+P 8805 5610
+F 0 "J10" V 8867 5754 50  0000 L CNN
+F 1 "Conn_01x04_Male" V 8958 5754 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 8805 5610 50  0001 C CNN
+F 3 "~" H 8805 5610 50  0001 C CNN
+	1    8805 5610
+	0    1    1    0   
+$EndComp
+Wire Notes Line
+	8260 5510 9695 5510
+Wire Notes Line
+	9695 5510 9695 6910
+Wire Notes Line
+	9695 6910 8255 6910
+Wire Notes Line
+	8255 6910 8255 5515
+Wire Notes Line
+	8255 5515 8265 5515
+$Comp
+L Device:LED D6
+U 1 1 5E993710
+P 8720 6420
+F 0 "D6" H 8713 6165 50  0000 C CNN
+F 1 "Yellow" H 8713 6256 50  0000 C CNN
+F 2 "" H 8720 6420 50  0001 C CNN
+F 3 "~" H 8720 6420 50  0001 C CNN
+	1    8720 6420
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D7
+U 1 1 5E9B7C79
+P 8705 6205
+F 0 "D7" H 8698 5950 50  0000 C CNN
+F 1 "Green" H 8698 6041 50  0000 C CNN
+F 2 "" H 8705 6205 50  0001 C CNN
+F 3 "~" H 8705 6205 50  0001 C CNN
+	1    8705 6205
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D8
+U 1 1 5EA2CB1E
+P 8715 6620
+F 0 "D8" H 8708 6365 50  0000 C CNN
+F 1 "RED" H 8708 6456 50  0000 C CNN
+F 2 "" H 8715 6620 50  0001 C CNN
+F 3 "~" H 8715 6620 50  0001 C CNN
+	1    8715 6620
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	8605 5810 8605 6160
+Wire Wire Line
+	8605 6160 8555 6160
+Wire Wire Line
+	8555 6160 8555 6205
+Wire Wire Line
+	8555 6205 8555 6420
+Wire Wire Line
+	8555 6420 8560 6420
+Connection ~ 8555 6205
+Wire Wire Line
+	8560 6420 8560 6620
+Wire Wire Line
+	8560 6620 8565 6620
+Connection ~ 8560 6420
+Wire Wire Line
+	8560 6420 8570 6420
+Wire Wire Line
+	8705 5810 8705 5910
+Wire Wire Line
+	8705 5910 8855 5910
+Wire Wire Line
+	8855 5910 8855 6205
+Wire Wire Line
+	8805 5810 8805 5875
+Wire Wire Line
+	8805 5875 8935 5875
+Wire Wire Line
+	8935 5875 8935 6420
+Wire Wire Line
+	8935 6420 8870 6420
+Wire Wire Line
+	8865 6620 9065 6620
+Wire Wire Line
+	9065 6620 9065 5805
+Wire Wire Line
+	9065 5805 8905 5805
+Wire Wire Line
+	8905 5805 8905 5810
 $EndSCHEMATC

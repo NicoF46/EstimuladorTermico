@@ -1826,7 +1826,7 @@ U 1 1 5DFE2CB4
 P 14345 1410
 F 0 "J8" H 14395 1827 50  0000 C CNN
 F 1 "Conn_02x05_Counter_Clockwise" H 14395 1736 50  0000 C CNN
-F 2 "Package_DIP:Pines2x5" H 14345 1410 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x05_P2.54mm_Vertical" H 14345 1410 50  0001 C CNN
 F 3 "~" H 14345 1410 50  0001 C CNN
 	1    14345 1410
 	1    0    0    -1  
@@ -1963,7 +1963,7 @@ U 1 1 5E576CF9
 P 2735 3470
 F 0 "J7" H 2785 3887 50  0000 C CNN
 F 1 "Conn_02x05_Counter_Clockwise" H 2785 3796 50  0000 C CNN
-F 2 "Package_DIP:Pines2x5" H 2735 3470 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x05_P2.54mm_VerticalNico" H 2735 3470 50  0001 C CNN
 F 3 "~" H 2735 3470 50  0001 C CNN
 	1    2735 3470
 	1    0    0    -1  
@@ -2087,4 +2087,98 @@ Wire Wire Line
 Connection ~ 6295 4840
 Wire Wire Line
 	6295 4840 6295 4890
+$Comp
+L Connector:Conn_01x04_Male J10
+U 1 1 5E8E758A
+P 8805 5610
+F 0 "J10" V 8867 5754 50  0000 L CNN
+F 1 "Conn_01x04_Male" V 8958 5754 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 8805 5610 50  0001 C CNN
+F 3 "~" H 8805 5610 50  0001 C CNN
+	1    8805 5610
+	0    1    1    0   
+$EndComp
+Wire Notes Line
+	8260 5510 9695 5510
+Wire Notes Line
+	9695 5510 9695 6910
+Wire Notes Line
+	9695 6910 8255 6910
+Wire Notes Line
+	8255 6910 8255 5515
+Wire Notes Line
+	8255 5515 8265 5515
+$Comp
+L Device:LED D6
+U 1 1 5E993710
+P 8720 6420
+F 0 "D6" H 8713 6165 50  0000 C CNN
+F 1 "Yellow" H 8713 6256 50  0000 C CNN
+F 2 "Diode_THT:D_A-405_P7.62mm_Horizontal" H 8720 6420 50  0001 C CNN
+F 3 "~" H 8720 6420 50  0001 C CNN
+	1    8720 6420
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D7
+U 1 1 5E9B7C79
+P 8705 6205
+F 0 "D7" H 8698 5950 50  0000 C CNN
+F 1 "Green" H 8698 6041 50  0000 C CNN
+F 2 "Diode_THT:D_A-405_P7.62mm_Horizontal" H 8705 6205 50  0001 C CNN
+F 3 "~" H 8705 6205 50  0001 C CNN
+	1    8705 6205
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D8
+U 1 1 5EA2CB1E
+P 8715 6620
+F 0 "D8" H 8708 6365 50  0000 C CNN
+F 1 "RED" H 8708 6456 50  0000 C CNN
+F 2 "Diode_THT:D_A-405_P7.62mm_Horizontal" H 8715 6620 50  0001 C CNN
+F 3 "~" H 8715 6620 50  0001 C CNN
+	1    8715 6620
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	8605 5810 8605 6160
+Wire Wire Line
+	8605 6160 8555 6160
+Wire Wire Line
+	8555 6160 8555 6205
+Wire Wire Line
+	8555 6205 8555 6420
+Wire Wire Line
+	8555 6420 8560 6420
+Connection ~ 8555 6205
+Wire Wire Line
+	8560 6420 8560 6620
+Wire Wire Line
+	8560 6620 8565 6620
+Connection ~ 8560 6420
+Wire Wire Line
+	8560 6420 8570 6420
+Wire Wire Line
+	8705 5810 8705 5910
+Wire Wire Line
+	8705 5910 8855 5910
+Wire Wire Line
+	8855 5910 8855 6205
+Wire Wire Line
+	8805 5810 8805 5875
+Wire Wire Line
+	8805 5875 8935 5875
+Wire Wire Line
+	8935 5875 8935 6420
+Wire Wire Line
+	8935 6420 8870 6420
+Wire Wire Line
+	8865 6620 9065 6620
+Wire Wire Line
+	9065 6620 9065 5805
+Wire Wire Line
+	9065 5805 8905 5805
+Wire Wire Line
+	8905 5805 8905 5810
 $EndSCHEMATC
