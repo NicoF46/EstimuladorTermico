@@ -8,19 +8,20 @@
 #include <time.h>
 #include <util/delay.h>
 
-#define REFERENCIAADC 5.00 //5v
+#define REFERENCIAADC 5.0 //5v
 #define MAXIMOVALORADC 1023
 #define R1 9750
 #define R2 9770
 #define CEROKELVIN -273.15
 #define T0TERMISTOR 298.15 //kelvin
+#define UNOSOBRET0TERMISTOR 0.003354016435
+#define UNOSOBREBETA0 0.0002958579882
 #define BETATERMISTOR 3982 //kelvin
 #define R0TERMISTOR 10000 //10k
-#define RESISTENCIADIVISORRESISTIVO 10000
-#define SALIDAMAXIMAMODOCALOR 255
-#define SALIDAMINIMAMODOCALOR 0
-#define SALIDAMAXIMAMODOFRIO 0
-#define SALIDAMINIMAMODOFRIO -255
+#define SALIDA_MAXIMA_MODO_CALOR 128
+#define SALIDA_MINIMA_MODO_CALOR 0
+#define SALIDA_MAXIMA_MODO_FRIO 255
+#define SALIDA_MINIMA_MODO_FRIO 0
 #define TEMPERATURA_MAXIMA 49.0
 #define TEMPERATURA_MINIMA -10.0
 #define DELAYVALUE 100.00
@@ -32,12 +33,17 @@
 #define RESISTENCIA_R4 39000.0
 #define RESISTENCIA_R5 27000.0
 #define CANTIDAD_TERMISTORES_SUPERFICIALES 4.0
-
+#define RESISTENCIA_R6 3300.0
+#define RESISTENCIA_R7 1500.0
+#define RESISTENCIA_R8 39000.0
+#define RESISTENCIA_R9 10000.0
+#define RESISTENCIA_R10 41000
 
 void apagarPuenteH();
 void apagar(volatile int*);
 void Pin_SetUp();
 float SensarTemperaturaSuperficial();
+float SensarTemperaturaPuntual();
 modo_t definir_modo(float, int );
 void modo_frio();
 void modo_calor();

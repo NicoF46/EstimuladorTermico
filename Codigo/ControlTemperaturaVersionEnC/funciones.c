@@ -24,6 +24,10 @@ void Pin_SetUp(){
   /*Configuro los leds de control como salidas PD*/
   DDRB|=((1<<PB1)|(1<<PB2));
   DDRD|=((1<<PD5)|(1<<PD6)|(1<<PD2)|(1<<PD3)|(1<<PD4));
+  PORTD &= ~(1<<PD2);
+  PORTD &= ~(1<<PD3);
+  PORTD &= ~(1<<PD4);
+
 
 }
 
@@ -33,16 +37,38 @@ float SensarTemperaturaSuperficial(){
     static float TemperaturaTermistor=0;
     static float Vout=0;
     /* Tension sensada*/
+    ADMUX &=~(1<<MUX0);
+    ADMUX |= (1<<MUX1);
     ValorLeidoAdc=ReadADC();
     /* calculos divisor*/
     Vout=((float)(ValorLeidoAdc))*REFERENCIAADC/MAXIMOVALORADC;
     ResistenciaTermistor=TENSION_REFERENCIA_OPAMPS*RESISTENCIA_R3/Vout*(1+RESISTENCIA_R4/RESISTENCIA_R5)-RESISTENCIA_R3;
-    ResistenciaTermistor=ResistenciaTermistor/4;
+    ResistenciaTermistor=ResistenciaTermistor/CANTIDAD_TERMISTORES_SUPERFICIALES;
     // calculos termistor
-    TemperaturaTermistor=((float)(1)/T0TERMISTOR+((float)(1)/(float)(BETATERMISTOR))*log (ResistenciaTermistor/R0TERMISTOR));
+    TemperaturaTermistor=(UNOSOBRET0TERMISTOR+(UNOSOBREBETA0)*log (ResistenciaTermistor/R0TERMISTOR));
     TemperaturaTermistor=((float)1)/TemperaturaTermistor+CEROKELVIN;
     return TemperaturaTermistor;
 }
+
+float SensarTemperaturaPuntual(){
+    static uint16_t ValorLeidoAdc=0;
+    static float ResistenciaTermistor=0;
+    static float TemperaturaTermistor=0;
+    static float Vout=0;
+    /* Tension sensada*/
+    ADMUX &=~(1<<MUX1);
+    ADMUX |= (1<<MUX0);
+    ValorLeidoAdc=ReadADC();
+    /* calculos divisor*/
+    Vout=((float)(ValorLeidoAdc))*REFERENCIAADC/MAXIMOVALORADC;
+    ResistenciaTermistor=((float)TENSION_REFERENCIA_OPAMPS)/Vout*((float)RESISTENCIA_R7/(RESISTENCIA_R7+RESISTENCIA_R6))*RESISTENCIA_R8*(1+(float)RESISTENCIA_R10/RESISTENCIA_R9)-RESISTENCIA_R8;
+    // calculos termistor
+    TemperaturaTermistor=(UNOSOBRET0TERMISTOR+(UNOSOBREBETA0)*log (ResistenciaTermistor/(float)R0TERMISTOR));
+    TemperaturaTermistor=((float)1)/TemperaturaTermistor+CEROKELVIN;
+    return TemperaturaTermistor;
+}
+
+
 
 
 modo_t definir_modo(float Tamb, int Tref){
@@ -82,12 +108,12 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
   float SalidaMinima=0;
 
   if(modo==FRIO){
-    SalidaMaxima=SALIDAMAXIMAMODOFRIO;
-    SalidaMinima=SALIDAMINIMAMODOFRIO;
+    SalidaMaxima=SALIDA_MAXIMA_MODO_FRIO;
+    SalidaMinima=SALIDA_MINIMA_MODO_FRIO;
   }
   else if (modo==CALOR){
-    SalidaMaxima=SALIDAMAXIMAMODOCALOR;
-    SalidaMinima=SALIDAMINIMAMODOCALOR;
+    SalidaMaxima=SALIDA_MAXIMA_MODO_CALOR;
+    SalidaMinima=SALIDA_MINIMA_MODO_CALOR;
   }
 
   h= DELAYVALUE*pow(10,-3);// Ts
@@ -105,6 +131,8 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
   if(Kp!=0)
     Salida  = Ik + Dk + Pk +bias;
 
+  if(modo==FRIO)
+    Salida=Salida*(-1);
   // Actualizo las variables la proxima iteracion
   SalidaPrevia=SalidaMedida;
   ReferenciaPrevia=ReferenciaControl;
@@ -114,22 +142,14 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
   if (Salida>SalidaMaxima){
       Salida=SalidaMaxima;
   }
-  else if(Salida <= SalidaMinima){
+  else if(Salida < SalidaMinima){
       Salida=SalidaMinima;
   }
 
-  if(modo==FRIO && Ik<=SalidaMinima)
+  if(Salida==SalidaMaxima && Ik>=SalidaMaxima)
+    Ik_previo=SalidaMaxima;
+  else if (Salida==SalidaMinima && Ik<=SalidaMinima)
     Ik_previo=SalidaMinima;
-  // Anulo el termino integral si mi sistema satura;
-  else if(SalidaMedida>=TEMPERATURA_MAXIMA && Salida==SalidaMaxima){
-    Ik_previo=0;
-  }
-  else if (modo == CALOR && Ik > SalidaMaxima){
-    Ik_previo = SalidaMaxima;
-  }
-  else if (SalidaMedida<=TEMPERATURA_MINIMA && Salida==SalidaMinima){
-    Ik_previo=0;
-  }
   else {
     Ik_previo=Ik;
   }
@@ -141,18 +161,10 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
    /*Para la calibracion genero un escalon correspondiente a la temperatura deseada
    Para esto necesito relacionar la corriente en el peltier con la diferencia de temperatura que necesito*/
    float TablaPWMvsDiffTemperatura[CANTIDAD_COMBINACIONES_PWM_DIFFTEMP][2]={{-255,-20},
-                   /*{-230, -18},
-                    {-205,-16},
-                    {-180,-13},
-                    {-155,-11},
-                    {-130,-9},
-                    {-105,-7},
-                    {-80,-5},*/
-                    /*{-55,-3},*/
                     {255,50}
                   };
   modo_t modo;
-  float TemperaturaInicial=SensarTemperaturaSuperficial();
+  float TemperaturaInicial=SensarTemperaturaPuntual();
   float TiempoDelay=0;
   float TiempoTotalTau=0;
   float DiferenciaTemperatura=(-1)*(TemperaturaInicial-ReferenciaControl);
@@ -166,17 +178,17 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
   modo=definir_modo(TemperaturaInicial,ReferenciaControl);
   PWM_set_modo(fabs(ValorPWM),modo);
   /*Marco el tiempo de inicio*/
-  while(fabs((TemperaturaInicial-SensarTemperaturaSuperficial())/TemperaturaInicial)<TOLERANCIA_DELAY){
+  while(fabs((TemperaturaInicial-SensarTemperaturaPuntual())/TemperaturaInicial)<TOLERANCIA_DELAY){
     _delay_ms(10);
     ContadorCicloDelayMs++;}
     int temp=0;
     if(modo==FRIO){
-      while((temp=SensarTemperaturaSuperficial())>(TemperaturaInicial+TAU*(ReferenciaControl-TemperaturaInicial))){
+      while((temp=SensarTemperaturaPuntual())>(TemperaturaInicial+TAU*(ReferenciaControl-TemperaturaInicial))){
         _delay_ms(10);
         ContadorCicloExpMs++;
         }}
     else{
-      while(SensarTemperaturaSuperficial()<(TemperaturaInicial+TAU*(ReferenciaControl-TemperaturaInicial))){
+      while(SensarTemperaturaPuntual()<(TemperaturaInicial+TAU*(ReferenciaControl-TemperaturaInicial))){
         _delay_ms(10);
         ContadorCicloExpMs++;}}
 

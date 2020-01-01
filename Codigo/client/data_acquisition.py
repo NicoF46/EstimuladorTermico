@@ -30,6 +30,15 @@ class EnviarDatos(cmd.Cmd):
 
         raw_data = struct.pack('<cb', b'r', temp)
         EnviarDatos.ser.write(raw_data)
+    
+    def do_cal(self, dato):
+        try:
+            temp = int(dato)
+        except ValueError(e):
+            print("temperature must be an integer")
+        raw_data = struct.pack('<cb', b'c', temp)
+        print("Iniciando calibracion")
+        EnviarDatos.ser.write(raw_data)
 
     def do_stop(self, data):
         EnviarDatos.ser.write(b's')
