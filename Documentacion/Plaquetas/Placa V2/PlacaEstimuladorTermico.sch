@@ -1,4 +1,5 @@
 EESchema Schematic File Version 4
+LIBS:PlacaEstimuladorTermico-cache
 EELAYER 30 0
 EELAYER END
 $Descr A3 16535 11693
@@ -2116,4 +2117,70 @@ Wire Wire Line
 	9065 5805 8905 5805
 Wire Wire Line
 	8905 5805 8905 5810
+Wire Notes Line rgb(194, 0, 78)
+	500  510  4010 510 
+Wire Notes Line rgb(194, 0, 78)
+	4010 510  4010 1440
+Wire Notes Line rgb(194, 0, 78)
+	4010 1440 500  1440
+Wire Notes Line rgb(194, 0, 75)
+	500  1440 500  510 
+Wire Notes Line rgb(194, 0, 78)
+	630  7180 6870 7180
+Wire Notes Line rgb(194, 0, 78)
+	6870 7180 6870 11120
+Wire Notes Line rgb(194, 0, 78)
+	6870 11120 630  11120
+Wire Notes Line rgb(194, 0, 78)
+	630  11120 630  7160
+Wire Notes Line
+	630  7160 600  7160
+Wire Notes Line rgb(23, 194, 0)
+	4020 1500 4020 4280
+Wire Notes Line rgb(23, 194, 0)
+	4020 4280 510  4280
+Wire Notes Line rgb(23, 194, 0)
+	510  4280 510  1500
+Wire Notes Line rgb(22, 194, 0)
+	510  1500 4020 1500
+Wire Notes Line rgb(23, 194, 0)
+	630  4360 5130 4360
+Wire Notes Line rgb(23, 194, 0)
+	5130 4360 5130 6980
+Wire Notes Line rgb(23, 194, 0)
+	5130 6980 630  6980
+Wire Notes Line rgb(23, 194, 0)
+	630  6980 630  4360
+Wire Notes Line rgb(23, 194, 0)
+	5270 4370 13230 4370
+Wire Notes Line rgb(23, 194, 0)
+	13230 4370 13230 7980
+Wire Notes Line rgb(23, 194, 0)
+	13230 7980 9750 7980
+Wire Notes Line rgb(23, 194, 0)
+	9750 7980 9750 10530
+Wire Notes Line rgb(23, 194, 0)
+	9750 10530 7120 10530
+Wire Notes Line rgb(23, 194, 0)
+	7120 10530 7120 6960
+Wire Notes Line rgb(23, 194, 0)
+	7120 6960 5270 6960
+Wire Notes Line rgb(23, 194, 0)
+	5270 6960 5270 4370
+Wire Notes Line rgb(23, 194, 0)
+	12210 4350 15580 4350
+Wire Notes Line rgb(23, 194, 0)
+	15580 4350 15580 770 
+Wire Notes Line rgb(23, 194, 0)
+	15580 770  12210 770 
+Wire Notes Line rgb(0, 136, 194)
+	4080 510  4080 4160
+Wire Notes Line rgb(53, 150, 194)
+	4080 4160 11910 4160
+Wire Notes Line rgb(53, 150, 194)
+	11910 4160 11910 510 
+Wire Notes Line rgb(53, 150, 194)
+	11910 510  4080 510 
+Wire Notes Line rgb(23, 194, 0)
+	12210 770  12210 4350
 $EndSCHEMATC
