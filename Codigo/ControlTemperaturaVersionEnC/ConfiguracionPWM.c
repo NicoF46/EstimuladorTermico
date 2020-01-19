@@ -4,7 +4,7 @@
 
 void PWM_configuration_init(){
 
-  DDRD |= ((1<<DDD5)|(1<<DDD6));
+  DDRD |= ((1 << DDD5)|(1 << DDD6));
   DDRB |= (1 << DDB1)|(1 << DDB2);
   ICR1 = 0x00FF;
   OCR1A = 0;
@@ -15,13 +15,7 @@ void PWM_configuration_init(){
   TCCR1B |= (1 << CS10);
 }
 
-
-void PWM_set(uint8_t pwm){
-  OCR1A=pwm;
-  OCR1B=0;
-  }
-
-void PWM_set_modo(uint8_t ValorPWM,modo_t modo){
+void PWM_set_modo(uint8_t ValorPWM, modo_t modo){
   if(modo==FRIO)
     OCR1A=ValorPWM;
   else if(modo==CALOR)

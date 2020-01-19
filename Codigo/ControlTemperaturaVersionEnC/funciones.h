@@ -37,11 +37,11 @@
 #define RESISTENCIA_R7 1500.0
 #define RESISTENCIA_R8 39000.0
 #define RESISTENCIA_R9 10000.0
-#define RESISTENCIA_R10 41000
+#define RESISTENCIA_R10 41000.0
 
-void apagarPuenteH();
-void apagar(volatile int*);
-void Pin_SetUp();
+void h_bridge_off();
+void h_bridge_setup();
+void leds_setup();
 float SensarTemperaturaSuperficial();
 float SensarTemperaturaPuntual();
 modo_t definir_modo(float, int );
@@ -51,3 +51,4 @@ uint8_t ControladorPID(float ,float , float , float , float ,float ,float ,modo_
 void CalibracionPID(float,float*,float*,float*,float*,float*);
 float BuscarPWMRequerido(float[][2],int,float);
 void ApagarLedsIndicacion();
+float SensarTemperaturaDivisor();

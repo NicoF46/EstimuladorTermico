@@ -1,34 +1,51 @@
 #include "funciones.h"
 #include "ConfiguracionADC.h"
 
-void apagar(volatile int* TemperaturaReferencia){
-/*Pongo en LOW las salidas que controlan el puente H*/
-/*PB2 PWM CALOR-PB1 PWM FRIO-PD6 PMOS CALOR-PD5 PMOS FRIO*/
-PORTD &= ~(1<<PD5);
-PORTD &= ~(1<<PD6);
-OCR1B=0;
-OCR1A=0;
-(*TemperaturaReferencia) = 255;
-}
 
-void apagarPuenteH(){
+/** Pongo en LOW las salidas que controlan el puente H
+ *  PB2 PWM CALOR-PB1 PWM FRIO-PD6 PMOS CALOR-PD5 PMOS FRIO
+ */
+void h_bridge_off(){
   PORTD &= ~(1<<PD5);
   PORTD &= ~(1<<PD6);
   OCR1B=0;
   OCR1A=0;
 }
 
-
-void Pin_SetUp(){
+void h_bridge_setup(){
   /*Configuro los pines PD5, PD6, PB1 y PB2 como salidas, estas corresponden puente H*/
   /*Configuro los leds de control como salidas PD*/
-  DDRB|=((1<<PB1)|(1<<PB2));
-  DDRD|=((1<<PD5)|(1<<PD6)|(1<<PD2)|(1<<PD3)|(1<<PD4));
+  DDRB |= ((1<<PB1)|(1<<PB2));
+  DDRD |= ((1<<PD5)|(1<<PD6));
+}
+
+void leds_setup()
+{
+  DDRD |= (1<<PD2)|(1<<PD3)|(1<<PD4);
   PORTD &= ~(1<<PD2);
   PORTD &= ~(1<<PD3);
   PORTD &= ~(1<<PD4);
+}
 
+float SensarTemperaturaDivisor(){
+  static uint16_t ValorLeidoAdc=0;
+  static float ResistenciaTermistor=0;
+  static float TemperaturaTermistor=0;
 
+  /* Tension sensada*/
+  ADMUX &=~(1<<MUX0);
+  ADMUX &=~(1<<MUX1);
+  ADMUX |= (1<<MUX2);
+  ValorLeidoAdc=ReadADC();
+  /* calculos divisor*/
+  float Vpote = ValorLeidoAdc * 5.0 / 1024.0;
+  return Vpote;
+
+  ResistenciaTermistor= (5.0-Vpote)/(4.0*Vpote/100000.0);
+  // calculos termistor
+  TemperaturaTermistor=(UNOSOBRET0TERMISTOR+(UNOSOBREBETA0)*log(ResistenciaTermistor/R0TERMISTOR));
+  TemperaturaTermistor=(1.0)/TemperaturaTermistor+CEROKELVIN;
+  return TemperaturaTermistor;  
 }
 
 float SensarTemperaturaSuperficial(){
@@ -60,14 +77,13 @@ float SensarTemperaturaPuntual(){
     ADMUX |= (1<<MUX0);
     ValorLeidoAdc=ReadADC();
     /* calculos divisor*/
-    Vout=((float)(ValorLeidoAdc))*REFERENCIAADC/MAXIMOVALORADC;
-    ResistenciaTermistor=((float)TENSION_REFERENCIA_OPAMPS)/Vout*((float)RESISTENCIA_R7/(RESISTENCIA_R7+RESISTENCIA_R6))*RESISTENCIA_R8*(1+(float)RESISTENCIA_R10/RESISTENCIA_R9)-RESISTENCIA_R8;
+    Vout = ValorLeidoAdc * REFERENCIAADC / MAXIMOVALORADC;
+    ResistenciaTermistor = TENSION_REFERENCIA_OPAMPS / Vout * ( RESISTENCIA_R7/(RESISTENCIA_R7+RESISTENCIA_R6) )*RESISTENCIA_R8*(1.0+RESISTENCIA_R10/RESISTENCIA_R9)-RESISTENCIA_R8;
     // calculos termistor
-    TemperaturaTermistor=(UNOSOBRET0TERMISTOR+(UNOSOBREBETA0)*log (ResistenciaTermistor/(float)R0TERMISTOR));
-    TemperaturaTermistor=((float)1)/TemperaturaTermistor+CEROKELVIN;
+    TemperaturaTermistor = (UNOSOBRET0TERMISTOR+(UNOSOBREBETA0)*log(ResistenciaTermistor/R0TERMISTOR));
+    TemperaturaTermistor = 1.0 / TemperaturaTermistor + CEROKELVIN;
     return TemperaturaTermistor;
 }
-
 
 
 
@@ -81,16 +97,21 @@ modo_t definir_modo(float Tamb, int Tref){
 }
 
 void modo_frio(){
-    PORTD&=~(1<<PD6);
-    OCR1B=0;
+    PORTD &= ~(1<<PD6);
+    OCR1B = 0;
+    _delay_ms(10);
     PORTD|=(1<<PD5);
 }
 
 void modo_calor(){
   PORTD&=~(1<<PD5);
   OCR1A=0;
+  _delay_ms(10);
   PORTD|=(1<<PD6);
 }
+
+
+
 
 uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, float Ki, float Kd,float N,float bias,modo_t modo){
   // Creo que las variables que necesito almacenar la proxima iteracion
@@ -194,7 +215,7 @@ uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, flo
 
   TiempoDelay=ContadorCicloDelayMs*10;
   TiempoTotalTau=ContadorCicloExpMs*10;
-  apagarPuenteH();
+  h_bridge_off();
   (*Kp)=1.2*TiempoTotalTau/TiempoDelay;
   (*Ki)=0.5/(TiempoTotalTau*0.001);
   (*Kp)=0.5*TiempoTotalTau*0.001;
@@ -214,5 +235,5 @@ float BuscarPWMRequerido(float TablaPWMvsDiffTemperatura[][2],int CantidadCombin
   }
 
 void ApagarLedsIndicacion(){
-PORTD &= ~((1<<PD2)|(1<<PD3)|(1<<PD4));
+  PORTD &= ~((1<<PD2)|(1<<PD3)|(1<<PD4));
 }

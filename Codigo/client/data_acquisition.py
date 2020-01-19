@@ -22,24 +22,28 @@ DEBUG = False
 class EnviarDatos(cmd.Cmd):
     ser = None
 
-    def do_temp(self, dato):
+    def _send_chunk(self, prefix, dato):
         try:
             temp = int(dato)
         except ValueError(e):
             print("temperature must be an integer")
 
-        raw_data = struct.pack('<cb', b'r', temp)
+        raw_data = struct.pack('<cb', prefix, temp)
         EnviarDatos.ser.write(raw_data)
+
+    def do_temp(self, dato):
+        self._send_chunk(b'r', dato)
+
+    def do_cold(self, dato):
+        self._send_chunk(b'a', dato)
+
+    def do_heat(self, dato):
+        self._send_chunk(b'b', dato)
     
     def do_cal(self, dato):
-        try:
-            temp = int(dato)
-        except ValueError(e):
-            print("temperature must be an integer")
-        raw_data = struct.pack('<cb', b'c', temp)
+        self._send_chunk(b'b', dato)
         print("Iniciando calibracion")
-        EnviarDatos.ser.write(raw_data)
-
+    
     def do_stop(self, data):
         EnviarDatos.ser.write(b's')
 
