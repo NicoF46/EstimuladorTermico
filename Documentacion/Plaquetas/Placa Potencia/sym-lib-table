@@ -1,0 +1,5 @@
+(sym_lib_table
+  (lib (name irfz44n)(type Legacy)(uri "C:/Users/administrator/Documents/Ceci/EstimuladorTermico/Documentacion/Plaquetas/Placa V2/irfz44n.lib")(options "")(descr ""))
+  (lib (name mcp1407)(type Legacy)(uri "C:/Users/administrator/Documents/Ceci/EstimuladorTermico/Documentacion/Plaquetas/Placa V2/mcp1407.lib")(options "")(descr ""))
+  (lib (name custom_symbols)(type Legacy)(uri "C:/Users/administrator/Documents/Ceci/EstimuladorTermico/Documentacion/Plaquetas/Placa V2/custom_symbols.lib")(options "")(descr ""))
+)
