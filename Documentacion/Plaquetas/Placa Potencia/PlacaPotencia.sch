@@ -1,4 +1,5 @@
 EESchema Schematic File Version 4
+LIBS:PlacaPotencia-cache
 EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
@@ -635,10 +636,8 @@ F 3 "" H 9050 1300 50  0001 C CNN
 	1    9050 1300
 	1    0    0    -1  
 $EndComp
-Text GLabel 9850 1550 2    50   Input ~ 0
+Text GLabel 9950 3100 2    50   Input ~ 0
 PMOS_CALOR
-Text GLabel 9850 1850 2    50   Input ~ 0
-PMOS_FRIO
 $Comp
 L Connector:Screw_Terminal_01x02 BORNERA1
 U 1 1 5E30EF0B
@@ -692,7 +691,7 @@ U 1 1 5E335F67
 P 9500 1750
 F 0 "BORNERA2" V 9464 1562 50  0000 R CNN
 F 1 "Screw_Terminal_01x02" V 9373 1562 50  0000 R CNN
-F 2 "TerminalBlock:TerminalBlock_bornier-2_P5.08mm" H 9500 1750 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 9500 1750 50  0001 C CNN
 F 3 "~" H 9500 1750 50  0001 C CNN
 	1    9500 1750
 	-1   0    0    1   
@@ -713,13 +712,11 @@ U 1 1 5E34C720
 P 9520 3010
 F 0 "BORNERA3" V 9484 2822 50  0000 R CNN
 F 1 "Screw_Terminal_01x02" V 9393 2822 50  0000 R CNN
-F 2 "TerminalBlock:TerminalBlock_bornier-2_P5.08mm" H 9520 3010 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 9520 3010 50  0001 C CNN
 F 3 "~" H 9520 3010 50  0001 C CNN
 	1    9520 3010
 	-1   0    0    1   
 $EndComp
-Text GLabel 9950 3100 2    50   Input ~ 0
-PWM_FRIO
 Text GLabel 9950 2800 2    50   Input ~ 0
 PWM_CALOR
 Wire Wire Line
@@ -734,6 +731,8 @@ Wire Wire Line
 	9850 2910 9850 2800
 Wire Wire Line
 	9850 2800 9950 2800
+NoConn ~ 10540 810 
+NoConn ~ 10540 910 
 $Comp
 L Connector:Conn_01x02_Male J1
 U 1 1 5E36A1B8
@@ -745,6 +744,8 @@ F 3 "~" H 10340 810 50  0001 C CNN
 	1    10340 810 
 	1    0    0    -1  
 $EndComp
-NoConn ~ 10540 810 
-NoConn ~ 10540 910 
+Text GLabel 9850 1850 2    50   Input ~ 0
+PMOS_FRIO
+Text GLabel 9850 1550 2    50   Input ~ 0
+PWM_FRIO
 $EndSCHEMATC
