@@ -670,8 +670,6 @@ Text GLabel 9475 2610 2    50   Input ~ 0
 PMOS_FRIO
 Text GLabel 9435 2810 2    50   Input ~ 0
 PWM_FRIO
-Text GLabel 9200 3390 1    50   Input ~ 0
-VCC
 $Comp
 L power:GND #PWR0101
 U 1 1 5E2A4616
@@ -1007,29 +1005,31 @@ Wire Wire Line
 Connection ~ 3500 5800
 Wire Wire Line
 	3500 5800 3000 5800
+NoConn ~ 8930 2310
+NoConn ~ 8930 2510
 $Comp
-L Connector:Conn_01x10_Male J2
-U 1 1 5E3FAAEB
-P 8895 2610
-F 0 "J2" H 9003 3191 50  0000 C CNN
-F 1 "Conn_01x10_Male" H 9003 3100 50  0000 C CNN
-F 2 "Connector_IDC:IDC-Header_2x05_P2.54mm_Vertical" H 8895 2610 50  0001 C CNN
-F 3 "~" H 8895 2610 50  0001 C CNN
-	1    8895 2610
+L Connector:Conn_01x06_Male J2
+U 1 1 5E3E38C6
+P 8730 2410
+F 0 "J2" H 8838 2791 50  0000 C CNN
+F 1 "Conn_01x06_Male" H 8838 2700 50  0000 C CNN
+F 2 "Connector_IDC:IDC-Header_2x03_P2.54mm_Vertical" H 8730 2410 50  0001 C CNN
+F 3 "~" H 8730 2410 50  0001 C CNN
+	1    8730 2410
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	9095 2210 9470 2210
+	8930 2410 9430 2410
 Wire Wire Line
-	9430 2410 9095 2410
+	8930 2710 9010 2710
 Wire Wire Line
-	9475 2610 9095 2610
+	9010 2710 9010 2810
 Wire Wire Line
-	9435 2810 9095 2810
-NoConn ~ 9095 2310
-NoConn ~ 9095 2510
-NoConn ~ 9095 2710
-NoConn ~ 9095 2910
-NoConn ~ 9095 3010
-NoConn ~ 9095 3110
+	9010 2810 9435 2810
+Wire Wire Line
+	8930 2610 9475 2610
+Wire Wire Line
+	8930 2210 9470 2210
+Text GLabel 9200 3390 1    50   Input ~ 0
+VCC
 $EndSCHEMATC
