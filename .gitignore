@@ -2,9 +2,8 @@
 *.o
 *.elf
 *.hex
-
 *.kicad_pcb-bak
-
 *.sch-bak
-
 **/desktop.ini
+*-cache
+*-table
