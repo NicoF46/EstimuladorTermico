@@ -41,7 +41,7 @@ class EnviarDatos(cmd.Cmd):
         self._send_chunk(b'b', dato)
     
     def do_cal(self, dato):
-        self._send_chunk(b'b', dato)
+        self._send_chunk(b'c', dato)
         print("Iniciando calibracion")
     
     def do_stop(self, data):

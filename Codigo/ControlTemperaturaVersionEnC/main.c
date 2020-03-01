@@ -14,6 +14,8 @@ float N_FILTRO = 10;
 static float TemperaturaCalibracion = 25;
 static uint8_t ValorPWM = 0;
 static bool power_on = false;
+static modo_t modo = CALIBRACION;
+static float TemperaturaReferencia=255;
 
 int main(void)
 {
@@ -26,23 +28,22 @@ int main(void)
   PWM_configuration_init();
   usart_configuration_init();
   ADC_configuration_init();
-  
+
   sei();
 
   while( true ){
 
     // TemperaturaTermistor = SensarTemperaturaSuperficial();
-    TemperaturaTermistor = SensarTemperaturaDivisor();      
+    TemperaturaTermistor = SensarTemperaturaDivisor();
     usart_transmit('t');
     usart_Buffer_transmit(&TemperaturaTermistor, sizeof(TemperaturaTermistor));
 
-    // if ( power_on ){
-
-    //   // ValorPWM = ControladorPID(TemperaturaReferencia,TemperaturaTermistor, Kp, Ki, Kd, 0, 0, modo);
-    //   PWM_set_modo(ValorPWM, modo);
-    //   usart_transmit('p');
-    //   usart_transmit(ValorPWM);
-    // }
+     if ( power_on ){
+       ValorPWM = ControladorPID(TemperaturaReferencia,TemperaturaTermistor, Kp, Ki, Kd, 0, 0, modo);
+       PWM_set_modo(ValorPWM, modo);
+       usart_transmit('p');
+       usart_transmit(ValorPWM);
+     }
 
     _delay_ms(DELAYVALUE);
  }
@@ -53,25 +54,27 @@ int main(void)
 
 ISR(USART_RX_vect){
 
-  uint8_t modo = receive();
+  uint8_t command = receive();
 
-  switch(modo){
-    // case('r'):
-    //   TemperaturaReferencia = receive();
-    //   break;
+  switch(command){
+     case('r'):
+       TemperaturaReferencia = receive();
+       modo = definir_modo(30,TemperaturaReferencia);
+       power_on = true;
+       break;
 
     case('a'):
         ValorPWM = receive();
         modo_frio();
         PWM_set_modo(ValorPWM, FRIO);
-        power_on = true;
+        power_on = false;
         break;
 
     case('b'):
         ValorPWM = receive();
         modo_calor();
         PWM_set_modo(ValorPWM, CALOR);
-        power_on = true;
+        power_on = false;
         break;
 
     case('s'):
