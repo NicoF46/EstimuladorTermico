@@ -1,0 +1,35 @@
+EESchema-LIBRARY Version 2.4
+#encoding utf-8
+#
+# Modulo_Relé
+#
+DEF Modulo_Relé K 0 40 Y Y 1 F N
+F0 "K" 0 0 50 H V C CNN
+F1 "Modulo_Relé" 0 100 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+S -250 -50 250 -850 0 1 0 N
+X DC+ 1 -450 -200 200 R 50 50 1 1 W
+X DC- 2 -450 -450 200 R 50 50 1 1 W
+X IN 3 -450 -700 200 R 50 50 1 1 P
+X NO 4 450 -700 200 L 50 50 1 1 P
+X COM 5 450 -450 200 L 50 50 1 1 P
+X NC 6 450 -200 200 L 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
+# transistoresDisipador
+#
+DEF transistoresDisipador U 0 40 Y Y 4 L N
+F0 "U" 0 0 50 H V C CNN
+F1 "transistoresDisipador" 0 0 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+P 2 0 1 0 -100 0 10 0 N
+P 2 0 1 0 -100 0 10 0 N
+ENDDRAW
+ENDDEF
+#
+#End Library
