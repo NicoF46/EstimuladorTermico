@@ -146,13 +146,7 @@ F 3 "http://www.ti.com/lit/ds/symlink/tl431.pdf" H 1560 2440 50  0001 C CIN
 	0    1    -1   0   
 $EndComp
 Wire Wire Line
-	1560 2240 1710 2240
-Wire Wire Line
-	1710 2240 1710 2440
-Wire Wire Line
 	1710 2440 1660 2440
-Wire Wire Line
-	1560 2240 1560 2340
 Wire Notes Line
 	580  620  550  620 
 $Comp
@@ -297,10 +291,7 @@ Wire Wire Line
 	1820 2990 1930 2990
 Wire Wire Line
 	1560 2540 1560 2590
-Connection ~ 1560 2240
 Connection ~ 1560 1940
-Wire Wire Line
-	1560 1940 1560 2240
 Wire Wire Line
 	1560 1790 1560 1940
 Wire Wire Line
@@ -436,7 +427,7 @@ U 1 1 5DDEF386
 P 4730 4130
 F 0 "C1" H 4845 4176 50  0000 L CNN
 F 1 "1u" H 4845 4085 50  0000 L CNN
-F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 4768 3980 50  0001 C CNN
+F 2 "Capacitor_THT:C_Rect_L7.0mm_W2.0mm_P5.00mm" H 4768 3980 50  0001 C CNN
 F 3 "~" H 4730 4130 50  0001 C CNN
 	1    4730 4130
 	1    0    0    -1  
@@ -509,4 +500,46 @@ Text Notes 4200 1580 0    50   ~ 0
 DC-
 Text Notes 4200 1680 0    50   ~ 0
 IN
+Wire Wire Line
+	1560 1940 1560 2340
+$Comp
+L Device:R_Small R3
+U 1 1 5E72E382
+P 1710 2340
+F 0 "R3" H 1769 2386 50  0000 L CNN
+F 1 "100k" H 1769 2295 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" H 1710 2340 50  0001 C CNN
+F 3 "~" H 1710 2340 50  0001 C CNN
+	1    1710 2340
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR02
+U 1 1 5E72E731
+P 1710 2640
+F 0 "#PWR02" H 1710 2390 50  0001 C CNN
+F 1 "GND" H 1715 2467 50  0000 C CNN
+F 2 "" H 1710 2640 50  0001 C CNN
+F 3 "" H 1710 2640 50  0001 C CNN
+	1    1710 2640
+	-1   0    0    -1  
+$EndComp
+Text GLabel 2210 2330 2    50   Input ~ 0
+VCC
+Wire Wire Line
+	1710 2240 2210 2240
+Wire Wire Line
+	2210 2240 2210 2330
+Connection ~ 1710 2440
+$Comp
+L Device:R_Small R4
+U 1 1 5E72DC5E
+P 1710 2540
+F 0 "R4" H 1769 2586 50  0000 L CNN
+F 1 "100k" H 1769 2495 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" H 1710 2540 50  0001 C CNN
+F 3 "~" H 1710 2540 50  0001 C CNN
+	1    1710 2540
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
