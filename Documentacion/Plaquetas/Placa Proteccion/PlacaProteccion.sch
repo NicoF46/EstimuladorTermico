@@ -74,7 +74,7 @@ F 3 "~" H 1560 1640 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 Wire Wire Line
-	1560 1940 1760 1940
+	1560 1940 1710 1940
 Text GLabel 1010 1470 0    50   Input ~ 0
 VCC
 Text Notes 1310 740  0    118  ~ 24
@@ -524,12 +524,6 @@ F 3 "" H 1710 2640 50  0001 C CNN
 	1    1710 2640
 	-1   0    0    -1  
 $EndComp
-Text GLabel 2210 2330 2    50   Input ~ 0
-VCC
-Wire Wire Line
-	1710 2240 2210 2240
-Wire Wire Line
-	2210 2240 2210 2330
 Connection ~ 1710 2440
 $Comp
 L Device:R_Small R4
@@ -542,4 +536,39 @@ F 3 "~" H 1710 2540 50  0001 C CNN
 	1    1710 2540
 	1    0    0    -1  
 $EndComp
+Wire Wire Line
+	1710 2240 1710 1940
+Connection ~ 1710 1940
+Wire Wire Line
+	1710 1940 1760 1940
+$Comp
+L Comparator:LM2903 U1
+U 1 1 5E742499
+P 4390 2920
+F 0 "U1" H 4390 2553 50  0000 C CNN
+F 1 "LM2903" H 4390 2644 50  0000 C CNN
+F 2 "Package_DIP:DIP-8_W7.62mm_Socket_LongPads" H 4390 2920 50  0001 C CNN
+F 3 "http://www.ti.com/lit/ds/symlink/lm393-n.pdf" H 4390 2920 50  0001 C CNN
+	1    4390 2920
+	1    0    0    1   
+$EndComp
+Wire Wire Line
+	4690 2920 4690 2500
+Wire Wire Line
+	4090 2500 4090 2820
+Wire Wire Line
+	4090 2500 4690 2500
+$Comp
+L power:GND #PWR?
+U 1 1 5E743EB5
+P 4000 3020
+F 0 "#PWR?" H 4000 2770 50  0001 C CNN
+F 1 "GND" H 4005 2847 50  0000 C CNN
+F 2 "" H 4000 3020 50  0001 C CNN
+F 3 "" H 4000 3020 50  0001 C CNN
+	1    4000 3020
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	4090 3020 4000 3020
 $EndSCHEMATC
