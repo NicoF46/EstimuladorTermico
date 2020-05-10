@@ -31,7 +31,7 @@ F 3 "" H 3200 6700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Text GLabel 3500 5850 2    50   Input ~ 0
-PIN_SENSOR_TEMPERATURA_2
+PIN_SENSOR_TEMPERATURA_SUPERFICIAL
 Wire Wire Line
 	3200 5700 3500 5700
 $Comp
@@ -39,7 +39,7 @@ L Device:R R3
 U 1 1 5DBD5433
 P 5665 2135
 F 0 "R3" H 5735 2181 50  0000 L CNN
-F 1 "10k" H 5735 2090 50  0000 L CNN
+F 1 "20k" H 5735 2090 50  0000 L CNN
 F 2 "Resistor_THT:R_Axial_DIN0414_L11.9mm_D4.5mm_P15.24mm_Horizontal" V 5595 2135 50  0001 C CNN
 F 3 "~" H 5665 2135 50  0001 C CNN
 	1    5665 2135
@@ -76,7 +76,7 @@ Wire Wire Line
 Wire Wire Line
 	5665 1135 6015 1135
 Text GLabel 3500 5700 2    50   Input ~ 0
-PIN_SENSOR_TEMPERATURA_1
+PIN_SENSOR_TEMPERATURA_DISIPADOR
 Wire Wire Line
 	3200 5800 3450 5800
 Wire Wire Line
@@ -352,11 +352,11 @@ Wire Notes Line
 Text Notes 5905 815  0    79   ~ 0
 Sensor de temperatura del peltier
 Text GLabel 5915 1680 2    50   Input ~ 0
-PIN_SENSOR_TEMPERATURA_2
+PIN_SENSOR_TEMPERATURA_SUPERFICIAL
 Text GLabel 6015 1135 2    50   Input ~ 0
-term_2_1
+term_pelt_1
 Text GLabel 6015 1235 2    50   Input ~ 0
-term_2_2
+term_pelt_2
 Text GLabel 820  1720 0    50   Input ~ 0
 VCC
 $Comp
@@ -384,18 +384,18 @@ Text Label 1020 1920 0    50   ~ 0
 fan_2
 Text Notes 10215 2120 0    50   ~ 0
 Conector hacia peltier
-Text GLabel 10360 3150 1    50   Input ~ 0
-term_2_2C
-Text GLabel 10565 3025 1    50   Input ~ 0
-term_1_1C
-Text GLabel 10755 3085 1    50   Input ~ 0
-term_1_2C
-Text GLabel 10850 2970 1    50   Input ~ 0
+Text GLabel 10510 3090 3    50   Input ~ 0
+term_pelt_2C
+Text GLabel 10750 3125 3    50   Input ~ 0
+term_disip_1C
+Text GLabel 10965 3140 3    50   Input ~ 0
+term_disip_2C
+Text GLabel 11515 2885 3    50   Input ~ 0
 fan_1C
 Wire Notes Line
 	12180 540  12180 4050
 Wire Notes Line
-	12185 4060 8875 4060
+	12180 4050 8870 4050
 Wire Notes Line
 	8870 530  9285 530 
 Text Notes 8910 2020 0    50   ~ 0
@@ -420,18 +420,74 @@ Wire Wire Line
 	1800 6100 1800 6000
 Wire Wire Line
 	1800 6000 2200 6000
-Text GLabel 10440 2885 1    50   Input ~ 0
+Text GLabel 11210 3085 3    50   Input ~ 0
 fan_2C
-Text GLabel 10155 3225 1    50   Input ~ 0
-term_2_1C
+Text GLabel 10210 3110 3    50   Input ~ 0
+term_pelt_1C
+$Comp
+L Connector:DB9_Female_MountingHoles J2
+U 1 1 5DD9E45B
+P 10775 2570
+F 0 "J2" V 11005 2530 50  0000 L CNN
+F 1 "DB9_Female_MountingHoles" V 11115 2050 50  0000 L CNN
+F 2 "Connector_Dsub:DSUB-9_Female_Horizontal_P2.77x2.84mm_EdgePinOffset7.70mm_Housed_MountingHolesOffset9.12mm" H 10775 2570 50  0001 C CNN
+F 3 " ~" H 10775 2570 50  0001 C CNN
+	1    10775 2570
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	10975 2870 10985 2870
+Wire Wire Line
+	10675 2870 10675 3085
+Wire Wire Line
+	10875 2865 10875 2870
+Wire Wire Line
+	10675 3085 10875 3085
+Connection ~ 10875 3085
+Connection ~ 10875 2870
+Wire Wire Line
+	10875 2870 10875 3085
+Wire Wire Line
+	10200 3070 10210 3070
+Wire Wire Line
+	10210 3070 10210 3110
+Wire Wire Line
+	10575 2865 10575 2870
+Wire Wire Line
+	10575 3090 10510 3090
+Connection ~ 10575 2870
+Wire Wire Line
+	10575 2870 10575 3090
+Wire Wire Line
+	10775 2870 10775 3045
+Wire Wire Line
+	10775 3045 10750 3045
+Wire Wire Line
+	10750 3045 10750 3125
+Wire Wire Line
+	10975 3140 10965 3140
+Wire Wire Line
+	11175 2870 11405 2870
+Wire Wire Line
+	11405 2870 11405 2835
+Wire Wire Line
+	11405 2835 11515 2835
+Wire Wire Line
+	11515 2835 11515 2885
+Wire Wire Line
+	11375 2570 11375 3015
+Wire Wire Line
+	11375 3015 11075 3015
 Text GLabel 14465 1320 2    50   Input ~ 0
-term_2_1
+term_pelt_1
 Text GLabel 13345 1360 0    50   Input ~ 0
-term_2_2
+term_pelt_2
 Text GLabel 14475 1470 2    50   Input ~ 0
-term_1_1
+term_disip_1
 Text GLabel 13475 1485 0    50   Input ~ 0
-term_1_2
+term_disip_2
+Text GLabel 14560 1830 2    50   Input ~ 0
+fan_1
 Wire Wire Line
 	14135 1465 14285 1465
 $Comp
@@ -461,6 +517,8 @@ Wire Wire Line
 	14285 1470 14285 1465
 Wire Wire Line
 	14130 1565 14135 1565
+Wire Wire Line
+	14390 1565 14390 1765
 Wire Wire Line
 	14390 1830 14560 1830
 Connection ~ 14135 1565
@@ -529,9 +587,9 @@ $EndComp
 Wire Wire Line
 	14700 6180 14700 6245
 Text GLabel 4020 1580 2    50   Input ~ 0
-term_1_2
+term_disip_2
 Text GLabel 4020 1480 2    50   Input ~ 0
-term_1_1
+term_disip_1
 Text Notes 3060 760  0    50   ~ 0
 Sensor de temperatura disipador
 Wire Notes Line
@@ -555,12 +613,14 @@ L Device:C C11
 U 1 1 5DCCB55D
 P 3670 2230
 F 0 "C11" H 3785 2276 50  0000 L CNN
-F 1 "4.7n" H 3785 2185 50  0000 L CNN
+F 1 "47n" H 3785 2185 50  0000 L CNN
 F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 3708 2080 50  0001 C CNN
 F 3 "~" H 3670 2230 50  0001 C CNN
 	1    3670 2230
 	1    0    0    -1  
 $EndComp
+Text GLabel 4450 2295 3    50   Input ~ 0
+PIN_SENSOR_TEMPERATURA_DISIPADOR
 Wire Wire Line
 	4020 2430 4020 2680
 Wire Wire Line
@@ -673,6 +733,10 @@ Connection ~ 6740 4855
 Wire Wire Line
 	6740 4855 6855 4855
 Connection ~ 6345 5360
+Wire Wire Line
+	6345 5360 6025 5360
+Wire Wire Line
+	6025 5305 5900 5305
 $Comp
 L MCU_Module:Arduino_Nano_v2.x A1
 U 1 1 5DB11DC8
@@ -717,16 +781,31 @@ Wire Wire Line
 	6740 5360 6740 5305
 Wire Wire Line
 	6345 5360 6740 5360
+Wire Wire Line
+	6025 5305 6025 5360
+Connection ~ 6025 5360
+Wire Wire Line
+	6025 5360 6020 5360
 Wire Notes Line
 	8310 4380 8310 6965
 Wire Notes Line
 	8310 6965 5095 6965
 Wire Notes Line
 	650  4380 8310 4380
-Text GLabel 10265 2880 1    50   Input ~ 0
-pump_sensor_C
+Text GLabel 10365 3105 3    50   Input ~ 0
+fan_in_2C
+Wire Wire Line
+	10200 2870 10375 2870
+Wire Wire Line
+	10200 2870 10200 3070
+Wire Wire Line
+	10475 2870 10475 2975
+Wire Wire Line
+	10475 2975 10365 2975
+Wire Wire Line
+	10365 2975 10365 3105
 Text GLabel 13375 1645 0    50   Input ~ 0
-pump_sensor
+fan_in_2
 Wire Wire Line
 	13505 1645 13375 1645
 Wire Wire Line
@@ -855,8 +934,12 @@ Wire Notes Line
 	510  1500 510  2290
 Wire Notes Line
 	510  2290 1445 2290
+Connection ~ 10975 2870
+Wire Wire Line
+	10975 2870 10975 3140
 Wire Wire Line
 	14135 1765 14390 1765
+Connection ~ 14390 1765
 Wire Wire Line
 	14390 1765 14390 1830
 Wire Wire Line
@@ -866,6 +949,16 @@ Wire Wire Line
 Wire Wire Line
 	13825 1905 14220 1905
 Connection ~ 14135 1665
+Wire Wire Line
+	10875 3085 11075 3085
+Wire Wire Line
+	11075 3015 11075 3085
+Connection ~ 11075 3085
+Wire Wire Line
+	11075 3085 11210 3085
+Wire Wire Line
+	11075 2870 11175 2870
+Connection ~ 11175 2870
 $Comp
 L Connector:Conn_01x03_Male J11
 U 1 1 5EBC481E
@@ -896,45 +989,47 @@ Wire Wire Line
 $Comp
 L Connector:Conn_01x02_Male J13
 U 1 1 5EC9B6CD
-P 11905 850
-F 0 "J13" H 12013 1031 50  0000 C CNN
-F 1 "Conn_01x02_Male" H 12013 940 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 11905 850 50  0001 C CNN
-F 3 "~" H 11905 850 50  0001 C CNN
-	1    11905 850 
+P 11430 865
+F 0 "J13" H 11538 1046 50  0000 C CNN
+F 1 "Conn_01x02_Male" H 11538 955 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 11430 865 50  0001 C CNN
+F 3 "~" H 11430 865 50  0001 C CNN
+	1    11430 865 
 	0    1    1    0   
 $EndComp
-Text GLabel 11905 1150 3    50   Input ~ 0
-term_1_1C
-Text GLabel 11810 1155 3    50   Input ~ 0
-term_1_2C
+Text GLabel 11430 1165 3    50   Input ~ 0
+term_disip_1C
+Text GLabel 11335 1170 3    50   Input ~ 0
+term_disip_2C
 Wire Wire Line
-	11905 1050 11905 1150
+	11430 1065 11430 1165
 Wire Wire Line
-	11810 1155 11810 1050
+	11335 1170 11335 1065
 Wire Wire Line
-	11810 1050 11805 1050
+	11335 1065 11330 1065
 Wire Notes Line
 	9270 540  12180 540 
 Wire Wire Line
-	11375 1055 11375 1135
-Text GLabel 11275 1130 3    50   Input ~ 0
-term_2_2C
-Text GLabel 11375 1135 3    50   Input ~ 0
-term_2_1C
+	10280 1060 10280 1135
+Wire Wire Line
+	10380 1060 10380 1140
+Text GLabel 10280 1135 3    50   Input ~ 0
+term_pelt_2C
+Text GLabel 10380 1140 3    50   Input ~ 0
+term_pelt_1C
 $Comp
 L Connector:Conn_01x02_Male J12
 U 1 1 5EC67904
-P 11375 855
-F 0 "J12" H 11483 1036 50  0000 C CNN
-F 1 "Conn_01x02_Male" H 11483 945 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 11375 855 50  0001 C CNN
-F 3 "~" H 11375 855 50  0001 C CNN
-	1    11375 855 
+P 10380 860
+F 0 "J12" H 10488 1041 50  0000 C CNN
+F 1 "Conn_01x02_Male" H 10488 950 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 10380 860 50  0001 C CNN
+F 3 "~" H 10380 860 50  0001 C CNN
+	1    10380 860 
 	0    1    1    0   
 $EndComp
 Text GLabel 9330 1015 3    50   Input ~ 0
-pump_sensor_C
+fan_in_2C
 $Comp
 L Connector:Screw_Terminal_01x02 J3
 U 1 1 5E84C1E1
@@ -1024,6 +1119,8 @@ Text Notes 12135 4555 0    79   ~ 0
 Conector a leds\n
 NoConn ~ 1600 7670
 NoConn ~ 1600 7870
+NoConn ~ 2200 5200
+NoConn ~ 2200 5300
 NoConn ~ 2200 5400
 Wire Wire Line
 	12550 5120 12550 4845
@@ -1033,235 +1130,4 @@ Wire Wire Line
 	13510 4920 12150 4920
 Wire Wire Line
 	12150 4920 12150 4845
-Text GLabel 4450 2295 3    50   Input ~ 0
-PIN_SENSOR_TEMPERATURA_1
-Wire Wire Line
-	5900 5305 5900 5360
-Wire Wire Line
-	5900 5360 6345 5360
-$Comp
-L Device:R R5
-U 1 1 5EBC9F91
-P 5890 7825
-F 0 "R5" H 5960 7871 50  0000 L CNN
-F 1 "10k" H 5960 7780 50  0000 L CNN
-F 2 "" V 5820 7825 50  0001 C CNN
-F 3 "~" H 5890 7825 50  0001 C CNN
-	1    5890 7825
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:R R4
-U 1 1 5EBCA31D
-P 5485 7820
-F 0 "R4" H 5555 7866 50  0000 L CNN
-F 1 "10k" H 5555 7775 50  0000 L CNN
-F 2 "" V 5415 7820 50  0001 C CNN
-F 3 "~" H 5485 7820 50  0001 C CNN
-	1    5485 7820
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	5890 7590 5890 7675
-Text GLabel 5730 7580 1    50   Input ~ 0
-REF_5
-Wire Wire Line
-	5730 7580 5730 7590
-Connection ~ 5730 7590
-Wire Wire Line
-	5730 7590 5890 7590
-Wire Wire Line
-	2200 5205 2200 5200
-Wire Wire Line
-	2065 5390 2065 5300
-Wire Wire Line
-	2065 5300 2200 5300
-Text GLabel 1840 5205 0    50   Input ~ 0
-SENSOR_PUMP
-Text GLabel 2065 5390 0    50   Input ~ 0
-SENSOR_FAN
-Wire Wire Line
-	1840 5205 2200 5205
-Wire Wire Line
-	5485 7590 5485 7670
-Wire Wire Line
-	5485 7590 5730 7590
-Wire Notes Line
-	4305 7220 7760 7220
-Wire Notes Line
-	7760 7220 7760 9125
-Wire Notes Line
-	7760 9125 4295 9125
-Wire Notes Line
-	4295 9125 4295 7215
-Text GLabel 5485 8055 3    50   Input ~ 0
-SENSOR_PUMP
-Text GLabel 5890 8060 3    50   Input ~ 0
-SENSOR_FAN
-Wire Wire Line
-	5890 7975 5890 8010
-Wire Wire Line
-	5485 7970 5485 8015
-$Comp
-L Device:C C4
-U 1 1 5EDAF428
-P 6195 8275
-F 0 "C4" H 6310 8321 50  0000 L CNN
-F 1 "2.2n" H 6310 8230 50  0000 L CNN
-F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 6233 8125 50  0001 C CNN
-F 3 "~" H 6195 8275 50  0001 C CNN
-	1    6195 8275
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:C C6
-U 1 1 5EDBC98B
-P 5135 8285
-F 0 "C6" H 5250 8331 50  0000 L CNN
-F 1 "2.2n" H 5250 8240 50  0000 L CNN
-F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 5173 8135 50  0001 C CNN
-F 3 "~" H 5135 8285 50  0001 C CNN
-	1    5135 8285
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	5890 8010 6195 8010
-Wire Wire Line
-	6195 8010 6195 8125
-Connection ~ 5890 8010
-Wire Wire Line
-	5890 8010 5890 8060
-Wire Wire Line
-	5135 8015 5485 8015
-Connection ~ 5485 8015
-Wire Wire Line
-	5485 8015 5485 8055
-$Comp
-L power:GND #PWR?
-U 1 1 5EDF4583
-P 6195 8530
-F 0 "#PWR?" H 6195 8280 50  0001 C CNN
-F 1 "GND" H 6200 8357 50  0000 C CNN
-F 2 "" H 6195 8530 50  0001 C CNN
-F 3 "" H 6195 8530 50  0001 C CNN
-	1    6195 8530
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:GND #PWR?
-U 1 1 5EDF5468
-P 5135 8570
-F 0 "#PWR?" H 5135 8320 50  0001 C CNN
-F 1 "GND" H 5140 8397 50  0000 C CNN
-F 2 "" H 5135 8570 50  0001 C CNN
-F 3 "" H 5135 8570 50  0001 C CNN
-	1    5135 8570
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	5135 8570 5135 8435
-Wire Wire Line
-	6195 8530 6195 8425
-Text Notes 4365 7395 0    79   ~ 0
-Sensores Water Cooling\n
-Text GLabel 14560 1830 2    50   Input ~ 0
-fan_1
-$Comp
-L Connector:DB9_Female_MountingHoles J2
-U 1 1 5DD9E45B
-P 10565 3605
-F 0 "J2" V 10795 3565 50  0000 L CNN
-F 1 "DB9_Female_MountingHoles" V 10905 3085 50  0000 L CNN
-F 2 "Connector_Dsub:DSUB-9_Female_Horizontal_P2.77x2.84mm_EdgePinOffset7.70mm_Housed_MountingHolesOffset9.12mm" H 10565 3605 50  0001 C CNN
-F 3 " ~" H 10565 3605 50  0001 C CNN
-	1    10565 3605
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	10155 3225 10155 3260
-Wire Wire Line
-	10155 3260 10165 3260
-Wire Wire Line
-	10165 3260 10165 3305
-Wire Wire Line
-	10565 3305 10565 3025
-Wire Wire Line
-	10465 3305 10440 3305
-Wire Wire Line
-	10440 3305 10440 3215
-Wire Wire Line
-	10665 3215 10665 3305
-Wire Wire Line
-	10440 3215 10665 3215
-Connection ~ 10440 3215
-Wire Wire Line
-	10440 3215 10440 2885
-Wire Wire Line
-	10265 2880 10265 3305
-Wire Wire Line
-	10755 3085 10755 3285
-Wire Wire Line
-	10755 3285 10765 3285
-Wire Wire Line
-	10765 3285 10765 3305
-Wire Wire Line
-	10360 3150 10360 3305
-Wire Wire Line
-	10360 3305 10365 3305
-Wire Wire Line
-	10865 2995 10850 2995
-Wire Wire Line
-	10850 2995 10850 2970
-Wire Wire Line
-	10865 2995 10865 3305
-Text GLabel 10965 3155 1    50   Input ~ 0
-fan_sensor_C
-Wire Wire Line
-	10965 3155 10965 3305
-Text GLabel 14480 1655 2    50   Input ~ 0
-fan_sensor
-Wire Wire Line
-	14390 1565 14390 1655
-Wire Wire Line
-	14390 1655 14480 1655
-$Comp
-L Connector:Conn_01x03_Male J14
-U 1 1 5F0FD136
-P 10515 715
-F 0 "J14" V 10577 859 50  0000 L CNN
-F 1 "Conn_01x03_Male" V 10668 859 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 10515 715 50  0001 C CNN
-F 3 "~" H 10515 715 50  0001 C CNN
-	1    10515 715 
-	0    1    1    0   
-$EndComp
-Text GLabel 10415 1055 3    50   Input ~ 0
-fan_2C
-Text GLabel 10520 1055 3    50   Input ~ 0
-fan_1C
-Wire Wire Line
-	10415 1055 10415 915 
-Wire Wire Line
-	10520 1055 10520 915 
-Wire Wire Line
-	10520 915  10515 915 
-Wire Wire Line
-	10615 915  10615 1055
-Wire Wire Line
-	10615 1055 10620 1055
-Text GLabel 10620 1055 3    50   Input ~ 0
-fan_sensor_C
-Wire Wire Line
-	11275 1055 11275 1130
-Text GLabel 5110 8020 0    50   Input ~ 0
-pump_sensor
-Wire Wire Line
-	5135 8015 5135 8020
-Wire Wire Line
-	5110 8020 5135 8020
-Connection ~ 5135 8020
-Wire Wire Line
-	5135 8020 5135 8135
-Text GLabel 6195 8010 2    50   Input ~ 0
-fan_sensor
 $EndSCHEMATC
