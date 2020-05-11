@@ -6,3 +6,4 @@
 *.sch-bak
 **/desktop.ini
 *-cache
+Codigo/FlaskServer/flask_env
