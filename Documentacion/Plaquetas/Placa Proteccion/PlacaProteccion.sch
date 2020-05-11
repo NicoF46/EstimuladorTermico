@@ -1,5 +1,4 @@
 EESchema Schematic File Version 4
-LIBS:PlacaProteccion-cache
 EELAYER 30 0
 EELAYER END
 $Descr A3 16535 11693
@@ -348,7 +347,7 @@ $EndComp
 Wire Wire Line
 	2830 5260 3030 5260
 Text Notes 2620 4940 0    50   ~ 0
-Salida Potencia
+Salidas Potencia
 $Comp
 L power:PWR_FLAG #FLG0103
 U 1 1 5E72634C
@@ -462,10 +461,10 @@ NoConn ~ 4500 1460
 Wire Wire Line
 	5930 1570 6080 1570
 $Comp
-L Connector:Screw_Terminal_01x02 J4
+L Connector:Screw_Terminal_01x02 J6
 U 1 1 5E615EF8
 P 5730 1570
-F 0 "J4" H 5690 1370 50  0000 L CNN
+F 0 "J6" H 5690 1370 50  0000 L CNN
 F 1 "RELAY_SW" H 5540 1280 50  0000 L CNN
 F 2 "TerminalBlock:TerminalBlock_bornier-2_P5.08mm" H 5730 1570 50  0001 C CNN
 F 3 "~" H 5730 1570 50  0001 C CNN
@@ -475,10 +474,10 @@ $EndComp
 Wire Wire Line
 	5930 1470 6020 1470
 $Comp
-L Connector:Conn_01x04_Female J3
+L Connector:Conn_01x04_Female J5
 U 1 1 5E61B787
 P 4190 1550
-F 0 "J3" H 4140 1840 50  0000 L CNN
+F 0 "J5" H 4140 1840 50  0000 L CNN
 F 1 "RELAY_CTRL" H 3960 1760 50  0000 L CNN
 F 2 "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Vertical" H 4190 1550 50  0001 C CNN
 F 3 "~" H 4190 1550 50  0001 C CNN
@@ -559,10 +558,10 @@ Wire Wire Line
 Wire Wire Line
 	4090 2500 4690 2500
 $Comp
-L power:GND #PWR?
+L power:GND #PWR04
 U 1 1 5E743EB5
 P 4000 3020
-F 0 "#PWR?" H 4000 2770 50  0001 C CNN
+F 0 "#PWR04" H 4000 2770 50  0001 C CNN
 F 1 "GND" H 4005 2847 50  0000 C CNN
 F 2 "" H 4000 3020 50  0001 C CNN
 F 3 "" H 4000 3020 50  0001 C CNN
@@ -571,4 +570,66 @@ F 3 "" H 4000 3020 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	4090 3020 4000 3020
+$Comp
+L Connector:Screw_Terminal_01x02 J3
+U 1 1 5EB9A951
+P 4310 5160
+F 0 "J3" H 4390 5152 50  0000 L CNN
+F 1 "POW_OUT" H 4390 5061 50  0000 L CNN
+F 2 "TerminalBlock:TerminalBlock_bornier-2_P5.08mm" H 4310 5160 50  0001 C CNN
+F 3 "~" H 4310 5160 50  0001 C CNN
+	1    4310 5160
+	1    0    0    -1  
+$EndComp
+Text GLabel 3910 5160 0    50   Input ~ 0
+VCC
+$Comp
+L power:GND #PWR03
+U 1 1 5EB9A958
+P 3910 5260
+F 0 "#PWR03" H 3910 5010 50  0001 C CNN
+F 1 "GND" H 3915 5087 50  0000 C CNN
+F 2 "" H 3910 5260 50  0001 C CNN
+F 3 "" H 3910 5260 50  0001 C CNN
+	1    3910 5260
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3910 5260 4110 5260
+Wire Wire Line
+	3910 5160 4110 5160
+$Comp
+L Connector:Screw_Terminal_01x02 J4
+U 1 1 5EB9D691
+P 5380 5140
+F 0 "J4" H 5460 5132 50  0000 L CNN
+F 1 "POW_OUT" H 5460 5041 50  0000 L CNN
+F 2 "TerminalBlock:TerminalBlock_bornier-2_P5.08mm" H 5380 5140 50  0001 C CNN
+F 3 "~" H 5380 5140 50  0001 C CNN
+	1    5380 5140
+	1    0    0    -1  
+$EndComp
+Text GLabel 4980 5140 0    50   Input ~ 0
+VCC
+$Comp
+L power:GND #PWR05
+U 1 1 5EB9D698
+P 4980 5240
+F 0 "#PWR05" H 4980 4990 50  0001 C CNN
+F 1 "GND" H 4985 5067 50  0000 C CNN
+F 2 "" H 4980 5240 50  0001 C CNN
+F 3 "" H 4980 5240 50  0001 C CNN
+	1    4980 5240
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4980 5240 5180 5240
+Wire Wire Line
+	4980 5140 5180 5140
+Text Notes 2650 5620 0    50   ~ 0
+A Placa Potencia
+Text Notes 3740 5640 0    50   ~ 0
+A Placa Prot
+Text Notes 4940 5630 0    50   ~ 0
+A Case
 $EndSCHEMATC
