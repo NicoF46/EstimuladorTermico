@@ -63,8 +63,6 @@ Wire Wire Line
 	6275 4375 6275 4625
 Wire Wire Line
 	6275 4320 6525 4320
-Wire Wire Line
-	6275 3775 6625 3775
 Text GLabel 5400 1730 2    50   Input ~ 0
 PIN_SENSOR_TEMPERATURA_1
 Wire Wire Line
@@ -328,22 +326,14 @@ Text Notes 6515 3455 0    79   ~ 0
 Sensor de temperatura del peltier
 Text GLabel 6525 4320 2    50   Input ~ 0
 PIN_SENSOR_TEMPERATURA_2
-Text GLabel 6625 3775 2    50   Input ~ 0
-term_2_1
-Text GLabel 6625 3875 2    50   Input ~ 0
-term_2_2
 Text Notes 1135 4620 0    50   ~ 0
 Conector a placa del gabinete del peltier\n\n
 Text GLabel 2495 4875 2    50   Input ~ 0
-term_2_1
+REF_5
 Text GLabel 1375 4915 0    50   Input ~ 0
-term_2_2
-Text GLabel 2505 5025 2    50   Input ~ 0
-term_1_1
+term_2
 Text GLabel 1505 5040 0    50   Input ~ 0
-term_1_2
-Wire Wire Line
-	2165 5020 2315 5020
+term_1
 $Comp
 L Connector_Generic:Conn_02x05_Counter_Clockwise J7
 U 1 1 5E576CF9
@@ -365,10 +355,6 @@ Wire Wire Line
 	1375 4915 1665 4915
 Wire Wire Line
 	1665 4915 1665 4920
-Wire Wire Line
-	2505 5025 2315 5025
-Wire Wire Line
-	2315 5025 2315 5020
 Wire Wire Line
 	1665 5020 1505 5020
 Wire Wire Line
@@ -421,10 +407,6 @@ F 3 "~" H 9450 5240 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	9940 5210 9940 5275
-Text GLabel 8260 3890 2    50   Input ~ 0
-term_1_2
-Text GLabel 8260 3790 2    50   Input ~ 0
-term_1_1
 Wire Wire Line
 	7910 4990 8075 4990
 Wire Wire Line
@@ -446,10 +428,6 @@ F 3 "~" H 7910 4540 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	8260 4740 8260 4990
-Wire Wire Line
-	7960 3790 8260 3790
-Text GLabel 7960 3790 0    50   Input ~ 0
-REF_5
 Wire Notes Line
 	3335 4350 3335 6235
 Wire Notes Line
@@ -912,8 +890,6 @@ Wire Notes Line
 Text GLabel 1455 7660 3    50   Input ~ 0
 pump_sensor_C
 Wire Wire Line
-	2500 6985 2500 7060
-Wire Wire Line
 	755  7385 755  7235
 Text GLabel 755  7385 3    50   Input ~ 0
 fan_sensor_C
@@ -929,8 +905,6 @@ Wire Wire Line
 	965  7455 965  7255
 Wire Wire Line
 	1455 7660 1455 7235
-Wire Wire Line
-	1155 7235 1155 7515
 Wire Wire Line
 	1555 7280 1555 7235
 Wire Wire Line
@@ -950,54 +924,16 @@ F 3 " ~" H 1155 6935 50  0001 C CNN
 $EndComp
 Text GLabel 2095 6995 3    50   Input ~ 0
 pump_sensor_C
-$Comp
-L Connector:Conn_01x02_Male J12
-U 1 1 5EC67904
-P 2600 6785
-F 0 "J12" H 2708 6966 50  0000 C CNN
-F 1 "Conn_01x02_Male" H 2708 6875 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 2600 6785 50  0001 C CNN
-F 3 "~" H 2600 6785 50  0001 C CNN
-	1    2600 6785
-	0    1    1    0   
-$EndComp
-Text GLabel 2600 7065 3    50   Input ~ 0
-term_2_1C
-Text GLabel 2500 7060 3    50   Input ~ 0
-term_2_2C
-Wire Wire Line
-	2600 6985 2600 7065
-Wire Wire Line
-	3035 6980 3030 6980
-Wire Wire Line
-	3035 7085 3035 6980
-Wire Wire Line
-	3130 6980 3130 7080
-Text GLabel 3035 7085 3    50   Input ~ 0
-term_1_2C
-Text GLabel 3130 7080 3    50   Input ~ 0
-term_1_1C
-$Comp
-L Connector:Conn_01x02_Male J13
-U 1 1 5EC9B6CD
-P 3130 6780
-F 0 "J13" H 3238 6961 50  0000 C CNN
-F 1 "Conn_01x02_Male" H 3238 6870 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 3130 6780 50  0001 C CNN
-F 3 "~" H 3130 6780 50  0001 C CNN
-	1    3130 6780
-	0    1    1    0   
-$EndComp
-Text GLabel 1565 7315 3    50   Input ~ 0
-term_2_1C
+Text GLabel 2580 7095 3    50   Input ~ 0
+term_2C
+Text GLabel 2480 7095 3    50   Input ~ 0
+term_1C
 Text Notes 720  6430 0    50   ~ 0
 Placa de conexion: chasis - placa de control\n
 Text GLabel 965  7455 3    50   Input ~ 0
-term_1_2C
-Text GLabel 1155 7515 3    50   Input ~ 0
-term_1_1C
+term_1C
 Text GLabel 1360 7390 3    50   Input ~ 0
-term_2_2C
+term_2C
 Text Notes 720  6535 0    50   ~ 0
 Conector hacia peltier
 Text Notes 9830 5800 0    59   ~ 0
@@ -1010,8 +946,6 @@ Wire Notes Line
 	2490 1455 2490 3040
 Text GLabel 2195 6995 3    50   Input ~ 0
 fan_sensor_C
-Text GLabel 6275 3775 0    50   Input ~ 0
-REF_5
 Wire Notes Line
 	3375 5060 5655 5060
 Wire Notes Line
@@ -1024,10 +958,6 @@ Wire Notes Line
 	2550 510  6685 510 
 Wire Notes Line
 	6685 510  6685 3090
-NoConn ~ 2165 5320
-NoConn ~ 1665 5320
-NoConn ~ 1665 5220
-NoConn ~ 2165 5220
 Wire Wire Line
 	2165 5120 2420 5120
 Text GLabel 4935 610  2    50   Input ~ 0
@@ -1043,22 +973,8 @@ F 3 "~" H 2195 6795 50  0001 C CNN
 	1    2195 6795
 	0    1    1    0   
 $EndComp
-$Comp
-L power:GND #PWR02
-U 1 1 5F0AC7D1
-P 1845 6935
-F 0 "#PWR02" H 1845 6685 50  0001 C CNN
-F 1 "GND" H 1850 6762 50  0000 C CNN
-F 2 "" H 1845 6935 50  0001 C CNN
-F 3 "" H 1845 6935 50  0001 C CNN
-	1    1845 6935
-	-1   0    0    1   
-$EndComp
 Wire Wire Line
 	1755 6935 1845 6935
-NoConn ~ 1255 7235
-NoConn ~ 1055 7235
-NoConn ~ 855  7235
 Text Notes 2005 6535 0    50   ~ 0
 Conector hacia placa control
 Wire Notes Line
@@ -1204,7 +1120,7 @@ U 1 1 5EC71CFF
 P 9085 780
 F 0 "J9" V 8920 708 50  0000 C CNN
 F 1 "Conn_01x08_Male" V 9011 708 50  0000 C CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_1x08_P2.54mm_Vertical" H 9085 780 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical" H 9085 780 50  0001 C CNN
 F 3 "~" H 9085 780 50  0001 C CNN
 	1    9085 780 
 	0    1    1    0   
@@ -1324,7 +1240,7 @@ U 1 1 5EE5F252
 P 3650 5735
 F 0 "J6" H 3758 6016 50  0000 C CNN
 F 1 "Conn_01x04_Male" H 3758 5925 50  0000 C CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Vertical" H 3650 5735 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 3650 5735 50  0001 C CNN
 F 3 "~" H 3650 5735 50  0001 C CNN
 	1    3650 5735
 	1    0    0    -1  
@@ -1414,4 +1330,167 @@ Wire Notes Line
 	3370 6240 3370 5115
 Text Notes 3435 5215 0    50   ~ 0
 Conector display
+Text GLabel 6625 3875 2    50   Input ~ 0
+term_2
+Wire Notes Line style solid
+	6275 3750 6275 3660
+Wire Notes Line style solid
+	6635 3750 6275 3750
+Text Notes 6205 3635 0    50   ~ 0
+5 V
+Wire Notes Line style solid
+	8255 3745 8255 3655
+Text Notes 8185 3630 0    50   ~ 0
+5 V
+Text GLabel 8465 3890 2    50   Input ~ 0
+term_1
+Wire Wire Line
+	8260 3890 8465 3890
+Wire Notes Line style solid
+	8470 3745 8255 3745
+NoConn ~ 2165 5020
+Text GLabel 2265 5320 2    50   Input ~ 0
+VCC
+Wire Wire Line
+	2165 5220 2265 5220
+Wire Wire Line
+	2265 5220 2265 5320
+Wire Wire Line
+	2165 5320 2215 5320
+$Comp
+L power:GND #PWR0109
+U 1 1 5EC8211E
+P 1520 5395
+F 0 "#PWR0109" H 1520 5145 50  0001 C CNN
+F 1 "GND" H 1525 5222 50  0000 C CNN
+F 2 "" H 1520 5395 50  0001 C CNN
+F 3 "" H 1520 5395 50  0001 C CNN
+	1    1520 5395
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1520 5320 1630 5320
+Wire Wire Line
+	1520 5220 1665 5220
+Connection ~ 1520 5320
+Wire Wire Line
+	1520 5320 1520 5220
+Wire Wire Line
+	1520 5320 1520 5395
+Text GLabel 1565 7315 3    50   Input ~ 0
+REF_5C
+$Comp
+L Connector:Conn_01x03_Male J11
+U 1 1 5ECDB511
+P 2580 6800
+F 0 "J11" H 2650 7120 50  0000 L CNN
+F 1 "Conn_01x03_Male" H 2350 7025 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 2580 6800 50  0001 C CNN
+F 3 "~" H 2580 6800 50  0001 C CNN
+	1    2580 6800
+	0    1    1    0   
+$EndComp
+Text GLabel 2680 7090 3    50   Input ~ 0
+REF_5C
+Wire Wire Line
+	2480 7000 2480 7095
+Wire Wire Line
+	2580 7000 2580 7095
+Wire Wire Line
+	2680 7000 2680 7090
+$Comp
+L Connector:Conn_01x03_Male J12
+U 1 1 5ED376B9
+P 2580 7590
+F 0 "J12" H 2650 7910 50  0000 L CNN
+F 1 "Conn_01x03_Male" H 2350 7815 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 2580 7590 50  0001 C CNN
+F 3 "~" H 2580 7590 50  0001 C CNN
+	1    2580 7590
+	0    1    1    0   
+$EndComp
+Text GLabel 2580 7935 3    50   Input ~ 0
+GND_C
+Wire Wire Line
+	2480 7790 2480 7865
+Wire Wire Line
+	2480 7865 2580 7865
+Wire Wire Line
+	2680 7865 2680 7790
+Wire Wire Line
+	2580 7790 2580 7865
+Connection ~ 2580 7865
+Wire Wire Line
+	2580 7865 2680 7865
+Wire Wire Line
+	2580 7935 2580 7865
+$Comp
+L Connector:Conn_01x03_Male J13
+U 1 1 5ED66AD6
+P 3120 6800
+F 0 "J13" H 3190 7120 50  0000 L CNN
+F 1 "Conn_01x03_Male" H 2890 7025 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 3120 6800 50  0001 C CNN
+F 3 "~" H 3120 6800 50  0001 C CNN
+	1    3120 6800
+	0    1    1    0   
+$EndComp
+Text GLabel 3120 7145 3    50   Input ~ 0
+VCC_C
+Wire Wire Line
+	3020 7000 3020 7075
+Wire Wire Line
+	3020 7075 3120 7075
+Wire Wire Line
+	3220 7075 3220 7000
+Wire Wire Line
+	3120 7000 3120 7075
+Connection ~ 3120 7075
+Wire Wire Line
+	3120 7075 3220 7075
+Wire Wire Line
+	3120 7145 3120 7075
+Text GLabel 1255 7295 3    50   Input ~ 0
+GND_C
+Text GLabel 1055 7300 3    50   Input ~ 0
+GND_C
+Text GLabel 1155 7305 3    50   Input ~ 0
+VCC_C
+Text GLabel 855  7330 3    50   Input ~ 0
+VCC_C
+Wire Wire Line
+	855  7235 855  7330
+Wire Wire Line
+	1055 7235 1055 7300
+Wire Wire Line
+	1155 7235 1155 7305
+Wire Wire Line
+	1255 7235 1255 7295
+Text GLabel 1845 6935 3    50   Input ~ 0
+GND_C
+$Comp
+L Connector:Conn_01x02_Male J8
+U 1 1 5EDB904C
+P 1970 5380
+F 0 "J8" V 2315 5330 50  0000 C CNN
+F 1 "Conn_01x02_Male" V 2395 5335 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 1970 5380 50  0001 C CNN
+F 3 "~" H 1970 5380 50  0001 C CNN
+	1    1970 5380
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	1630 5320 1630 5580
+Wire Wire Line
+	1630 5580 1870 5580
+Connection ~ 1630 5320
+Wire Wire Line
+	1630 5320 1665 5320
+Wire Wire Line
+	2215 5580 2215 5320
+Connection ~ 2215 5320
+Wire Wire Line
+	2215 5320 2265 5320
+Wire Wire Line
+	1970 5580 2215 5580
 $EndSCHEMATC
