@@ -24,10 +24,6 @@ F 3 "" H 5100 2830 50  0001 C CNN
 	1    5100 2830
 	1    0    0    -1  
 $EndComp
-Text GLabel 5400 2430 2    50   Input ~ 0
-PIN_SENSOR_TEMPERATURA_2
-Wire Wire Line
-	5100 2330 5400 2330
 $Comp
 L Device:R R3
 U 1 1 5DBD5433
@@ -63,8 +59,6 @@ Wire Wire Line
 	6275 4375 6275 4625
 Wire Wire Line
 	6275 4320 6525 4320
-Text GLabel 5400 2330 2    50   Input ~ 0
-PIN_SENSOR_TEMPERATURA_1
 Text GLabel 770  880  0    50   Input ~ 0
 VCC
 $Comp
@@ -523,17 +517,6 @@ Connection ~ 1840 3535
 Wire Wire Line
 	1840 3535 1905 3535
 Connection ~ 1445 4040
-$Comp
-L custom_symbols:Arduino_Nano_v2.x A1
-U 1 1 5DB11DC8
-P 4600 1730
-F 0 "A1" H 4600 641 50  0000 C CNN
-F 1 "Arduino_Nano_v3.x" H 4600 550 50  0000 C CNN
-F 2 "Module:Arduino_Nano" H 4750 780 50  0001 L CNN
-F 3 "http://www.mouser.com/pdfdocs/Gravitech_Arduino_Nano3_0.pdf" H 4600 730 50  0001 C CNN
-	1    4600 1730
-	1    0    0    -1  
-$EndComp
 Text GLabel 800  3535 0    50   Input ~ 0
 REF_5
 $Comp
@@ -743,18 +726,6 @@ Wire Wire Line
 Connection ~ 4600 3665
 Wire Wire Line
 	4600 3665 4760 3665
-Wire Wire Line
-	4100 1335 4100 1330
-Wire Wire Line
-	3965 1520 3965 1430
-Wire Wire Line
-	3965 1430 4100 1430
-Text GLabel 3740 1335 0    50   Input ~ 0
-SENSOR_PUMP
-Text GLabel 3965 1520 0    50   Input ~ 0
-SENSOR_FAN
-Wire Wire Line
-	3740 1335 4100 1335
 Wire Wire Line
 	4355 3665 4355 3745
 Wire Wire Line
@@ -1406,8 +1377,6 @@ F 3 "~" H 1970 5380 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 Wire Wire Line
-	5100 2430 5400 2430
-Wire Wire Line
 	5100 1930 5400 1930
 Wire Wire Line
 	5100 2030 5400 2030
@@ -1419,8 +1388,6 @@ Text GLabel 4045 1930 0    50   Input ~ 0
 PIN-COLD-LED-BLUE
 Text GLabel 4045 1830 0    50   Input ~ 0
 PIN-HOT-LED-YELLOW
-NoConn ~ 5100 1730
-NoConn ~ 5100 1830
 Wire Wire Line
 	3595 2130 4100 2130
 NoConn ~ 4100 2430
@@ -1503,4 +1470,33 @@ Wire Wire Line
 Connection ~ 10095 3860
 Wire Wire Line
 	10095 3860 10130 3860
+Wire Wire Line
+	5460 1830 5100 1830
+Text GLabel 5235 1730 2    50   Input ~ 0
+SENSOR_PUMP
+Wire Wire Line
+	5235 1730 5100 1730
+Wire Wire Line
+	5100 2430 5400 2430
+Text GLabel 5400 2330 2    50   Input ~ 0
+PIN_SENSOR_TEMPERATURA_1
+Wire Wire Line
+	5100 2330 5400 2330
+Text GLabel 5400 2430 2    50   Input ~ 0
+PIN_SENSOR_TEMPERATURA_2
+Text GLabel 5460 1830 2    50   Input ~ 0
+SENSOR_FAN
+NoConn ~ 4100 1430
+$Comp
+L custom_symbols:Arduino_Nano_v2.x A1
+U 1 1 5DB11DC8
+P 4600 1730
+F 0 "A1" H 4600 641 50  0000 C CNN
+F 1 "Arduino_Nano_v3.x" H 4600 550 50  0000 C CNN
+F 2 "Module:Arduino_Nano" H 4750 780 50  0001 L CNN
+F 3 "http://www.mouser.com/pdfdocs/Gravitech_Arduino_Nano3_0.pdf" H 4600 730 50  0001 C CNN
+	1    4600 1730
+	1    0    0    -1  
+$EndComp
+NoConn ~ 4100 1330
 $EndSCHEMATC
