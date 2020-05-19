@@ -6,3 +6,4 @@
 *.sch-bak
 **/desktop.ini
 *-cache
+*-cache.lib

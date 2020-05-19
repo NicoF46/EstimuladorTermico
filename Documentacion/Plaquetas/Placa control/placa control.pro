@@ -1,4 +1,4 @@
-update=18/5/2020 15:33:24
+update=19/5/2020 20:50:53
 version=1
 last_client=kicad
 [general]
@@ -240,6 +240,28 @@ Enabled=0
 [pcbnew/Netclasses]
 [pcbnew/Netclasses/Default]
 Name=Default
+Clearance=0.7
+TrackWidth=1
+ViaDiameter=2
+ViaDrill=0.8
+uViaDiameter=0.3
+uViaDrill=0.1
+dPairWidth=0.2
+dPairGap=0.25
+dPairViaGap=0.25
+[pcbnew/Netclasses/1]
+Name=Arduino
+Clearance=0.7
+TrackWidth=1
+ViaDiameter=2
+ViaDrill=0.8
+uViaDiameter=0.3
+uViaDrill=0.1
+dPairWidth=0.2
+dPairGap=0.25
+dPairViaGap=0.25
+[pcbnew/Netclasses/2]
+Name=Conector
 Clearance=0.5
 TrackWidth=1
 ViaDiameter=2

@@ -910,7 +910,7 @@ U 1 1 5F040BCB
 P 2195 6795
 F 0 "J1" H 2303 6976 50  0000 C CNN
 F 1 "Conn_01x02_Male" H 2303 6885 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 2195 6795 50  0001 C CNN
+F 2 "custom_footprints:PinHeader_1x02_P2.54mm_Vertical" H 2195 6795 50  0001 C CNN
 F 3 "~" H 2195 6795 50  0001 C CNN
 	1    2195 6795
 	0    1    1    0   
@@ -999,7 +999,7 @@ U 1 1 5EBD2A40
 P 10630 3555
 F 0 "J5" H 10265 3400 50  0000 C CNN
 F 1 "Conn_01x02_Male" H 10265 3500 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 10630 3555 50  0001 C CNN
+F 2 "custom_footprints:PinHeader_1x02_P2.54mm_Vertical" H 10630 3555 50  0001 C CNN
 F 3 "~" H 10630 3555 50  0001 C CNN
 	1    10630 3555
 	-1   0    0    1   
@@ -1042,7 +1042,7 @@ U 1 1 5EC71CFF
 P 9085 780
 F 0 "J9" V 8920 708 50  0000 C CNN
 F 1 "Conn_01x08_Male" V 9011 708 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical" H 9085 780 50  0001 C CNN
+F 2 "custom_footprints:PinHeader_1x08_P2.54mm_Vertical" H 9085 780 50  0001 C CNN
 F 3 "~" H 9085 780 50  0001 C CNN
 	1    9085 780 
 	0    1    1    0   
@@ -1146,14 +1146,14 @@ U 1 1 5EE5F252
 P 3650 5735
 F 0 "J6" H 3758 6016 50  0000 C CNN
 F 1 "Conn_01x04_Male" H 3758 5925 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 3650 5735 50  0001 C CNN
+F 2 "custom_footprints:PinHeader_1x04_P2.54mm_Vertical" H 3650 5735 50  0001 C CNN
 F 3 "~" H 3650 5735 50  0001 C CNN
 	1    3650 5735
 	1    0    0    -1  
 $EndComp
-Text GLabel 4620 5835 2    50   Input ~ 0
-SDA-DISPLAY
 Text GLabel 4620 5735 2    50   Input ~ 0
+SDA-DISPLAY
+Text GLabel 4620 5835 2    50   Input ~ 0
 SCL-DISPLAY
 Text GLabel 4980 5235 2    50   Input ~ 0
 REF_5
@@ -1255,7 +1255,7 @@ Wire Wire Line
 Wire Notes Line style solid
 	8470 3745 8255 3745
 NoConn ~ 2165 5020
-Text GLabel 2265 5320 2    50   Input ~ 0
+Text GLabel 1520 5395 0    50   Input ~ 0
 VCC
 Wire Wire Line
 	2165 5220 2265 5220
@@ -1264,12 +1264,12 @@ Wire Wire Line
 $Comp
 L power:GND #PWR0109
 U 1 1 5EC8211E
-P 1520 5395
-F 0 "#PWR0109" H 1520 5145 50  0001 C CNN
-F 1 "GND" H 1525 5222 50  0000 C CNN
-F 2 "" H 1520 5395 50  0001 C CNN
-F 3 "" H 1520 5395 50  0001 C CNN
-	1    1520 5395
+P 2265 5320
+F 0 "#PWR0109" H 2265 5070 50  0001 C CNN
+F 1 "GND" H 2270 5147 50  0000 C CNN
+F 2 "" H 2265 5320 50  0001 C CNN
+F 3 "" H 2265 5320 50  0001 C CNN
+	1    2265 5320
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
@@ -1371,7 +1371,7 @@ U 1 1 5EDB904C
 P 1970 5380
 F 0 "J8" V 2315 5330 50  0000 C CNN
 F 1 "Conn_01x02_Male" V 2395 5335 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 1970 5380 50  0001 C CNN
+F 2 "custom_footprints:PinHeader_1x02_P2.54mm_Vertical" H 1970 5380 50  0001 C CNN
 F 3 "~" H 1970 5380 50  0001 C CNN
 	1    1970 5380
 	0    1    1    0   
@@ -1493,7 +1493,7 @@ U 1 1 5DB11DC8
 P 4600 1730
 F 0 "A1" H 4600 641 50  0000 C CNN
 F 1 "Arduino_Nano_v3.x" H 4600 550 50  0000 C CNN
-F 2 "Module:Arduino_Nano" H 4750 780 50  0001 L CNN
+F 2 "custom_footprints:Arduino_Nano" H 4750 780 50  0001 L CNN
 F 3 "http://www.mouser.com/pdfdocs/Gravitech_Arduino_Nano3_0.pdf" H 4600 730 50  0001 C CNN
 	1    4600 1730
 	1    0    0    -1  
