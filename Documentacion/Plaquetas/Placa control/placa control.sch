@@ -110,7 +110,7 @@ U 1 1 5DE3A5E4
 P 5700 1250
 F 0 "C9" H 5815 1296 50  0000 L CNN
 F 1 "100n" H 5815 1205 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 5738 1100 50  0001 C CNN
+F 2 "custom_footprints:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 5738 1100 50  0001 C CNN
 F 3 "~" H 5700 1250 50  0001 C CNN
 	1    5700 1250
 	1    0    0    -1  
@@ -136,7 +136,7 @@ U 1 1 5DC34274
 P 5875 4725
 F 0 "C10" H 5990 4771 50  0000 L CNN
 F 1 "4.7n" H 5990 4680 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 5913 4575 50  0001 C CNN
+F 2 "custom_footprints:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 5913 4575 50  0001 C CNN
 F 3 "~" H 5875 4725 50  0001 C CNN
 	1    5875 4725
 	1    0    0    -1  
@@ -408,7 +408,7 @@ U 1 1 5DCCB55D
 P 7910 4540
 F 0 "C11" H 8025 4586 50  0000 L CNN
 F 1 "4.7n" H 8025 4495 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 7948 4390 50  0001 C CNN
+F 2 "custom_footprints:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 7948 4390 50  0001 C CNN
 F 3 "~" H 7910 4540 50  0001 C CNN
 	1    7910 4540
 	1    0    0    -1  
@@ -498,7 +498,7 @@ U 1 1 5EBF2723
 P 1000 3835
 F 0 "C2" H 1115 3881 50  0000 L CNN
 F 1 "100n" H 1115 3790 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 1038 3685 50  0001 C CNN
+F 2 "custom_footprints:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 1038 3685 50  0001 C CNN
 F 3 "~" H 1000 3835 50  0001 C CNN
 	1    1000 3835
 	1    0    0    -1  
@@ -525,7 +525,7 @@ U 1 1 5EBF44A4
 P 1840 3835
 F 0 "C3" H 1955 3881 50  0000 L CNN
 F 1 "330n" H 1955 3790 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 1878 3685 50  0001 C CNN
+F 2 "custom_footprints:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 1878 3685 50  0001 C CNN
 F 3 "~" H 1840 3835 50  0001 C CNN
 	1    1840 3835
 	1    0    0    -1  
@@ -746,7 +746,7 @@ U 1 1 5EDAF428
 P 5065 4350
 F 0 "C4" H 5180 4396 50  0000 L CNN
 F 1 "2.2n" H 5180 4305 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 5103 4200 50  0001 C CNN
+F 2 "custom_footprints:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 5103 4200 50  0001 C CNN
 F 3 "~" H 5065 4350 50  0001 C CNN
 	1    5065 4350
 	1    0    0    -1  
@@ -757,7 +757,7 @@ U 1 1 5EDBC98B
 P 4005 4360
 F 0 "C6" H 4120 4406 50  0000 L CNN
 F 1 "2.2n" H 4120 4315 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 4043 4210 50  0001 C CNN
+F 2 "custom_footprints:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 4043 4210 50  0001 C CNN
 F 3 "~" H 4005 4360 50  0001 C CNN
 	1    4005 4360
 	1    0    0    -1  
@@ -996,16 +996,14 @@ $EndComp
 $Comp
 L Connector:Conn_01x02_Male J5
 U 1 1 5EBD2A40
-P 10630 3555
-F 0 "J5" H 10265 3400 50  0000 C CNN
-F 1 "Conn_01x02_Male" H 10265 3500 50  0000 C CNN
-F 2 "custom_footprints:PinHeader_1x02_P2.54mm_Vertical" H 10630 3555 50  0001 C CNN
-F 3 "~" H 10630 3555 50  0001 C CNN
-	1    10630 3555
+P 10630 4210
+F 0 "J5" H 10265 4055 50  0000 C CNN
+F 1 "Conn_01x02_Male" H 10265 4155 50  0000 C CNN
+F 2 "custom_footprints:PinHeader_1x02_P2.54mm_Vertical" H 10630 4210 50  0001 C CNN
+F 3 "~" H 10630 4210 50  0001 C CNN
+	1    10630 4210
 	-1   0    0    1   
 $EndComp
-Wire Wire Line
-	10430 3660 10430 3555
 Wire Wire Line
 	10430 4235 10430 4210
 Wire Wire Line
@@ -1020,14 +1018,10 @@ Wire Wire Line
 	9680 3860 9755 3860
 Text Notes 9290 3305 0    50   ~ 0
 BUZZER\n
-Wire Wire Line
-	10430 3455 10430 3295
-Text GLabel 10430 3295 0    50   Input ~ 0
+Text GLabel 10426 3568 0    50   Input ~ 0
 REF_5
 Wire Notes Line
 	9225 3160 11365 3160
-Wire Notes Line
-	11365 3160 11365 4515
 Wire Notes Line
 	11365 4515 9225 4515
 Wire Notes Line
@@ -1451,7 +1445,7 @@ U 1 1 5ECB0042
 P 10095 4095
 F 0 "C1" H 10210 4141 50  0000 L CNN
 F 1 "2u" H 10210 4050 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 10133 3945 50  0001 C CNN
+F 2 "custom_footprints:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 10133 3945 50  0001 C CNN
 F 3 "~" H 10095 4095 50  0001 C CNN
 	1    10095 4095
 	1    0    0    -1  
@@ -1462,9 +1456,6 @@ Wire Wire Line
 	10285 4245 10285 4210
 Wire Wire Line
 	10285 4210 10430 4210
-Connection ~ 10430 4210
-Wire Wire Line
-	10430 4210 10430 4060
 Wire Wire Line
 	10095 3860 10095 3945
 Connection ~ 10095 3860
@@ -1499,4 +1490,13 @@ F 3 "http://www.mouser.com/pdfdocs/Gravitech_Arduino_Nano3_0.pdf" H 4600 730 50 
 	1    0    0    -1  
 $EndComp
 NoConn ~ 4100 1330
+Wire Notes Line
+	11374 3158 11374 4513
+Connection ~ 10430 4210
+Wire Wire Line
+	10430 4060 10430 4110
+Wire Wire Line
+	10430 3660 10430 3568
+Wire Wire Line
+	10430 3568 10426 3568
 $EndSCHEMATC
