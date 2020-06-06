@@ -12,3 +12,8 @@ uint16_t ReadADC(){
 while ( (ADCSRA & _BV(ADSC)) );
     return ADC;
 }
+
+void adc_select_channel(uint8_t channel_number){
+  ADMUX &= ((1<<REFS1)|(1<<REFS0)|(1<<ADLAR));
+  ADMUX |= channel_number;
+}

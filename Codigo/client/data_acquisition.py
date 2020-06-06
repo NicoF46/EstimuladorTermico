@@ -15,6 +15,7 @@ SEPARATOR_SIZE = 1
 SEPARATOR = b't'
 DATA_SIZE = 4
 DATA_FORMAT = '<f'
+CALIBRATION_SEPARATOR = b'c'
 
 DEBUG = False
 
@@ -41,7 +42,7 @@ class EnviarDatos(cmd.Cmd):
         self._send_chunk(b'b', dato)
     
     def do_cal(self, dato):
-        self._send_chunk(b'b', dato)
+        self._send_chunk(b'c', dato)
         print("Iniciando calibracion")
     
     def do_stop(self, data):
@@ -100,6 +101,15 @@ def get_data():
 
             times.append(current_time)
             data.append(current_data)
+
+        if raw_separator == CALIBRATION_SEPARATOR:
+            raw_data = ser.read(DATA_SIZE)
+            kp = struct.unpack(DATA_FORMAT, raw_data)
+            raw_data = ser.read(DATA_SIZE)
+            ki = struct.unpack(DATA_FORMAT, raw_data)
+            raw_data = ser.read(DATA_SIZE)
+            kd = struct.unpack(DATA_FORMAT, raw_data)
+            print(f'El valor de KP es {kp}, KI es {ki} y KD es {kd}.')
 
         if DEBUG:
             if raw_separator == b'p':

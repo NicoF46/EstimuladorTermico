@@ -14,37 +14,44 @@ float N_FILTRO = 10;
 static float TemperaturaCalibracion = 25;
 static uint8_t ValorPWM = 0;
 static bool power_on = false;
+static modo_t modo = CALIBRACION;
+static float TemperaturaReferencia = 255;
+char buffer_serial[25];
+uint8_t alert_system_register = 0;
 
 int main(void)
 {
-  static float TemperaturaTermistor=255;
+  static float temperature_measure=255;
 
   leds_setup();
-
+  PWM_configuration_init();
   h_bridge_setup();
   h_bridge_off();
-  PWM_configuration_init();
   usart_configuration_init();
   ADC_configuration_init();
-  
+  buzzer_configuration_init();
+  normal_operation_led_on();
   sei();
 
   while( true ){
 
-    // TemperaturaTermistor = SensarTemperaturaSuperficial();
-    TemperaturaTermistor = SensarTemperaturaDivisor();      
+    temperature_measure = read_temperature();
     usart_transmit('t');
-    usart_Buffer_transmit(&TemperaturaTermistor, sizeof(TemperaturaTermistor));
+    usart_Buffer_transmit(&temperature_measure, sizeof(temperature_measure));
 
-    // if ( power_on ){
+     if ( power_on ){
+       ValorPWM = ControladorPID(TemperaturaReferencia,temperature_measure, Kp, Ki, Kd, 0, 0, modo);
+       PWM_set_modo(ValorPWM, modo);
+     }
 
-    //   // ValorPWM = ControladorPID(TemperaturaReferencia,TemperaturaTermistor, Kp, Ki, Kd, 0, 0, modo);
-    //   PWM_set_modo(ValorPWM, modo);
-    //   usart_transmit('p');
-    //   usart_transmit(ValorPWM);
-    // }
+    _delay_ms(DELAY_VALUE);
 
-    _delay_ms(DELAYVALUE);
+    if(alert_system_register != STATUS_OK){
+      send_failure_signals();
+      desactivate_equipment();
+    }
+
+
  }
 
   return(0);
@@ -53,25 +60,27 @@ int main(void)
 
 ISR(USART_RX_vect){
 
-  uint8_t modo = receive();
+  uint8_t command = receive();
 
-  switch(modo){
-    // case('r'):
-    //   TemperaturaReferencia = receive();
-    //   break;
+  switch(command){
+     case('r'):
+       TemperaturaReferencia = receive();
+       modo = definir_modo(25,TemperaturaReferencia);
+       power_on = true;
+       break;
 
     case('a'):
         ValorPWM = receive();
         modo_frio();
         PWM_set_modo(ValorPWM, FRIO);
-        power_on = true;
+        power_on = false;
         break;
 
     case('b'):
         ValorPWM = receive();
         modo_calor();
         PWM_set_modo(ValorPWM, CALOR);
-        power_on = true;
+        power_on = false;
         break;
 
     case('s'):
@@ -82,6 +91,7 @@ ISR(USART_RX_vect){
     case('c'):
       TemperaturaCalibracion = receive();
       CalibracionPID(TemperaturaCalibracion, &Kp, &Ki, &Kd, &N_FILTRO, &bias);
+      power_on = false;
       break;
   }
   sei();
