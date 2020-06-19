@@ -20,10 +20,10 @@
 #define R0TERMISTOR 10000 //10k
 #define SALIDA_MAXIMA_MODO_CALOR 128
 #define SALIDA_MINIMA_MODO_CALOR 0
-#define SALIDA_MAXIMA_MODO_FRIO 255
-#define SALIDA_MINIMA_MODO_FRIO 0
+#define SALIDA_MAXIMA_MODO_FRIO 0
+#define SALIDA_MINIMA_MODO_FRIO -255
 #define TEMPERATURA_MAXIMA 49.0
-#define TEMPERATURA_MINIMA -10.0
+#define TEMPERATURA_MINIMA 5.0
 #define DELAY_VALUE 100.00
 #define CANTIDAD_COMBINACIONES_PWM_DIFFTEMP 4
 #define TOLERANCIA_DELAY 0.08
@@ -42,9 +42,8 @@
 #define THERMISTOR_2_ADC_CHANNEL 6
 #define STATUS_OK 0
 #define BUZZER_SIGNAL_CYCLES 10
-#define TEMPERATURE_RECORD_SIZE 120
-#define TEMPERATURE_DELAY_TOLERANCE 2
-#define STEADY_STATE_TOLERANCE 0.5
+#define TEMPERATURE_DIFFERENCE_TOLERANCE 5
+#define ERROR_TEMPERATURE_DIFFERENCE 1
 
 void h_bridge_off();
 void h_bridge_setup();
@@ -53,9 +52,9 @@ modo_t definir_modo(float, float );
 void modo_frio();
 void modo_calor();
 uint8_t ControladorPID(float ,float , float , float , float ,float ,float ,modo_t );
-void CalibracionPID(float,float*,float*,float*,float*,float*);
+void CalibracionPID(float,float*,float*,float*,float*,float*, uint8_t*);
 void ApagarLedsIndicacion();
-float read_temperature();
+float read_temperature(uint8_t*);
 float calculate_temperature(uint8_t);
 void buzzer_configuration_init();
 void emergency_buzzer_signal_on();

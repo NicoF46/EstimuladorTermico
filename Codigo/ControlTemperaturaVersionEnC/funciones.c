@@ -24,12 +24,20 @@ void leds_setup()
   PORTB &= ~(1<<PB0);
 }
 
-float read_temperature(){
+float read_temperature(uint8_t* alert_system_register){
     float temperature_thermistor_1 = 0;
     float temperature_thermistor_2 = 0;
+    float mean_temperature = 0;
 
     temperature_thermistor_1 = calculate_temperature(THERMISTOR_1_ADC_CHANNEL);
     temperature_thermistor_2 = calculate_temperature(THERMISTOR_2_ADC_CHANNEL);
+    mean_temperature = (temperature_thermistor_1+temperature_thermistor_2)/2.0;
+    if (fabs(temperature_thermistor_1-temperature_thermistor_2) > TEMPERATURE_DIFFERENCE_TOLERANCE)
+      (*alert_system_register) = ERROR_TEMPERATURE_DIFFERENCE;
+    /*usart_transmit('h');
+    usart_Buffer_transmit(&temperature_thermistor_1, sizeof(temperature_thermistor_1));
+    usart_Buffer_transmit(&temperature_thermistor_2, sizeof(temperature_thermistor_2));
+    usart_Buffer_transmit(&mean_temperature, sizeof(mean_temperature));*/
     return (temperature_thermistor_1+temperature_thermistor_2)/2.0;
 }
 
@@ -77,113 +85,142 @@ void modo_calor(){
 
 uint8_t ControladorPID(float ReferenciaControl,float SalidaMedida, float Kp, float Ki, float Kd,float N,float bias,modo_t modo){
   // Creo que las variables que necesito almacenar la proxima iteracion
-  static float SalidaPrevia=0;
-  static float ReferenciaPrevia=0;
-  static float Ik_previo=0;
-  static float Dk_previo=0;
-  float Pk=0;
-  float Ik=0;
-  float Dk=0;
-  float Salida=0;
-  float gamma;
-  float  h;
-  float SalidaMaxima=0;
-  float SalidaMinima=0;
+static float SalidaPrevia=0;
+static float ReferenciaPrevia=0;
+static float Ik_previo=0;
+static float Dk_previo=0;
+float Pk=0;
+float Ik=0;
+float Dk=0;
+float Salida;
+float gamma;
+float  h;
+float SalidaMaxima=0;
+float SalidaMinima=0;
 
-  if(modo==FRIO){
-    SalidaMaxima=SALIDA_MAXIMA_MODO_FRIO;
-    SalidaMinima=SALIDA_MINIMA_MODO_FRIO;
-  }
-  else if (modo==CALOR){
-    SalidaMaxima=SALIDA_MAXIMA_MODO_CALOR;
-    SalidaMinima=SALIDA_MINIMA_MODO_CALOR;
-  }
+if(modo==FRIO){
+  SalidaMaxima=SALIDA_MAXIMA_MODO_FRIO;
+  SalidaMinima=SALIDA_MINIMA_MODO_FRIO;
+}
+else if (modo==CALOR){
+  SalidaMaxima=SALIDA_MAXIMA_MODO_CALOR;
+  SalidaMinima=SALIDA_MINIMA_MODO_CALOR;
+}
 
-  h= DELAY_VALUE*pow(10,-3);// Ts
+h= ((DELAY_VALUE)*pow(10,-3));
 
-  if (!N){
-     N=1;
-  }
-  gamma=Kd/N;
+if (!N){
+   N=1;
+}
+gamma=Kd/N;
 
-  Pk= Kp*(ReferenciaControl-SalidaMedida);
-  Ik = Ik_previo+Ki*Kp*h*(ReferenciaPrevia-SalidaPrevia);
-  Dk =gamma/(gamma+h)*Dk_previo-Kp*Kd/(gamma+h)*(SalidaMedida-SalidaPrevia);
+Pk= Kp*(ReferenciaControl-SalidaMedida);
+Ik = Ik_previo+Ki*Kp*h*(ReferenciaPrevia-SalidaPrevia);
+Dk =gamma/(gamma+h)*Dk_previo-Kp*Kd/(gamma+h)*(SalidaMedida-SalidaPrevia);
 
-  // Emito la salida
-  if(Kp!=0)
-    Salida  = Ik + Dk + Pk +bias;
+// Emito la salida
+if(Kp!=0)
+  Salida  = Ik + Dk + Pk +bias;
 
-  if(modo==FRIO)
-    Salida=Salida*(-1);
-  // Actualizo las variables la proxima iteracion
-  SalidaPrevia=SalidaMedida;
-  ReferenciaPrevia=ReferenciaControl;
-  Dk_previo=Dk;
+// Actualizo las variables la proxima iteracion
+SalidaPrevia=SalidaMedida;
+ReferenciaPrevia=ReferenciaControl;
+Dk_previo=Dk;
 
-  // Trunco la salida si se va de rango
-  if (Salida>SalidaMaxima){
-      Salida=SalidaMaxima;
-  }
-  else if(Salida < SalidaMinima){
-      Salida=SalidaMinima;
-  }
+// Trunco la salida si se va de rango
+if (Salida>SalidaMaxima){
+    Salida=SalidaMaxima;
+}
+else if(Salida <= SalidaMinima){
+    Salida=SalidaMinima;
+}
 
-  if(Salida==SalidaMaxima && Ik>=SalidaMaxima)
-    Ik_previo=SalidaMaxima;
-  else if (Salida==SalidaMinima && Ik<=SalidaMinima)
-    Ik_previo=SalidaMinima;
-  else {
-    Ik_previo=Ik;
-  }
+if(modo==FRIO && Ik<=SalidaMinima)
+  Ik_previo=SalidaMinima;
+// Anulo el termino integral si mi sistema satura;
+else if(SalidaMedida>=TEMPERATURA_MAXIMA && Salida==SalidaMaxima){
+  Ik_previo=0;
+}
+else if (modo == CALOR && Ik > SalidaMaxima){
+  Ik_previo = SalidaMaxima;
+}
+else if (SalidaMedida<=TEMPERATURA_MINIMA && Salida==SalidaMinima){
+  Ik_previo=0;
+}
+else {
+  Ik_previo=Ik;
+}
 
-  return Salida;
+/*usart_transmit('g');
+usart_Buffer_transmit(&Pk, sizeof(Pk));
+usart_Buffer_transmit(&Ik, sizeof(Ik));
+usart_Buffer_transmit(&Dk, sizeof(Dk));*/
+if (modo == FRIO)
+  Salida = Salida*(-1);
+return Salida;
  }
 
- void CalibracionPID(float ReferenciaControl,float* Kp,float* Ki,float* Kd,float* N,float* bias){
+ void CalibracionPID(float ReferenciaControl,float* Kp,float* Ki,float* Kd,float* N,float* bias,uint8_t* alert_system_register ){
   modo_t modo;
-  float TemperaturaInicial = read_temperature();
-  float temperature_now = 255;
-  float temperature_before = 0;
-  float TiempoDelay = 0;
-  float TiempoTotalTau = 0;
-  uint8_t ValorEscalon = 0;
-  unsigned int iterator = 0;
-  float temperature_record[TEMPERATURE_RECORD_SIZE];
-  unsigned int delay_counter = 0;
-
+  float TemperaturaInicial = read_temperature(alert_system_register);
+  float time_value = 0.0;
+  uint8_t step_value = 0;
+  float input_step_value = 0;
+  float temperature_measure = 255;
+  int step_time = 2000;
+  int sampling_measure = 100;
+  int i=0;
+  h_bridge_off();
+  modo = definir_modo(TemperaturaInicial,ReferenciaControl);
+  PWM_set_modo(0,modo);
+  input_step_value = 0;
+  step_time = 4000;
+  while(step_time>0){
+    temperature_measure = read_temperature(alert_system_register);
+    usart_transmit('c');
+    usart_Buffer_transmit(&time_value, sizeof(time_value));
+    usart_Buffer_transmit(&input_step_value, sizeof(input_step_value));
+    usart_Buffer_transmit(&temperature_measure, sizeof(temperature_measure));
+    _delay_ms(sampling_measure);
+    step_time = step_time - 1;
+    time_value = time_value + sampling_measure/1000.00 ;
+  }
+  for(i=0;i<2;i++){
+  step_time = 4000;
   modo = definir_modo(TemperaturaInicial,ReferenciaControl);
   if (modo == FRIO){
-    ValorEscalon = SALIDA_MAXIMA_MODO_FRIO;
+    step_value = SALIDA_MAXIMA_MODO_FRIO;
     modo_frio();
 }
   else{
-    ValorEscalon = SALIDA_MAXIMA_MODO_CALOR;
+    step_value = SALIDA_MAXIMA_MODO_CALOR;
     modo_calor();}
-  PWM_set_modo(fabs(ValorEscalon),modo);
-
-  while((fabs((temperature_now=read_temperature())-temperature_before)>STEADY_STATE_TOLERANCE) || (fabs(temperature_now-TemperaturaInicial))<TEMPERATURE_DELAY_TOLERANCE || iterator<100){
-    temperature_record[iterator] = temperature_now;
-    if((fabs(temperature_now-TemperaturaInicial)/TemperaturaInicial)>TOLERANCIA_DELAY && delay_counter==0)
-        delay_counter = iterator;
-    iterator = iterator + 1;
-    temperature_before = temperature_now;
-    _delay_ms(500);
-    usart_transmit('t');
-    usart_Buffer_transmit(&temperature_now, sizeof(temperature_now));
+  PWM_set_modo(fabs(step_value),modo);
+  input_step_value = step_value;
+  while(step_time>0){
+    temperature_measure = read_temperature(alert_system_register);
+    usart_transmit('c');
+    usart_Buffer_transmit(&time_value, sizeof(time_value));
+    usart_Buffer_transmit(&input_step_value, sizeof(input_step_value));
+    usart_Buffer_transmit(&temperature_measure, sizeof(temperature_measure));
+    _delay_ms(sampling_measure);
+    step_time = step_time - 1;
+    time_value = time_value + sampling_measure/1000.00 ;
   }
-
-  TiempoDelay=delay_counter*0.5;
-  TiempoTotalTau=(iterator+1)*0.5/5;
   h_bridge_off();
-  (*Kp)=1.2*TiempoTotalTau/TiempoDelay*(ValorEscalon*12/255)/(fabs(TemperaturaInicial-temperature_now));
-  (*Ki)=2*TiempoDelay*0.001;
-  (*Kd)=0.5*TiempoDelay*0.001;
-
-  usart_transmit('c');
-  usart_Buffer_transmit(Kp, sizeof(*Kp));
-  usart_Buffer_transmit(Ki, sizeof(*Ki));
-  usart_Buffer_transmit(Kd, sizeof(*Kd));
+  PWM_set_modo(0,modo);
+  input_step_value = 0;
+  step_time = 2000;
+  while(step_time>0){
+    temperature_measure = read_temperature(alert_system_register);
+    usart_transmit('c');
+    usart_Buffer_transmit(&time_value, sizeof(time_value));
+    usart_Buffer_transmit(&input_step_value, sizeof(input_step_value));
+    usart_Buffer_transmit(&temperature_measure, sizeof(temperature_measure));
+    _delay_ms(sampling_measure);
+    step_time = step_time - 1;
+    time_value = time_value + sampling_measure/1000.00 ;
+  }}
   }
 
 void ApagarLedsIndicacion(){
@@ -265,4 +302,5 @@ void send_failure_signals(){
 
 void desactivate_equipment(){
   /*funcion para desactivar el equipo ante una falla*/
+  while( 1 ){};
 }

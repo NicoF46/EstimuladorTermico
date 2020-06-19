@@ -6,9 +6,9 @@
 #include <avr/interrupt.h>
 #include "funciones.h"
 
-float Kp = 7.8*1.1;
-float Ki = 0.127;
-float Kd = 1.959;
+float Kp = 42.09506265030314;
+float Ki = 0.021557975007171537;
+float Kd = 4.4487479401778325;
 float bias = 0;
 float N_FILTRO = 10;
 static float TemperaturaCalibracion = 25;
@@ -16,13 +16,11 @@ static uint8_t ValorPWM = 0;
 static bool power_on = false;
 static modo_t modo = CALIBRACION;
 static float TemperaturaReferencia = 255;
-char buffer_serial[25];
 uint8_t alert_system_register = 0;
+float temperature_measure=255;
 
 int main(void)
 {
-  static float temperature_measure=255;
-
   leds_setup();
   PWM_configuration_init();
   h_bridge_setup();
@@ -35,15 +33,15 @@ int main(void)
 
   while( true ){
 
-    temperature_measure = read_temperature();
-    usart_transmit('t');
-    usart_Buffer_transmit(&temperature_measure, sizeof(temperature_measure));
+    temperature_measure = read_temperature(&alert_system_register);
+    /*usart_transmit('t');
+    usart_Buffer_transmit(&temperature_measure, sizeof(temperature_measure));*/
 
      if ( power_on ){
-       ValorPWM = ControladorPID(TemperaturaReferencia,temperature_measure, Kp, Ki, Kd, 0, 0, modo);
-       PWM_set_modo(ValorPWM, modo);
-     }
+      ValorPWM = ControladorPID(TemperaturaReferencia,temperature_measure, Kp, Ki, Kd, 0, 0, modo);
+      PWM_set_modo(ValorPWM, modo);
 
+     }
     _delay_ms(DELAY_VALUE);
 
     if(alert_system_register != STATUS_OK){
@@ -63,11 +61,6 @@ ISR(USART_RX_vect){
   uint8_t command = receive();
 
   switch(command){
-     case('r'):
-       TemperaturaReferencia = receive();
-       modo = definir_modo(25,TemperaturaReferencia);
-       power_on = true;
-       break;
 
     case('a'):
         ValorPWM = receive();
@@ -83,15 +76,35 @@ ISR(USART_RX_vect){
         power_on = false;
         break;
 
+    case('c'):
+      TemperaturaCalibracion = receive();
+      CalibracionPID(TemperaturaCalibracion, &Kp, &Ki, &Kd, &N_FILTRO, &bias, &alert_system_register);
+      power_on = false;
+      break;
+
+    case('d'):
+      TemperaturaCalibracion = receive();
+      CalibracionPID(TemperaturaCalibracion, &Kp, &Ki, &Kd, &N_FILTRO, &bias, &alert_system_register);
+      power_on = false;
+      break;
+
     case('s'):
       h_bridge_off();
       power_on = false;
       break;
 
-    case('c'):
-      TemperaturaCalibracion = receive();
-      CalibracionPID(TemperaturaCalibracion, &Kp, &Ki, &Kd, &N_FILTRO, &bias);
-      power_on = false;
+    case('r'):
+      TemperaturaReferencia = receive();
+      if (TemperaturaReferencia >= TEMPERATURA_MINIMA && TemperaturaReferencia <= TEMPERATURA_MAXIMA ){
+        modo = definir_modo(25,TemperaturaReferencia);
+        power_on = true;}
+      break;
+
+    case('x'):
+      if (temperature_measure == 255)
+        temperature_measure = read_temperature(&alert_system_register);
+      usart_transmit('x');
+      usart_Buffer_transmit(&temperature_measure, sizeof(temperature_measure));
       break;
   }
   sei();
