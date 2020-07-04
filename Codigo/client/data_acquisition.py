@@ -15,7 +15,7 @@ SEPARATOR_SIZE = 1
 SEPARATOR = b't'
 DATA_SIZE = 4
 DATA_FORMAT = '<f'
-CALIBRATION_SEPARATOR = b'c'
+LINE_LABEL = 'temp'
 
 DEBUG = False
 
@@ -59,9 +59,9 @@ def find_arduino(baud_rate):
     ports = list(ports_list.comports())
     for p in ports:
         if p.device == '/dev/ttyACM0' or p.device == '/dev/ttyUSB0':  # arduino found
-            print("Arduino found at " + p.device)
+            print("Device found at " + p.device)
             return serial.Serial(p.device, baud_rate)
-    raise IOError("Could not find an arduino - is it plugged in?")
+    raise IOError("Could not find the device - is it plugged in?")
 
 
 def ask_stop(stop_event):
@@ -84,6 +84,7 @@ def get_data():
 
     p = Plotter([0, 30], [-10, 60])
     p.set_ticks('y', [y for y in range(-10, 61, 5)])
+    p.add_line(LINE_LABEL)
     start_time = time()
     data = []
     times = []
@@ -97,30 +98,10 @@ def get_data():
             current_data, = struct.unpack(DATA_FORMAT, raw_data)
             current_time = time()-start_time
 
-            p.add_data([current_time], [current_data])
+            p.add_data([current_time], [current_data], LINE_LABEL)
 
             times.append(current_time)
             data.append(current_data)
-
-        if raw_separator == CALIBRATION_SEPARATOR:
-            raw_data = ser.read(DATA_SIZE)
-            kp = struct.unpack(DATA_FORMAT, raw_data)
-            raw_data = ser.read(DATA_SIZE)
-            ki = struct.unpack(DATA_FORMAT, raw_data)
-            raw_data = ser.read(DATA_SIZE)
-            kd = struct.unpack(DATA_FORMAT, raw_data)
-            print(f'El valor de KP es {kp}, KI es {ki} y KD es {kd}.')
-
-        if DEBUG:
-            if raw_separator == b'p':
-                raw_data = ser.read(1)
-                current_data, = struct.unpack('<B', raw_data)
-                print("PWM :" + str(current_data))
-
-            elif raw_separator == b'x':
-                raw_data = ser.read(1)
-                current_data, = struct.unpack('<b', raw_data)
-                print("Temperatura Referencia:" + str(current_data))
 
     ser.close()
     p.close()
