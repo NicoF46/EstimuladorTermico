@@ -7,8 +7,8 @@
 #include "funciones.h"
 
 float Kp = 42.09506265030314;
-float Ki = 0.021557975007171537;
-float Kd = 4.4487479401778325;
+float Ki = 0.04;
+float Kd = 2.8;
 float bias = 0;
 float N_FILTRO = 10;
 static float TemperaturaCalibracion = 25;
@@ -34,8 +34,8 @@ int main(void)
   while( true ){
 
     temperature_measure = read_temperature(&alert_system_register);
-    /*usart_transmit('t');
-    usart_Buffer_transmit(&temperature_measure, sizeof(temperature_measure));*/
+    usart_transmit('t');
+    usart_Buffer_transmit(&temperature_measure, sizeof(temperature_measure));
 
      if ( power_on ){
       ValorPWM = ControladorPID(TemperaturaReferencia,temperature_measure, Kp, Ki, Kd, 0, 0, modo);
@@ -97,6 +97,7 @@ ISR(USART_RX_vect){
       TemperaturaReferencia = receive();
       if (TemperaturaReferencia >= TEMPERATURA_MINIMA && TemperaturaReferencia <= TEMPERATURA_MAXIMA ){
         modo = definir_modo(25,TemperaturaReferencia);
+        set_modo(modo);
         power_on = true;}
       break;
 

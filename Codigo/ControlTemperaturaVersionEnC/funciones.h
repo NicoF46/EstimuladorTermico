@@ -26,8 +26,9 @@
 #define TEMPERATURA_MINIMA 5.0
 #define DELAY_VALUE 100.00
 #define CANTIDAD_COMBINACIONES_PWM_DIFFTEMP 4
-#define TOLERANCIA_DELAY 0.08
+#define TOLERANCIA_DELAY 0.2
 #define TAU 0.63
+#define TAU_TEMPERATURE_TOLERANCE 0.5
 #define TENSION_REFERENCIA_OPAMPS 2.495
 #define RESISTENCIA_R3 39000.0
 #define RESISTENCIA_R4 39000.0
@@ -44,6 +45,9 @@
 #define BUZZER_SIGNAL_CYCLES 10
 #define TEMPERATURE_DIFFERENCE_TOLERANCE 5
 #define ERROR_TEMPERATURE_DIFFERENCE 1
+#define CALIBRATION_STEP_TIME 800
+#define CALIBRATION_RETURN_TOLERANCE 1.5
+#define ZIEGLER_RULE 1
 
 void h_bridge_off();
 void h_bridge_setup();
@@ -64,3 +68,7 @@ void normal_operation_led_off();
 void emergency_led_on();
 void emergency_led_off();
 void desactivate_equipment();
+uint8_t select_step_value(modo_t);
+void send_temperature(float);
+void set_modo(modo_t);
+
