@@ -15,7 +15,7 @@ SEPARATOR_SIZE = 1
 SEPARATOR = b't'
 DATA_SIZE = 4
 DATA_FORMAT = '<f'
-LINE_LABEL = 'temp'
+T_LABELS = ('t1', 't2')
 
 DEBUG = False
 
@@ -35,11 +35,17 @@ class EnviarDatos(cmd.Cmd):
     def do_temp(self, dato):
         self._send_chunk(b'r', dato)
 
-    def do_cold(self, dato):
+    def do_pwm_cold(self, dato):
         self._send_chunk(b'a', dato)
 
-    def do_heat(self, dato):
+    def do_pwm_hot(self, dato):
         self._send_chunk(b'b', dato)
+
+    def do_cold(self, dato):
+        self._send_chunk(b'd', dato)
+
+    def do_hot(self, dato):
+        self._send_chunk(b'e', dato)
     
     def do_cal(self, dato):
         self._send_chunk(b'c', dato)
@@ -84,9 +90,11 @@ def get_data():
 
     p = Plotter([0, 30], [-10, 60])
     p.set_ticks('y', [y for y in range(-10, 61, 5)])
-    p.add_line(LINE_LABEL)
     start_time = time()
-    data = []
+    data = {}
+    for l in T_LABELS:
+        p.add_line(l)
+        data[l] = []
     times = []
 
     while not stop_event.isSet():
@@ -94,14 +102,16 @@ def get_data():
         raw_separator = ser.read(SEPARATOR_SIZE)
 
         if raw_separator == SEPARATOR:
-            raw_data = ser.read(DATA_SIZE)
-            current_data, = struct.unpack(DATA_FORMAT, raw_data)
-            current_time = time()-start_time
+            
 
-            p.add_data([current_time], [current_data], LINE_LABEL)
+            current_time = time()-start_time
+            for l in T_LABELS   :
+                raw_data = ser.read(DATA_SIZE)
+                current_data, = struct.unpack(DATA_FORMAT, raw_data)
+                p.add_data([current_time], [current_data], l)
+                data[l].append(current_data)
 
             times.append(current_time)
-            data.append(current_data)
 
     ser.close()
     p.close()

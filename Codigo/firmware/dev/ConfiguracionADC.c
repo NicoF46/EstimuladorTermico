@@ -8,9 +8,9 @@ void ADC_configuration_init(){
 }
 
 uint16_t ReadADC(){
-    ADCSRA|=(1<<ADSC);
-while ( (ADCSRA & _BV(ADSC)) );
-    return ADC;
+  ADCSRA|=(1<<ADSC);
+  while ( (ADCSRA & _BV(ADSC)) );
+  return ADC;
 }
 
 void adc_select_channel(uint8_t channel_number){

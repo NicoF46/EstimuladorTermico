@@ -1,6 +1,8 @@
 #include "funciones.h"
 #include "ConfiguracionADC.h"
 
+#define BIT_BUZZER PB4
+
 void h_bridge_off(){
   PORTD &= ~(1<<PD5);
   PORTD &= ~(1<<PD6);
@@ -27,13 +29,13 @@ void leds_setup()
 float read_temperature(uint8_t* alert_system_register){
     float temperature_thermistor_1 = 0;
     float temperature_thermistor_2 = 0;
-    float mean_temperature = 0;
+    // float mean_temperature = 0;
 
-    temperature_thermistor_1 = calculate_temperature(THERMISTOR_1_ADC_CHANNEL);
-    temperature_thermistor_2 = calculate_temperature(THERMISTOR_2_ADC_CHANNEL);
-    mean_temperature = (temperature_thermistor_1+temperature_thermistor_2)/2.0;
-    if (fabs(temperature_thermistor_1-temperature_thermistor_2) > TEMPERATURE_DIFFERENCE_TOLERANCE)
-      (*alert_system_register) = ERROR_TEMPERATURE_DIFFERENCE;
+    // temperature_thermistor_1 = calculate_temperature(THERMISTOR_1_ADC_CHANNEL);
+    // temperature_thermistor_2 = calculate_temperature(THERMISTOR_2_ADC_CHANNEL);
+    // mean_temperature = (temperature_thermistor_1+temperature_thermistor_2)/2.0;
+    // if (fabs(temperature_thermistor_1-temperature_thermistor_2) > TEMPERATURE_DIFFERENCE_TOLERANCE)
+    //   (*alert_system_register) = ERROR_TEMPERATURE_DIFFERENCE;
     /*usart_transmit('h');
     usart_Buffer_transmit(&temperature_thermistor_1, sizeof(temperature_thermistor_1));
     usart_Buffer_transmit(&temperature_thermistor_2, sizeof(temperature_thermistor_2));
@@ -66,19 +68,23 @@ modo_t definir_modo(float Tamb, float Tref){
 }
 
 void modo_frio(){
+    /* MODO CALOR OFF */
     PORTD &= ~(1<<PD6);
     OCR1A = 0;
-    DDRB &= ~(1<<PB1);
+    DDRB &= ~(1<<PB1);  
     _delay_ms(10);
+    /* MODO FRIO ON */
     PORTD |= (1<<PD5);
     DDRB |= (1<<PB2);
 }
 
 void modo_calor(){
+  /* MODO FRIO OFF */
   PORTD&=~(1<<PD5);
   OCR1B=0;
   DDRB &= ~(1<<PB2);
   _delay_ms(10);
+  /* MODO CALOR ON */
   PORTD |= (1<<PD6);
   DDRB |= (1<<PB1);
 }
@@ -92,7 +98,7 @@ static float Dk_previo=0;
 float Pk=0;
 float Ik=0;
 float Dk=0;
-float Salida;
+float Salida = 0;
 float gamma;
 float  h;
 float SalidaMaxima=0;
@@ -228,49 +234,49 @@ void ApagarLedsIndicacion(){
 }
 
 void buzzer_configuration_init(){
-  DDRB |= (1 << PB3);
+  DDRB |= (1 << BIT_BUZZER);
 }
 
 void emergency_buzzer_signal_on(){
-  PORTB |= (1 << PB3);
+  PORTB |= (1 << BIT_BUZZER);
   _delay_ms(200);
-  PORTB &= ~(1 << PB3);
+  PORTB &= ~(1 << BIT_BUZZER);
   _delay_ms(100);
-  PORTB |= (1 << PB3);
+  PORTB |= (1 << BIT_BUZZER);
   _delay_ms(200);
-  PORTB &= ~(1 << PB3);
+  PORTB &= ~(1 << BIT_BUZZER);
   _delay_ms(100);
-  PORTB |= (1 << PB3);
+  PORTB |= (1 << BIT_BUZZER);
   _delay_ms(200);
-  PORTB &= ~(1 << PB3);
+  PORTB &= ~(1 << BIT_BUZZER);
   _delay_ms(300);
-  PORTB |= (1 << PB3);
+  PORTB |= (1 << BIT_BUZZER);
   _delay_ms(200);
-  PORTB &= ~(1 << PB3);
+  PORTB &= ~(1 << BIT_BUZZER);
   _delay_ms(100);
-  PORTB |= (1 << PB3);
+  PORTB |= (1 << BIT_BUZZER);
   _delay_ms(200);
-  PORTB &= ~(1 << PB3);
+  PORTB &= ~(1 << BIT_BUZZER);
   _delay_ms(500);
-  PORTB |= (1 << PB3);
+  PORTB |= (1 << BIT_BUZZER);
   _delay_ms(200);
-  PORTB &= ~(1 << PB3);
+  PORTB &= ~(1 << BIT_BUZZER);
   _delay_ms(100);
-  PORTB |= (1 << PB3);
+  PORTB |= (1 << BIT_BUZZER);
   _delay_ms(200);
-  PORTB &= ~(1 << PB3);
+  PORTB &= ~(1 << BIT_BUZZER);
   _delay_ms(100);
-  PORTB |= (1 << PB3);
+  PORTB |= (1 << BIT_BUZZER);
   _delay_ms(200);
-  PORTB &= ~(1 << PB3);
+  PORTB &= ~(1 << BIT_BUZZER);
   _delay_ms(300);
-  PORTB |= (1 << PB3);
+  PORTB |= (1 << BIT_BUZZER);
   _delay_ms(200);
-  PORTB &= ~(1 << PB3);
+  PORTB &= ~(1 << BIT_BUZZER);
   _delay_ms(100);
-  PORTB |= (1 << PB3);
+  PORTB |= (1 << BIT_BUZZER);
   _delay_ms(200);
-  PORTB &= ~(1 << PB3);
+  PORTB &= ~(1 << BIT_BUZZER);
   _delay_ms(2500);
 }
 
