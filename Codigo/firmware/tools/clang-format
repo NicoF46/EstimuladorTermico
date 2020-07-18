@@ -1,0 +1,33 @@
+{
+AlignEscapedNewlinesLeft: Left,
+AllowAllParametersOfDeclarationOnNextLine: false,
+AllowShortFunctionsOnASingleLine: None,
+AllowShortIfStatementsOnASingleLine: false,
+AllowShortLoopsOnASingleLine: false,
+BasedOnStyle: Google,
+BinPackArguments: false,
+BinPackParameters: false,
+BreakBeforeBraces: Custom,
+BraceWrapping:
+{
+  AfterControlStatement: true,
+  AfterEnum:       true,
+  AfterFunction:   true,
+  AfterStruct:     true,
+  AfterUnion:      true,
+  BeforeElse:      true,
+  IndentBraces:    false
+},
+ColumnLimit: 100,
+ContinuationIndentWidth: 2,
+Cpp11BracedListStyle: false,
+IndentPPDirectives: AfterHash,
+IndentWidth: 2,
+MaxEmptyLinesToKeep: 2,
+SortIncludes: false,
+SpaceAfterCStyleCast: false,
+SpaceBeforeParens: Never,
+SpacesInCStyleCastParentheses: true,
+SpacesInParentheses: true,
+UseTab: Never
+}
