@@ -1,6 +1,6 @@
 #include "status.h"
 #include <avr/io.h>
-  
+
 /* ----------------------------------------------------------------------------
   Internal data
 ------------------------------------------------------------------------------*/
@@ -13,12 +13,15 @@
 #define LED_HOT_PORT PORTC
 #define LED_HOT_DIRECTION DDRC
 
-static status_t actual_status = STANDBY;
+static status_t current_status = STANDBY;
 
 /* ----------------------------------------------------------------------------
   Function definition
 ------------------------------------------------------------------------------*/
 
+/**
+ * Sets the register's bit to output mode used by the hot and cold indicators LEDs.
+ */
 void status_setup()
 {
   LED_COLD_DIRECTION |= ( 1 << LED_COLD_BIT );
@@ -26,32 +29,41 @@ void status_setup()
 }
 
 
-void status_set(status_t status){
-
+/**
+ * Sets the devices current status.
+ *
+ * \param[in]  status  The new device's status.
+ */
+void status_set( status_t status )
+{
   switch( status )
-  {    
+  {
     case COLD:
-      actual_status = COLD;
+      current_status = COLD;
       LED_HOT_PORT &= ~( 1 << LED_HOT_BIT );
       LED_COLD_PORT |= ( 1 << LED_COLD_BIT );
       break;
-    
+
     case HOT:
-      actual_status = HOT;
+      current_status = HOT;
       LED_COLD_PORT &= ~( 1 << LED_COLD_BIT );
       LED_HOT_PORT |= ( 1 << LED_HOT_BIT );
       break;
 
     case STANDBY:
-      actual_status = STANDBY;
+      current_status = STANDBY;
       LED_COLD_PORT &= ~( 1 << LED_COLD_BIT );
       LED_HOT_PORT &= ~( 1 << LED_HOT_BIT );
   }
-	
 }
 
 
+/**
+ * Returns the current device's status.
+ *
+ * \return     The current device's status.
+ */
 status_t status_get()
 {
-	return actual_status;
+  return current_status;
 }

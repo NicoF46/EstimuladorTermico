@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <avr/io.h>
-#include  <math.h>
+#include <math.h>
 #include "ConfiguracionPWM.h"
 #include "ConfiguracionSerial.h"
 #include "ConfiguracionADC.h"
@@ -8,16 +8,16 @@
 #include <time.h>
 #include <util/delay.h>
 
-#define REFERENCIAADC 5.0 //5v
+#define REFERENCIAADC 5.0  // 5v
 #define MAXIMOVALORADC 1023
 #define R1 9750
 #define R2 9770
 #define CEROKELVIN -273.15
-#define T0TERMISTOR 298.15 //kelvin
+#define T0TERMISTOR 298.15  // kelvin
 #define UNOSOBRET0TERMISTOR 0.003354016435
 #define UNOSOBREBETA0 0.0002911208151
-#define BETATERMISTOR 3435 //kelvin
-#define R0TERMISTOR 10000 //10k
+#define BETATERMISTOR 3435  // kelvin
+#define R0TERMISTOR 10000   // 10k
 #define SALIDA_MAXIMA_MODO_CALOR 128
 #define SALIDA_MINIMA_MODO_CALOR 0
 #define SALIDA_MAXIMA_MODO_FRIO 0
@@ -48,19 +48,11 @@
 void h_bridge_off();
 void h_bridge_setup();
 void leds_setup();
-modo_t definir_modo(float, float );
+modo_t definir_modo( float, float );
 void modo_frio();
 void modo_calor();
-uint8_t ControladorPID(float ,float , float , float , float ,float ,float ,modo_t );
-void CalibracionPID(float,float*,float*,float*,float*,float*, uint8_t*);
+uint8_t ControladorPID( float, float, float, float, float, float, float, modo_t );
+void CalibracionPID( float, float*, float*, float*, float*, float*, uint8_t* );
 void ApagarLedsIndicacion();
-float read_temperature(uint8_t*);
-float calculate_temperature(uint8_t);
-void buzzer_configuration_init();
-void emergency_buzzer_signal_on();
-void send_failure_signals();
-void normal_operation_led_on();
-void normal_operation_led_off();
-void emergency_led_on();
-void emergency_led_off();
-void desactivate_equipment();
+float read_temperature( uint8_t* );
+float calculate_temperature( uint8_t );

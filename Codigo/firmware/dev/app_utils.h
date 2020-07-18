@@ -5,6 +5,6 @@
   Function prototypes
 ------------------------------------------------------------------------------*/
 
-void delay_ms(unsigned int delay);
+void delay_ms( unsigned int delay );
 
 #endif

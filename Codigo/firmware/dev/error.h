@@ -5,14 +5,18 @@
   Library data types
 -----------------------------------------------------------------------------*/
 
-typedef enum{NO_ERROR, ERROR}error_t;
+typedef enum
+{
+  NO_ERROR,
+  ERROR
+} error_t;
 
 /* ----------------------------------------------------------------------------
   Function prototypes
 ------------------------------------------------------------------------------*/
 
 void error_setup();
-void error_set(error_t status);
+void error_set( error_t status );
 error_t error_get();
 
 #endif

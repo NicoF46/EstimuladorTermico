@@ -19,127 +19,123 @@ uint8_t alert_system_register = 0;
 int TemperaturaReferencia = 25;
 modo_t modo = WAITING;
 
-int main(void)
+int main( void )
 {
   status_setup();
-  status_set(STANDBY);
+  status_set( STANDBY );
   error_setup();
-  error_set(NO_ERROR);
+  error_set( NO_ERROR );
+
   PWM_configuration_init();
   h_bridge_setup();
   h_bridge_off();
   usart_configuration_init();
   ADC_configuration_init();
-  buzzer_configuration_init();
   sei();
 
-  float temperature_measure=255;
+  float temperature_measure = 255;
   float temp = 25;
 
-  while( true ){
-
-    usart_transmit('t');
-    temperature_measure = calculate_temperature(THERMISTOR_1_ADC_CHANNEL);
-    usart_Buffer_transmit(&temperature_measure, sizeof(temperature_measure));
+  while( true )
+  {
+    usart_transmit( 't' );
+    temperature_measure = calculate_temperature( THERMISTOR_1_ADC_CHANNEL );
+    usart_Buffer_transmit( &temperature_measure, sizeof( temperature_measure ) );
     temp = temperature_measure;
-    temperature_measure = calculate_temperature(THERMISTOR_2_ADC_CHANNEL);
-    usart_Buffer_transmit(&temperature_measure, sizeof(temperature_measure));
+    temperature_measure = calculate_temperature( THERMISTOR_2_ADC_CHANNEL );
+    usart_Buffer_transmit( &temperature_measure, sizeof( temperature_measure ) );
     temp += temperature_measure;
     temp /= 2;
 
-    _delay_ms(DELAY_VALUE);
+    _delay_ms( DELAY_VALUE );
 
-     if ( modo != WAITING ){
-      ValorPWM = ControladorPID(TemperaturaReferencia,temp, Kp, Ki, Kd, 0, 0, modo);
-      PWM_set_modo(ValorPWM, modo);
-     }
-
-    if(alert_system_register != STATUS_OK){
-      send_failure_signals();
-      desactivate_equipment();
+    if( modo != WAITING )
+    {
+      ValorPWM = ControladorPID( TemperaturaReferencia, temp, Kp, Ki, Kd, 0, 0, modo );
+      PWM_set_modo( ValorPWM, modo );
     }
 
+  }
 
- }
-
-  return(0);
+  return ( 0 );
 }
 
 
-ISR(USART_RX_vect){
-
+ISR( USART_RX_vect )
+{
   uint8_t command = receive();
 
-  switch(command){
-
-    case('a'):
+  switch( command )
+  {
+    case( 'a' ):
       ValorPWM = receive();
       modo_frio();
-      PWM_set_modo(ValorPWM, FRIO);
-      status_set(COLD);
+      PWM_set_modo( ValorPWM, FRIO );
+      status_set( COLD );
       break;
 
-    case('b'):
+    case( 'b' ):
       ValorPWM = receive();
       modo_calor();
-      PWM_set_modo(ValorPWM, CALOR);
-      status_set(HOT);
+      PWM_set_modo( ValorPWM, CALOR );
+      status_set( HOT );
       break;
 
-    case('d'):
+    case( 'd' ):
       TemperaturaReferencia = receive();
       modo_frio();
-      status_set(COLD);
+      status_set( COLD );
       modo = FRIO;
       break;
 
-    case('e'):
+    case( 'e' ):
       TemperaturaReferencia = receive();
       modo_calor();
-      status_set(HOT);
+      status_set( HOT );
       modo = CALOR;
-      break;    
+      break;
 
-    case('s'):
+    case( 's' ):
       h_bridge_off();
-      status_set(STANDBY);
+      status_set( STANDBY );
       modo = WAITING;
       break;
 
-    case('x'):
+    case( 'x' ):
       h_bridge_off();
       sei();
-      error_set(ERROR);
+      error_set( ERROR );
       break;
 
-    case('z'):
-      error_set(NO_ERROR);
+    case( 'z' ):
+      error_set( NO_ERROR );
       break;
 
-    // case('c'):
-    //   TemperaturaCalibracion = receive();
-    //   CalibracionPID(TemperaturaCalibracion, &Kp, &Ki, &Kd, &N_FILTRO, &bias, &alert_system_register);
-    //   break;
+      // case('c'):
+      //   TemperaturaCalibracion = receive();
+      //   CalibracionPID(TemperaturaCalibracion, &Kp, &Ki, &Kd, &N_FILTRO, &bias,
+      //   &alert_system_register); break;
 
-    // case('d'):
-    //   TemperaturaCalibracion = receive();
-    //   CalibracionPID(TemperaturaCalibracion, &Kp, &Ki, &Kd, &N_FILTRO, &bias, &alert_system_register);
-    //   break;
+      // case('d'):
+      //   TemperaturaCalibracion = receive();
+      //   CalibracionPID(TemperaturaCalibracion, &Kp, &Ki, &Kd, &N_FILTRO, &bias,
+      //   &alert_system_register); break;
 
 
-    // case('r'):
-    //   TemperaturaReferencia = receive();
-    //   if (TemperaturaReferencia >= TEMPERATURA_MINIMA && TemperaturaReferencia <= TEMPERATURA_MAXIMA ){
-    //     modo = definir_modo(25,TemperaturaReferencia);
-    //     power_on = true;}
-    //   break;
+      // case('r'):
+      //   TemperaturaReferencia = receive();
+      //   if (TemperaturaReferencia >= TEMPERATURA_MINIMA && TemperaturaReferencia <=
+      //   TEMPERATURA_MAXIMA ){
+      //     modo = definir_modo(25,TemperaturaReferencia);
+      //     power_on = true;}
+      //   break;
 
-    // case('x'):
-    //   if (temperature_measure == 255)
-    //     temperature_measure = read_temperature(&alert_system_register);
-    //   usart_transmit('x');
-    //   usart_Buffer_transmit(&temperature_measure, sizeof(temperature_measure));
-    //   break;
+      // case('x'):
+      //   if (temperature_measure == 255)
+      //     temperature_measure = read_temperature(&alert_system_register);
+      //   usart_transmit('x');
+      //   usart_Buffer_transmit(&temperature_measure, sizeof(temperature_measure));
+      //   break;
   }
   sei();
 }
