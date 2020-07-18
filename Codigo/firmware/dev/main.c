@@ -54,7 +54,6 @@ int main( void )
       ValorPWM = ControladorPID( TemperaturaReferencia, temp, Kp, Ki, Kd, 0, 0, modo );
       PWM_set_modo( ValorPWM, modo );
     }
-
   }
 
   return ( 0 );

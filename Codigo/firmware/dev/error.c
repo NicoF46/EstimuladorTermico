@@ -20,12 +20,13 @@
 #define BUZZER_BIT PB4
 #define BUZZER_PORT PORTB
 #define BUZZER_DIRECTION DDRB
+
 #define BUZZER_MELODY_SIZE 20
-#define BUZZER_MELODY                                                                              \
-  {                                                                                                \
-    200, 100, 200, 100, 200, 300, 200, 100, 200, 500, 200, 100, 200, 100, 200, 300, 200, 100, 200, \
-      2500                                                                                         \
-  }
+const static unsigned int BUZZER_MELODY[BUZZER_MELODY_SIZE] = 
+  {
+    200, 100, 200, 100, 200, 300, 200, 100, 200, 500, 
+    200, 100, 200, 100, 200, 300, 200, 100, 200, 2500
+  };
 
 static error_t current_error = NO_ERROR;
 
@@ -93,14 +94,13 @@ error_t error_get()
 static void _alarm_sound()
 {
   bool sound_on = true;
-  const unsigned int melody[] = BUZZER_MELODY;
 
   while( current_error == ERROR )
   {
     for( size_t i = 0; i < BUZZER_MELODY_SIZE; i++ )
     {
       sound_on ? ( BUZZER_PORT |= ( 1 << BUZZER_BIT ) ) : ( BUZZER_PORT &= ~( 1 << BUZZER_BIT ) );
-      delay_ms( melody[i] );
+      delay_ms( BUZZER_MELODY[i] );
 
       sound_on = !sound_on;
     }

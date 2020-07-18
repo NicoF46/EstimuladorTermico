@@ -22,7 +22,7 @@ all: $(OBJ_DIR)/$(TARGET).elf
 
 .PHONY: clean
 clean:
-	rm -f $(OBJ_DIR)/$(TARGET).elf *.o *.hex
+	rm -f $(OBJ_DIR)/$(TARGET).elf $(OBJ_DIR)/*.o $(OBJ_DIR)/*.hex
 
 $(OBJ_DIR)/%.o: $(OBJ_DIR)/%.c
 	$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
