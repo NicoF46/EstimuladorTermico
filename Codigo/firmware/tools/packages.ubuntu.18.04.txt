@@ -1,0 +1,4 @@
+avrdude
+avr-libc
+gcc-avr
+clang-format-6.0
