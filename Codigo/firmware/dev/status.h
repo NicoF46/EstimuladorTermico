@@ -5,7 +5,7 @@
   Library data types
 -----------------------------------------------------------------------------*/
 
-typedef enum{NO_ERROR, ERROR, COLD, HOT}status_t;
+typedef enum{NO_ERROR, ERROR, COLD, HOT, STANDBY}status_t;
 
 /* ----------------------------------------------------------------------------
   Function prototypes

@@ -7,6 +7,7 @@
 /* ----------------------------------------------------------------------------
   Internal data
 ------------------------------------------------------------------------------*/
+
 #define LED_NO_ERROR_BIT PB0
 #define LED_NO_ERROR_PORT PORTB
 #define LED_NO_ERROR_DIRECTION DDRB
@@ -50,20 +51,15 @@ void status_setup()
   LED_COLD_DIRECTION |= ( 1 << LED_COLD_BIT );
   LED_HOT_DIRECTION |= ( 1 << LED_HOT_BIT );
   BUZZER_DIRECTION |= ( 1 << BUZZER_BIT);
+  
+  LED_NO_ERROR_PORT |= ( 1 << LED_NO_ERROR_BIT );
 }
 
 
 void status_set(status_t status){
 
   switch( status )
-  {
-    case NO_ERROR:
-      actual_status = NO_ERROR;
-      LED_ERROR_PORT &= ~( 1 << LED_ERROR_BIT );
-      BUZZER_PORT &= ~( 1 << BUZZER_BIT );
-      LED_NO_ERROR_PORT |= ( 1 << LED_NO_ERROR_BIT );
-      break;
-    
+  {    
     case ERROR:
       actual_status = ERROR;
       LED_NO_ERROR_PORT &= ~( 1 << LED_NO_ERROR_BIT );
@@ -82,6 +78,11 @@ void status_set(status_t status){
       LED_COLD_PORT &= ~( 1 << LED_COLD_BIT );
       LED_HOT_PORT |= ( 1 << LED_HOT_BIT );
       break;
+
+    case STANDBY:
+      actual_status = NO_ERROR;
+      LED_COLD_PORT &= ~( 1 << LED_COLD_BIT );
+      LED_HOT_PORT &= ~( 1 << LED_HOT_BIT );
   }
 	
 }

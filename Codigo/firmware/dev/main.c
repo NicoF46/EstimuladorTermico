@@ -6,6 +6,8 @@
 #include <avr/interrupt.h>
 #include "funciones.h"
 
+#include "status.h"
+
 float Kp = 42.09506265030314;
 float Ki = 0.021557975007171537;
 float Kd = 4.4487479401778325;
@@ -14,27 +16,18 @@ float N_FILTRO = 10;
 static uint8_t ValorPWM = 0;
 uint8_t alert_system_register = 0;
 int TemperaturaReferencia = 25;
-modo_t modo = STANDBY;
-
-/*
- * A2 = hot
- * A3 = cold
- * D7 = ERROR
- * D8 = ON
- * 
- * D12 = buzzer
- */
+modo_t modo = WAITING;
 
 int main(void)
 {
-  leds_setup();
+  status_setup();
+  status_set(NO_ERROR);
   PWM_configuration_init();
   h_bridge_setup();
   h_bridge_off();
   usart_configuration_init();
   ADC_configuration_init();
   buzzer_configuration_init();
-  normal_operation_led_on();
   sei();
 
   float temperature_measure=255;
@@ -53,7 +46,7 @@ int main(void)
 
     _delay_ms(DELAY_VALUE);
 
-     if ( modo != STANDBY ){
+     if ( modo != WAITING ){
       ValorPWM = ControladorPID(TemperaturaReferencia,temp, Kp, Ki, Kd, 0, 0, modo);
       PWM_set_modo(ValorPWM, modo);
      }
@@ -80,29 +73,34 @@ ISR(USART_RX_vect){
       ValorPWM = receive();
       modo_frio();
       PWM_set_modo(ValorPWM, FRIO);
+      status_set(COLD);
       break;
 
     case('b'):
       ValorPWM = receive();
       modo_calor();
       PWM_set_modo(ValorPWM, CALOR);
+      status_set(HOT);
       break;
 
     case('d'):
       TemperaturaReferencia = receive();
       modo_frio();
+      status_set(COLD);
       modo = FRIO;
       break;
 
     case('e'):
       TemperaturaReferencia = receive();
       modo_calor();
+      status_set(HOT);
       modo = CALOR;
       break;    
 
     case('s'):
       h_bridge_off();
-      modo = STANDBY;
+      status_set(STANDBY);
+      modo = WAITING;
       break;
 
     // case('c'):

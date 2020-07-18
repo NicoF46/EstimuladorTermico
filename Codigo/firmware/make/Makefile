@@ -16,7 +16,7 @@ OBJ_FILES   = \
 	$(patsubst $(OBJ_DIR)/%.c,$(OBJ_DIR)/%.o,$(wildcard $(OBJ_DIR)/*.c)) \
 	$(patsubst $(OBJ_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(wildcard $(OBJ_DIR)/*.cpp))
 
-all: $(OBJ_DIR)/$(TARGET).hex
+all: $(OBJ_DIR)/$(TARGET).elf
 
 clean:
 	rm -f $(OBJ_DIR)/$(TARGET).elf *.o *.hex

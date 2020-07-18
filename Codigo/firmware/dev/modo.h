@@ -1,1 +1,1 @@
-typedef enum{FRIO,CALOR,CALIBRACION, STANDBY}modo_t;
+typedef enum{FRIO,CALOR,CALIBRACION,WAITING}modo_t;
