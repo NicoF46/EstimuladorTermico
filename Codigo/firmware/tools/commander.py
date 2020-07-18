@@ -54,6 +54,12 @@ class EnviarDatos(cmd.Cmd):
     def do_stop(self, data):
         EnviarDatos.ser.write(b's')
 
+    def do_error(self, data):
+        EnviarDatos.ser.write(b'x')
+
+    def do_no_error(self, data):
+        EnviarDatos.ser.write(b'z')
+
     def do_exit(self, data):
         return True
 
