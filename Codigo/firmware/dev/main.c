@@ -7,6 +7,7 @@
 #include "funciones.h"
 
 #include "status.h"
+#include "error.h"
 
 float Kp = 42.09506265030314;
 float Ki = 0.021557975007171537;
@@ -21,7 +22,9 @@ modo_t modo = WAITING;
 int main(void)
 {
   status_setup();
-  status_set(NO_ERROR);
+  status_set(STANDBY);
+  error_setup();
+  error_set(NO_ERROR);
   PWM_configuration_init();
   h_bridge_setup();
   h_bridge_off();
@@ -101,6 +104,16 @@ ISR(USART_RX_vect){
       h_bridge_off();
       status_set(STANDBY);
       modo = WAITING;
+      break;
+
+    case('x'):
+      h_bridge_off();
+      sei();
+      error_set(ERROR);
+      break;
+
+    case('z'):
+      error_set(NO_ERROR);
       break;
 
     // case('c'):

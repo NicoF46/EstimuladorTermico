@@ -1,18 +1,18 @@
-#ifndef STATUS_H
-#define STATUS_H
+#ifndef ERROR_H
+#define ERROR_H
 
 /*-----------------------------------------------------------------------------
   Library data types
 -----------------------------------------------------------------------------*/
 
-typedef enum{COLD, HOT, STANDBY}status_t;
+typedef enum{NO_ERROR, ERROR}error_t;
 
 /* ----------------------------------------------------------------------------
   Function prototypes
 ------------------------------------------------------------------------------*/
 
-void status_setup();
-void status_set(status_t status);
-status_t status_get();
+void error_setup();
+void error_set(error_t status);
+error_t error_get();
 
 #endif
