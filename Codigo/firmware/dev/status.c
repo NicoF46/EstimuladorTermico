@@ -46,7 +46,7 @@ static void _alarm_sound();
 
 void status_setup()
 {
-	LED_NO_ERROR_DIRECTION |= ( 1 << LED_NO_ERROR_BIT );
+  LED_NO_ERROR_DIRECTION |= ( 1 << LED_NO_ERROR_BIT );
   LED_ERROR_DIRECTION |= ( 1 << LED_ERROR_BIT );
   LED_COLD_DIRECTION |= ( 1 << LED_COLD_BIT );
   LED_HOT_DIRECTION |= ( 1 << LED_HOT_BIT );
