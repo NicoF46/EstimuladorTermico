@@ -67,3 +67,15 @@ status_t status_get()
 {
   return current_status;
 }
+
+
+/**
+ * Fills the `index` header's byte with the device's current status.
+ *
+ * \param[out] header  The header to be sended.
+ * \param[in]  index   The index in the header where the status is saved.
+ */
+void status_fill_header( uint8_t *header, size_t index )
+{
+  header[index] = current_status;
+}

@@ -1,15 +1,18 @@
 #ifndef STATUS_H
 #define STATUS_H
 
+#include <stdint.h>
+#include <stddef.h>
+
 /*-----------------------------------------------------------------------------
   Library data types
 -----------------------------------------------------------------------------*/
 
 typedef enum
 {
+  STANDBY,
   COLD,
-  HOT,
-  STANDBY
+  HOT
 } status_t;
 
 /* ----------------------------------------------------------------------------
@@ -19,5 +22,6 @@ typedef enum
 void status_setup();
 void status_set( status_t status );
 status_t status_get();
+void status_fill_header( uint8_t *header, size_t index );
 
 #endif

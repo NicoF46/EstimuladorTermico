@@ -38,22 +38,19 @@ int main( void )
 
   while( true )
   {
-    usart_transmit( 't' );
     temperature_measure = calculate_temperature( THERMISTOR_1_ADC_CHANNEL );
-    usart_Buffer_transmit( &temperature_measure, sizeof( temperature_measure ) );
     temp = temperature_measure;
     temperature_measure = calculate_temperature( THERMISTOR_2_ADC_CHANNEL );
-    usart_Buffer_transmit( &temperature_measure, sizeof( temperature_measure ) );
     temp += temperature_measure;
     temp /= 2;
-
-    _delay_ms( DELAY_VALUE );
 
     if( modo != WAITING )
     {
       ValorPWM = ControladorPID( TemperaturaReferencia, temp, Kp, Ki, Kd, 0, 0, modo );
       PWM_set_modo( ValorPWM, modo );
     }
+
+    _delay_ms( DELAY_VALUE );
   }
 
   return ( 0 );
@@ -110,6 +107,28 @@ ISR( USART_RX_vect )
       error_set( NO_ERROR );
       break;
 
+    case( 'i' ):
+    {
+      uint8_t header;
+      status_fill_header( &header, 0 );
+      usart_Buffer_transmit( &header, sizeof( header ) );
+      break;
+    }
+
+    case( 't' ):
+    {
+      int8_t termistor = receive();
+      if ( termistor != 0 && termistor != 1 )
+        break;
+
+      float temp;
+      if ( termistor == 0 )
+        temp = calculate_temperature( THERMISTOR_1_ADC_CHANNEL );
+      else
+        temp = calculate_temperature( THERMISTOR_2_ADC_CHANNEL );
+      usart_Buffer_transmit( &temp, sizeof( temp ) );
+      break;
+    }
       // case('c'):
       //   TemperaturaCalibracion = receive();
       //   CalibracionPID(TemperaturaCalibracion, &Kp, &Ki, &Kd, &N_FILTRO, &bias,
@@ -120,14 +139,6 @@ ISR( USART_RX_vect )
       //   CalibracionPID(TemperaturaCalibracion, &Kp, &Ki, &Kd, &N_FILTRO, &bias,
       //   &alert_system_register); break;
 
-
-      // case('r'):
-      //   TemperaturaReferencia = receive();
-      //   if (TemperaturaReferencia >= TEMPERATURA_MINIMA && TemperaturaReferencia <=
-      //   TEMPERATURA_MAXIMA ){
-      //     modo = definir_modo(25,TemperaturaReferencia);
-      //     power_on = true;}
-      //   break;
 
       // case('x'):
       //   if (temperature_measure == 255)

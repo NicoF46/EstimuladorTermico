@@ -22,11 +22,9 @@
 #define BUZZER_DIRECTION DDRB
 
 #define BUZZER_MELODY_SIZE 20
-const static unsigned int BUZZER_MELODY[BUZZER_MELODY_SIZE] = 
-  {
-    200, 100, 200, 100, 200, 300, 200, 100, 200, 500, 
-    200, 100, 200, 100, 200, 300, 200, 100, 200, 2500
-  };
+const static unsigned int BUZZER_MELODY[BUZZER_MELODY_SIZE] = { 200, 100, 200, 100, 200, 300, 200,
+                                                                100, 200, 500, 200, 100, 200, 100,
+                                                                200, 300, 200, 100, 200, 2500 };
 
 static error_t current_error = NO_ERROR;
 
@@ -83,6 +81,18 @@ error_t error_get()
   return current_error;
 }
 
+
+/**
+ * Fills the `index` header's byte with the device's current error code.
+ *
+ * \param[out] header  The header to be sended.
+ * \param[in]  index   The index in the header where the error code is saved.
+ */
+void error_fill_header( uint8_t *header, size_t index )
+{
+  header[index] = current_error;
+}
+
 /* ----------------------------------------------------------------------------
   Internal function definition
 ------------------------------------------------------------------------------*/
@@ -97,7 +107,7 @@ static void _alarm_sound()
 
   while( current_error == ERROR )
   {
-    for( size_t i = 0; i < BUZZER_MELODY_SIZE; i++ )
+    for( size_t i = 0; i < BUZZER_MELODY_SIZE && current_error == ERROR; i++ )
     {
       sound_on ? ( BUZZER_PORT |= ( 1 << BUZZER_BIT ) ) : ( BUZZER_PORT &= ~( 1 << BUZZER_BIT ) );
       delay_ms( BUZZER_MELODY[i] );
@@ -105,4 +115,5 @@ static void _alarm_sound()
       sound_on = !sound_on;
     }
   }
+  BUZZER_PORT &= ~( 1 << BUZZER_BIT );
 }
