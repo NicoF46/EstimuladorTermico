@@ -69,6 +69,12 @@ class EnviarDatos(cmd.Cmd):
     def do_no_error(self, data):
         self.send_chunk('<c', (b'z',))
 
+    def do_pwm_get(self, data):
+        if not self.send_chunk('<c', (b'f',)):
+            return
+        pwm = self.read_chunk(1, '<b')
+        print(f'pwm = {pwm}')
+
     def do_status(self, data):
         if not self.send_chunk('<c', (b'i',)):
             return

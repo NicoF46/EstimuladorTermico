@@ -129,6 +129,11 @@ ISR( USART_RX_vect )
       usart_Buffer_transmit( &temp, sizeof( temp ) );
       break;
     }
+
+    case( 'f'):
+      usart_Buffer_transmit(&ValorPWM, sizeof(ValorPWM));
+      break;
+
       // case('c'):
       //   TemperaturaCalibracion = receive();
       //   CalibracionPID(TemperaturaCalibracion, &Kp, &Ki, &Kd, &N_FILTRO, &bias,
