@@ -16,8 +16,10 @@ float bias = 0;
 float N_FILTRO = 10;
 static uint8_t ValorPWM = 0;
 uint8_t alert_system_register = 0;
-int TemperaturaReferencia = 25;
+float TemperaturaReferencia = 25.0;
 modo_t modo = WAITING;
+float temps[] = {0, 0};
+
 
 int main( void )
 {
@@ -33,19 +35,16 @@ int main( void )
   ADC_configuration_init();
   sei();
 
-  float temperature_measure = 255;
-  float temp = 25;
+  float temp;
 
   while( true )
   {
-    temperature_measure = calculate_temperature( THERMISTOR_1_ADC_CHANNEL );
-    temp = temperature_measure;
-    temperature_measure = calculate_temperature( THERMISTOR_2_ADC_CHANNEL );
-    temp += temperature_measure;
-    temp /= 2;
+    temps[0] = calculate_temperature( THERMISTOR_1_ADC_CHANNEL );
+    temps[1] = calculate_temperature( THERMISTOR_2_ADC_CHANNEL );
+    temp = (temps[0] + temps[1]) / 2.0;
 
-    if( modo != WAITING )
-    {
+   if( modo != WAITING )
+   {
       ValorPWM = ControladorPID( TemperaturaReferencia, temp, Kp, Ki, Kd, 0, 0, modo );
       PWM_set_modo( ValorPWM, modo );
     }
@@ -79,6 +78,7 @@ ISR( USART_RX_vect )
 
     case( 'd' ):
       TemperaturaReferencia = receive();
+      usart_Buffer_transmit( &TemperaturaReferencia, sizeof( TemperaturaReferencia ) );
       modo_frio();
       status_set( COLD );
       modo = FRIO;
@@ -86,6 +86,7 @@ ISR( USART_RX_vect )
 
     case( 'e' ):
       TemperaturaReferencia = receive();
+      usart_Buffer_transmit( &TemperaturaReferencia, sizeof( TemperaturaReferencia ) );
       modo_calor();
       status_set( HOT );
       modo = CALOR;
@@ -121,12 +122,7 @@ ISR( USART_RX_vect )
       if ( termistor != 0 && termistor != 1 )
         break;
 
-      float temp;
-      if ( termistor == 0 )
-        temp = calculate_temperature( THERMISTOR_1_ADC_CHANNEL );
-      else
-        temp = calculate_temperature( THERMISTOR_2_ADC_CHANNEL );
-      usart_Buffer_transmit( &temp, sizeof( temp ) );
+      usart_Buffer_transmit( &temps[termistor], sizeof( temps[termistor] ) );
       break;
     }
 
@@ -134,23 +130,10 @@ ISR( USART_RX_vect )
       usart_Buffer_transmit(&ValorPWM, sizeof(ValorPWM));
       break;
 
-      // case('c'):
-      //   TemperaturaCalibracion = receive();
-      //   CalibracionPID(TemperaturaCalibracion, &Kp, &Ki, &Kd, &N_FILTRO, &bias,
-      //   &alert_system_register); break;
+    case( 'g' ):
+      usart_Buffer_transmit( &TemperaturaReferencia, sizeof( TemperaturaReferencia ) );
+      break;
 
-      // case('d'):
-      //   TemperaturaCalibracion = receive();
-      //   CalibracionPID(TemperaturaCalibracion, &Kp, &Ki, &Kd, &N_FILTRO, &bias,
-      //   &alert_system_register); break;
-
-
-      // case('x'):
-      //   if (temperature_measure == 255)
-      //     temperature_measure = read_temperature(&alert_system_register);
-      //   usart_transmit('x');
-      //   usart_Buffer_transmit(&temperature_measure, sizeof(temperature_measure));
-      //   break;
   }
   sei();
 }

@@ -22,6 +22,7 @@
 #define BUZZER_DIRECTION DDRB
 
 #define BUZZER_MELODY_SIZE 20
+#define BUZZER_MELODY_REPETITION 10
 const static unsigned int BUZZER_MELODY[BUZZER_MELODY_SIZE] = { 200, 100, 200, 100, 200, 300, 200,
                                                                 100, 200, 500, 200, 100, 200, 100,
                                                                 200, 300, 200, 100, 200, 2500 };
@@ -105,7 +106,7 @@ static void _alarm_sound()
 {
   bool sound_on = true;
 
-  while( current_error == ERROR )
+  for( size_t n = 0; n < BUZZER_MELODY_REPETITION; n++)
   {
     for( size_t i = 0; i < BUZZER_MELODY_SIZE && current_error == ERROR; i++ )
     {

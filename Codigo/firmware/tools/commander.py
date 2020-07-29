@@ -17,7 +17,7 @@ SEPARATOR = b't'
 DATA_SIZE = 4
 DATA_FORMAT = '<f'
 T_LABELS = ('t1', 't2')
-TIMEOUT = 0.1
+TIMEOUT = 0.2
 
 DEBUG = False
 
@@ -29,57 +29,82 @@ class EnviarDatos(cmd.Cmd):
     @classmethod
     def send_chunk(cls, data_format, data):
         raw_data = struct.pack(data_format, *data)
-        if not EnviarDatos.communication_available.wait(timeout = TIMEOUT):
-            print( "serial communcation bussy")
-            return False
-        EnviarDatos.communication_available.clear()
         EnviarDatos.ser.write(raw_data)
-        EnviarDatos.communication_available.set()
         return True
 
     @classmethod
     def read_chunk(cls, size, data_format):
-        if not EnviarDatos.communication_available.wait(timeout = TIMEOUT):
-            print( "serial communcation bussy")
-            return None
-        EnviarDatos.communication_available.clear()
         raw_data = EnviarDatos.ser.read(size)
-        EnviarDatos.communication_available.set()
         data, = struct.unpack(data_format, raw_data)
         return data
 
     def do_pwm_cold(self, dato):
+        EnviarDatos.communication_available.clear()
         self.send_chunk('<cB', (b'a', numpy.uint8(dato)))
+        EnviarDatos.communication_available.set()
+
 
     def do_pwm_hot(self, dato):
+        EnviarDatos.communication_available.clear()
         self.send_chunk('<cB', (b'b', numpy.uint8(dato)))
+        EnviarDatos.communication_available.set()
 
     def do_cold(self, dato):
-        self.send_chunk('<cf', (b'd', int(dato)))
+        EnviarDatos.communication_available.clear()
+        self.send_chunk('<cB', (b'd', int(dato)))
+        referencia = self.read_chunk(4, '<f')
+        print(f'temperatura referencia = {referencia}')
+        EnviarDatos.communication_available.set()
+
 
     def do_hot(self, dato):
-        self.send_chunk('<cf', (b'e', int(dato)))
+        EnviarDatos.communication_available.clear()
+        self.send_chunk('<cB', (b'e', int(dato)))
+        referencia = self.read_chunk(4, '<f')
+        print(f'temperatura referencia = {referencia}')
+        EnviarDatos.communication_available.set()
+
         
     def do_stop(self, data):
+        EnviarDatos.communication_available.clear()
         self.send_chunk('<c', (b's',))
+        EnviarDatos.communication_available.set()
+
 
     def do_error(self, data):
+        EnviarDatos.communication_available.clear()
         self.send_chunk('<c', (b'x',))
+        EnviarDatos.communication_available.set()
+
 
     def do_no_error(self, data):
+        EnviarDatos.communication_available.clear()
         self.send_chunk('<c', (b'z',))
+        EnviarDatos.communication_available.set()
 
     def do_pwm_get(self, data):
+        EnviarDatos.communication_available.clear()
         if not self.send_chunk('<c', (b'f',)):
             return
         pwm = self.read_chunk(1, '<b')
+        EnviarDatos.communication_available.set()
         print(f'pwm = {pwm}')
 
     def do_status(self, data):
+        EnviarDatos.communication_available.clear()
         if not self.send_chunk('<c', (b'i',)):
             return
         status = self.read_chunk(1, '<b')
+        EnviarDatos.communication_available.set()
         print(f'status = {status}')
+
+    def do_temp_referencia(self, data):
+        EnviarDatos.communication_available.clear()
+        if not self.send_chunk('<c', (b'g',)):
+            return
+        referencia = self.read_chunk(4, '<f')
+        EnviarDatos.communication_available.set()
+        print(f'temperatura referencia = {referencia}')
 
 
     def do_exit(self, data):
@@ -133,8 +158,8 @@ def get_data():
     while not stop_event.isSet():
         
         i = 0
+        EnviarDatos.communication_available.clear()
         for l in T_LABELS:
-
             EnviarDatos.send_chunk('<cb', (b't',i))
             current_data = EnviarDatos.read_chunk(DATA_SIZE, DATA_FORMAT)
 
@@ -143,8 +168,9 @@ def get_data():
             data[l].append(current_data)
             times[i].append(current_time)
             i += 1
-
-        time.sleep(0.1)
+        EnviarDatos.communication_available.set()
+                
+        time.sleep(0.5)
 
     ser.close()
     p.close()

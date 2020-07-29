@@ -184,10 +184,6 @@ uint8_t ControladorPID( float ReferenciaControl,
     Ik_previo = Ik;
   }
 
-  /*usart_transmit('g');
-  usart_Buffer_transmit(&Pk, sizeof(Pk));
-  usart_Buffer_transmit(&Ik, sizeof(Ik));
-  usart_Buffer_transmit(&Dk, sizeof(Dk));*/
   if( modo == FRIO )
     Salida = Salida * ( -1 );
   return Salida;
