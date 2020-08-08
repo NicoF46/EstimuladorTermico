@@ -39,12 +39,14 @@ void status_set( status_t status )
   switch( status )
   {
     case COLD:
+    case COLD_REACHED:
       current_status = COLD;
       LED_HOT_PORT &= ~( 1 << LED_HOT_BIT );
       LED_COLD_PORT |= ( 1 << LED_COLD_BIT );
       break;
 
     case HOT:
+    case HOT_REACHED:
       current_status = HOT;
       LED_COLD_PORT &= ~( 1 << LED_COLD_BIT );
       LED_HOT_PORT |= ( 1 << LED_HOT_BIT );
@@ -75,7 +77,7 @@ status_t status_get()
  * \param[out] header  The header to be sended.
  * \param[in]  index   The index in the header where the status is saved.
  */
-void status_fill_header( uint8_t *header, size_t index )
+void status_fill_header( uint8_t *header )
 {
-  header[index] = current_status;
+  *header = current_status;
 }

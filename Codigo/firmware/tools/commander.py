@@ -27,6 +27,11 @@ class EnviarDatos(cmd.Cmd):
     communication_available = threading.Event();
 
     @classmethod
+    def wait_communication_available(cls):
+        while not EnviarDatos.communication_available.isSet():
+            pass
+
+    @classmethod
     def send_chunk(cls, data_format, data):
         raw_data = struct.pack(data_format, *data)
         EnviarDatos.ser.write(raw_data)
@@ -35,21 +40,24 @@ class EnviarDatos(cmd.Cmd):
     @classmethod
     def read_chunk(cls, size, data_format):
         raw_data = EnviarDatos.ser.read(size)
-        data, = struct.unpack(data_format, raw_data)
+        data = struct.unpack(data_format, raw_data)
         return data
 
     def do_pwm_cold(self, dato):
+        self.wait_communication_available()
         EnviarDatos.communication_available.clear()
         self.send_chunk('<cB', (b'a', numpy.uint8(dato)))
         EnviarDatos.communication_available.set()
 
 
     def do_pwm_hot(self, dato):
+        self.wait_communication_available()
         EnviarDatos.communication_available.clear()
         self.send_chunk('<cB', (b'b', numpy.uint8(dato)))
         EnviarDatos.communication_available.set()
 
     def do_cold(self, dato):
+        self.wait_communication_available()
         EnviarDatos.communication_available.clear()
         self.send_chunk('<cB', (b'd', int(dato)))
         referencia = self.read_chunk(4, '<f')
@@ -58,6 +66,7 @@ class EnviarDatos(cmd.Cmd):
 
 
     def do_hot(self, dato):
+        self.wait_communication_available()
         EnviarDatos.communication_available.clear()
         self.send_chunk('<cB', (b'e', int(dato)))
         referencia = self.read_chunk(4, '<f')
@@ -66,23 +75,27 @@ class EnviarDatos(cmd.Cmd):
 
         
     def do_stop(self, data):
+        self.wait_communication_available()
         EnviarDatos.communication_available.clear()
         self.send_chunk('<c', (b's',))
         EnviarDatos.communication_available.set()
 
 
     def do_error(self, data):
+        self.wait_communication_available()
         EnviarDatos.communication_available.clear()
-        self.send_chunk('<c', (b'x',))
+        self.send_chunk('<cB', (b'x',numpy.uint8(data)))
         EnviarDatos.communication_available.set()
 
 
     def do_no_error(self, data):
+        self.wait_communication_available()
         EnviarDatos.communication_available.clear()
         self.send_chunk('<c', (b'z',))
         EnviarDatos.communication_available.set()
 
     def do_pwm_get(self, data):
+        self.wait_communication_available()
         EnviarDatos.communication_available.clear()
         if not self.send_chunk('<c', (b'f',)):
             return
@@ -91,14 +104,16 @@ class EnviarDatos(cmd.Cmd):
         print(f'pwm = {pwm}')
 
     def do_status(self, data):
+        self.wait_communication_available()
         EnviarDatos.communication_available.clear()
         if not self.send_chunk('<c', (b'i',)):
             return
-        status = self.read_chunk(1, '<b')
+        status = self.read_chunk(2, '<bb')
         EnviarDatos.communication_available.set()
         print(f'status = {status}')
 
     def do_temp_referencia(self, data):
+        self.wait_communication_available()
         EnviarDatos.communication_available.clear()
         if not self.send_chunk('<c', (b'g',)):
             return
@@ -157,6 +172,8 @@ def get_data():
 
     while not stop_event.isSet():
         
+        EnviarDatos.wait_communication_available()
+
         i = 0
         EnviarDatos.communication_available.clear()
         for l in T_LABELS:
@@ -170,7 +187,7 @@ def get_data():
             i += 1
         EnviarDatos.communication_available.set()
                 
-        time.sleep(0.5)
+        time.sleep(0.1)
 
     ser.close()
     p.close()

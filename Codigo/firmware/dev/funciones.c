@@ -1,8 +1,6 @@
 #include "funciones.h"
 #include "ConfiguracionADC.h"
 
-#define BIT_BUZZER PB4
-
 void h_bridge_off()
 {
   PORTD &= ~( 1 << PD5 );
@@ -40,9 +38,9 @@ float read_temperature( uint8_t* alert_system_register )
   // if (fabs(temperature_thermistor_1-temperature_thermistor_2) > TEMPERATURE_DIFFERENCE_TOLERANCE)
   //   (*alert_system_register) = ERROR_TEMPERATURE_DIFFERENCE;
   /*usart_transmit('h');
-  usart_Buffer_transmit(&temperature_thermistor_1, sizeof(temperature_thermistor_1));
-  usart_Buffer_transmit(&temperature_thermistor_2, sizeof(temperature_thermistor_2));
-  usart_Buffer_transmit(&mean_temperature, sizeof(mean_temperature));*/
+  usart_buffer_transmit(&temperature_thermistor_1, sizeof(temperature_thermistor_1));
+  usart_buffer_transmit(&temperature_thermistor_2, sizeof(temperature_thermistor_2));
+  usart_buffer_transmit(&mean_temperature, sizeof(mean_temperature));*/
   return ( temperature_thermistor_1 + temperature_thermistor_2 ) / 2.0;
 }
 
@@ -215,9 +213,9 @@ void CalibracionPID( float ReferenciaControl,
   {
     temperature_measure = read_temperature( alert_system_register );
     usart_transmit( 'c' );
-    usart_Buffer_transmit( &time_value, sizeof( time_value ) );
-    usart_Buffer_transmit( &input_step_value, sizeof( input_step_value ) );
-    usart_Buffer_transmit( &temperature_measure, sizeof( temperature_measure ) );
+    usart_buffer_transmit( &time_value, sizeof( time_value ) );
+    usart_buffer_transmit( &input_step_value, sizeof( input_step_value ) );
+    usart_buffer_transmit( &temperature_measure, sizeof( temperature_measure ) );
     _delay_ms( sampling_measure );
     step_time = step_time - 1;
     time_value = time_value + sampling_measure / 1000.00;
@@ -242,9 +240,9 @@ void CalibracionPID( float ReferenciaControl,
     {
       temperature_measure = read_temperature( alert_system_register );
       usart_transmit( 'c' );
-      usart_Buffer_transmit( &time_value, sizeof( time_value ) );
-      usart_Buffer_transmit( &input_step_value, sizeof( input_step_value ) );
-      usart_Buffer_transmit( &temperature_measure, sizeof( temperature_measure ) );
+      usart_buffer_transmit( &time_value, sizeof( time_value ) );
+      usart_buffer_transmit( &input_step_value, sizeof( input_step_value ) );
+      usart_buffer_transmit( &temperature_measure, sizeof( temperature_measure ) );
       _delay_ms( sampling_measure );
       step_time = step_time - 1;
       time_value = time_value + sampling_measure / 1000.00;
@@ -257,9 +255,9 @@ void CalibracionPID( float ReferenciaControl,
     {
       temperature_measure = read_temperature( alert_system_register );
       usart_transmit( 'c' );
-      usart_Buffer_transmit( &time_value, sizeof( time_value ) );
-      usart_Buffer_transmit( &input_step_value, sizeof( input_step_value ) );
-      usart_Buffer_transmit( &temperature_measure, sizeof( temperature_measure ) );
+      usart_buffer_transmit( &time_value, sizeof( time_value ) );
+      usart_buffer_transmit( &input_step_value, sizeof( input_step_value ) );
+      usart_buffer_transmit( &temperature_measure, sizeof( temperature_measure ) );
       _delay_ms( sampling_measure );
       step_time = step_time - 1;
       time_value = time_value + sampling_measure / 1000.00;

@@ -2,7 +2,7 @@
 #include <avr/io.h>
 #include <math.h>
 #include "ConfiguracionPWM.h"
-#include "ConfiguracionSerial.h"
+#include "usart.h"
 #include "ConfiguracionADC.h"
 #include <stdlib.h>
 #include <time.h>

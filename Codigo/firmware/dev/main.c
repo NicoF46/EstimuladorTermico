@@ -18,7 +18,7 @@ static uint8_t ValorPWM = 0;
 uint8_t alert_system_register = 0;
 float TemperaturaReferencia = 25.0;
 modo_t modo = WAITING;
-float temps[] = {0, 0};
+float temps[] = { 0, 0 };
 
 
 int main( void )
@@ -26,12 +26,11 @@ int main( void )
   status_setup();
   status_set( STANDBY );
   error_setup();
-  error_set( NO_ERROR );
 
   PWM_configuration_init();
   h_bridge_setup();
   h_bridge_off();
-  usart_configuration_init();
+  usart_init();
   ADC_configuration_init();
   sei();
 
@@ -41,10 +40,10 @@ int main( void )
   {
     temps[0] = calculate_temperature( THERMISTOR_1_ADC_CHANNEL );
     temps[1] = calculate_temperature( THERMISTOR_2_ADC_CHANNEL );
-    temp = (temps[0] + temps[1]) / 2.0;
+    temp = ( temps[0] + temps[1] ) / 2.0;
 
-   if( modo != WAITING )
-   {
+    if( modo != WAITING )
+    {
       ValorPWM = ControladorPID( TemperaturaReferencia, temp, Kp, Ki, Kd, 0, 0, modo );
       PWM_set_modo( ValorPWM, modo );
     }
@@ -58,35 +57,35 @@ int main( void )
 
 ISR( USART_RX_vect )
 {
-  uint8_t command = receive();
+  uint8_t command = usart_receive();
 
   switch( command )
   {
     case( 'a' ):
-      ValorPWM = receive();
+      ValorPWM = usart_receive();
       modo_frio();
       PWM_set_modo( ValorPWM, FRIO );
       status_set( COLD );
       break;
 
     case( 'b' ):
-      ValorPWM = receive();
+      ValorPWM = usart_receive();
       modo_calor();
       PWM_set_modo( ValorPWM, CALOR );
       status_set( HOT );
       break;
 
     case( 'd' ):
-      TemperaturaReferencia = receive();
-      usart_Buffer_transmit( &TemperaturaReferencia, sizeof( TemperaturaReferencia ) );
+      TemperaturaReferencia = usart_receive();
+      usart_buffer_transmit( &TemperaturaReferencia, sizeof( TemperaturaReferencia ) );
       modo_frio();
       status_set( COLD );
       modo = FRIO;
       break;
 
     case( 'e' ):
-      TemperaturaReferencia = receive();
-      usart_Buffer_transmit( &TemperaturaReferencia, sizeof( TemperaturaReferencia ) );
+      TemperaturaReferencia = usart_receive();
+      usart_buffer_transmit( &TemperaturaReferencia, sizeof( TemperaturaReferencia ) );
       modo_calor();
       status_set( HOT );
       modo = CALOR;
@@ -100,40 +99,40 @@ ISR( USART_RX_vect )
 
     case( 'x' ):
       h_bridge_off();
-      sei();
-      error_set( ERROR );
+      error_t error = usart_receive();
+      error_set( error );
       break;
 
     case( 'z' ):
-      error_set( NO_ERROR );
+      error_clear_all( );
       break;
 
     case( 'i' ):
     {
-      uint8_t header;
-      status_fill_header( &header, 0 );
-      usart_Buffer_transmit( &header, sizeof( header ) );
+      uint8_t header[2] = {0, 0};
+      status_fill_header( &header[0] );
+      error_fill_header( &header[1] );
+      usart_buffer_transmit( &header, sizeof( header ) );
       break;
     }
 
     case( 't' ):
     {
-      int8_t termistor = receive();
-      if ( termistor != 0 && termistor != 1 )
+      int8_t termistor = usart_receive();
+      if( termistor != 0 && termistor != 1 )
         break;
 
-      usart_Buffer_transmit( &temps[termistor], sizeof( temps[termistor] ) );
+      usart_buffer_transmit( &temps[termistor], sizeof( temps[termistor] ) );
       break;
     }
 
-    case( 'f'):
-      usart_Buffer_transmit(&ValorPWM, sizeof(ValorPWM));
+    case( 'f' ):
+      usart_buffer_transmit( &ValorPWM, sizeof( ValorPWM ) );
       break;
 
     case( 'g' ):
-      usart_Buffer_transmit( &TemperaturaReferencia, sizeof( TemperaturaReferencia ) );
+      usart_buffer_transmit( &TemperaturaReferencia, sizeof( TemperaturaReferencia ) );
       break;
-
   }
   sei();
 }

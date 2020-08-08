@@ -10,8 +10,8 @@ LDFLAGS     = -g -mmcu=$(MCU) -lm -Wl,--gc-sections -Os
 PGMER       = -c arduino -b 115200 -P /dev/ttyUSB0
 PGMERISP    = -c avrispv2 -P /dev/ttyUSB0
 DUDE        = /usr/bin/avrdude -V -p $(MCU)
-OBJ_DIR = ../dev/
-TOOLS_DIR = ../tools/
+OBJ_DIR = ../dev
+TOOLS_DIR = ../tools
 
 OBJ_FILES   = \
 	$(patsubst $(OBJ_DIR)/%.c,$(OBJ_DIR)/%.o,$(wildcard $(OBJ_DIR)/*.c)) \

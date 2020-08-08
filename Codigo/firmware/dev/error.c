@@ -27,13 +27,13 @@ const static unsigned int BUZZER_MELODY[BUZZER_MELODY_SIZE] = { 200, 100, 200, 1
                                                                 100, 200, 500, 200, 100, 200, 100,
                                                                 200, 300, 200, 100, 200, 2500 };
 
-static error_t current_error = NO_ERROR;
+static uint8_t current_error = 0;
 
 /* ----------------------------------------------------------------------------
   Internal function Prototypes
 ------------------------------------------------------------------------------*/
 
-static void _alarm_sound();
+static void _error_led_off();
 
 /* ----------------------------------------------------------------------------
   Function definition
@@ -47,39 +47,54 @@ void error_setup()
   LED_NO_ERROR_DIRECTION |= ( 1 << LED_NO_ERROR_BIT );
   LED_ERROR_DIRECTION |= ( 1 << LED_ERROR_BIT );
   BUZZER_DIRECTION |= ( 1 << BUZZER_BIT );
+  _error_led_off();
 }
 
+
 /**
- * Sets the device's current error.
+ * Sets the device's error flag.
  *
- * \param[in]  error  The new device's error.
+ * \param[in]  error  The error flag.
  */
 void error_set( error_t error )
 {
-  switch( error )
-  {
-    case NO_ERROR:
-      current_error = NO_ERROR;
-      LED_ERROR_PORT &= ~( 1 << LED_ERROR_BIT );
-      LED_NO_ERROR_PORT |= ( 1 << LED_NO_ERROR_BIT );
-      break;
-    case ERROR:
-      current_error = ERROR;
-      LED_NO_ERROR_PORT &= ~( 1 << LED_NO_ERROR_BIT );
-      LED_ERROR_PORT |= ( 1 << LED_ERROR_BIT );
-      _alarm_sound();
-      break;
-  }
+  current_error |= (1 << error);
+  LED_NO_ERROR_PORT &= ~( 1 << LED_NO_ERROR_BIT );
+  LED_ERROR_PORT |= ( 1 << LED_ERROR_BIT );
 }
 
+
 /**
- * Returns the current device error.
+ * Clears the `error` bit flag.
  *
- * \return The current error.
+ * \param[in]  error  The error flag.
  */
-error_t error_get()
+void error_clear(error_t error)
 {
-  return current_error;
+  current_error &= ~( 1 << error );
+  if( current_error == 0 )
+    _error_led_off();
+}
+
+
+/**
+ * Clears every error flag.
+ */
+void error_clear_all()
+{
+  current_error = 0;
+  _error_led_off();
+}
+
+
+/**
+ * Tells if the device's is on error.
+ *
+ * \return     \c false if there is no error, \c true otherwise.
+ */
+bool error_is_on_error( )
+{
+  return current_error != 0;
 }
 
 
@@ -89,26 +104,24 @@ error_t error_get()
  * \param[out] header  The header to be sended.
  * \param[in]  index   The index in the header where the error code is saved.
  */
-void error_fill_header( uint8_t *header, size_t index )
+void error_fill_header( uint8_t *header )
 {
-  header[index] = current_error;
+  *header = current_error;
 }
 
-/* ----------------------------------------------------------------------------
-  Internal function definition
-------------------------------------------------------------------------------*/
 
 /**
  * Makes the device plays an alarm melody indefinitely. It can only be stoped using
  * an interruption that changes the current error value.
  */
-static void _alarm_sound()
+void error_sound_alarm()
 {
+  sei();
   bool sound_on = true;
 
-  for( size_t n = 0; n < BUZZER_MELODY_REPETITION; n++)
+  for( size_t n = 0; n < BUZZER_MELODY_REPETITION; n++ )
   {
-    for( size_t i = 0; i < BUZZER_MELODY_SIZE && current_error == ERROR; i++ )
+    for( size_t i = 0; i < BUZZER_MELODY_SIZE && current_error != 0; i++ )
     {
       sound_on ? ( BUZZER_PORT |= ( 1 << BUZZER_BIT ) ) : ( BUZZER_PORT &= ~( 1 << BUZZER_BIT ) );
       delay_ms( BUZZER_MELODY[i] );
@@ -117,4 +130,14 @@ static void _alarm_sound()
     }
   }
   BUZZER_PORT &= ~( 1 << BUZZER_BIT );
+}
+
+/* ----------------------------------------------------------------------------
+  Internal function definition
+------------------------------------------------------------------------------*/
+
+static void _error_led_off()
+{
+  LED_ERROR_PORT &= ~( 1 << LED_ERROR_BIT );
+  LED_NO_ERROR_PORT |= ( 1 << LED_NO_ERROR_BIT ); 
 }
