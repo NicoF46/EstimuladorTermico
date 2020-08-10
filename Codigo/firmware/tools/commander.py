@@ -22,103 +22,103 @@ TIMEOUT = 0.2
 DEBUG = False
 
 
-class EnviarDatos(cmd.Cmd):
+class Commander(cmd.Cmd):
     ser = None
     communication_available = threading.Event();
 
     @classmethod
     def wait_communication_available(cls):
-        while not EnviarDatos.communication_available.isSet():
+        while not Commander.communication_available.isSet():
             pass
 
     @classmethod
     def send_chunk(cls, data_format, data):
         raw_data = struct.pack(data_format, *data)
-        EnviarDatos.ser.write(raw_data)
+        Commander.ser.write(raw_data)
         return True
 
     @classmethod
     def read_chunk(cls, size, data_format):
-        raw_data = EnviarDatos.ser.read(size)
+        raw_data = Commander.ser.read(size)
         data = struct.unpack(data_format, raw_data)
         return data
 
     def do_pwm_cold(self, dato):
         self.wait_communication_available()
-        EnviarDatos.communication_available.clear()
+        Commander.communication_available.clear()
         self.send_chunk('<cB', (b'a', numpy.uint8(dato)))
-        EnviarDatos.communication_available.set()
+        Commander.communication_available.set()
 
 
     def do_pwm_hot(self, dato):
         self.wait_communication_available()
-        EnviarDatos.communication_available.clear()
+        Commander.communication_available.clear()
         self.send_chunk('<cB', (b'b', numpy.uint8(dato)))
-        EnviarDatos.communication_available.set()
+        Commander.communication_available.set()
 
     def do_cold(self, dato):
         self.wait_communication_available()
-        EnviarDatos.communication_available.clear()
+        Commander.communication_available.clear()
         self.send_chunk('<cB', (b'd', int(dato)))
         referencia = self.read_chunk(4, '<f')
         print(f'temperatura referencia = {referencia}')
-        EnviarDatos.communication_available.set()
+        Commander.communication_available.set()
 
 
     def do_hot(self, dato):
         self.wait_communication_available()
-        EnviarDatos.communication_available.clear()
+        Commander.communication_available.clear()
         self.send_chunk('<cB', (b'e', int(dato)))
         referencia = self.read_chunk(4, '<f')
         print(f'temperatura referencia = {referencia}')
-        EnviarDatos.communication_available.set()
+        Commander.communication_available.set()
 
         
     def do_stop(self, data):
         self.wait_communication_available()
-        EnviarDatos.communication_available.clear()
+        Commander.communication_available.clear()
         self.send_chunk('<c', (b's',))
-        EnviarDatos.communication_available.set()
+        Commander.communication_available.set()
 
 
     def do_error(self, data):
         self.wait_communication_available()
-        EnviarDatos.communication_available.clear()
+        Commander.communication_available.clear()
         self.send_chunk('<cB', (b'x',numpy.uint8(data)))
-        EnviarDatos.communication_available.set()
+        Commander.communication_available.set()
 
 
     def do_no_error(self, data):
         self.wait_communication_available()
-        EnviarDatos.communication_available.clear()
+        Commander.communication_available.clear()
         self.send_chunk('<c', (b'z',))
-        EnviarDatos.communication_available.set()
+        Commander.communication_available.set()
 
     def do_pwm_get(self, data):
         self.wait_communication_available()
-        EnviarDatos.communication_available.clear()
+        Commander.communication_available.clear()
         if not self.send_chunk('<c', (b'f',)):
             return
         pwm = self.read_chunk(1, '<b')
-        EnviarDatos.communication_available.set()
+        Commander.communication_available.set()
         print(f'pwm = {pwm}')
 
     def do_status(self, data):
         self.wait_communication_available()
-        EnviarDatos.communication_available.clear()
+        Commander.communication_available.clear()
         if not self.send_chunk('<c', (b'i',)):
             return
         status = self.read_chunk(2, '<bb')
-        EnviarDatos.communication_available.set()
+        Commander.communication_available.set()
         print(f'status = {status}')
 
     def do_temp_referencia(self, data):
         self.wait_communication_available()
-        EnviarDatos.communication_available.clear()
+        Commander.communication_available.clear()
         if not self.send_chunk('<c', (b'g',)):
             return
         referencia = self.read_chunk(4, '<f')
-        EnviarDatos.communication_available.set()
+        Commander.communication_available.set()
         print(f'temperatura referencia = {referencia}')
 
 
@@ -141,22 +141,22 @@ def find_arduino(baud_rate):
     raise IOError("Could not find the device - is it plugged in?")
 
 
-def ask_stop(stop_event):
-    EnviarDatos().cmdloop()
+def start_cmd(stop_event):
+    Commander().cmdloop()
     stop_event.set()
     print("Closing plot")
 
+def main():
 
-def get_data():
     try:
         ser = find_arduino(BAUD_RATE)
     except IOError as e:
         print(e)
         return
+    Commander.ser = ser
 
     stop_event = threading.Event()
-    EnviarDatos.ser = ser
-    t = threading.Thread(name='ask_stop', target=ask_stop, args=(stop_event,))
+    t = threading.Thread(name='commander', target=start_cmd, args=(stop_event,))
     t.start()
 
     p = Plotter([0, 30], [-10, 60])
@@ -168,24 +168,24 @@ def get_data():
         data[l] = []
     times = [[],[]]
 
-    EnviarDatos.communication_available.set()
+    Commander.communication_available.set()
 
     while not stop_event.isSet():
         
-        EnviarDatos.wait_communication_available()
+        Commander.wait_communication_available()
 
         i = 0
-        EnviarDatos.communication_available.clear()
+        Commander.communication_available.clear()
         for l in T_LABELS:
-            EnviarDatos.send_chunk('<cb', (b't',i))
-            current_data = EnviarDatos.read_chunk(DATA_SIZE, DATA_FORMAT)
+            Commander.send_chunk('<cb', (b't',i))
+            current_data = Commander.read_chunk(DATA_SIZE, DATA_FORMAT)
 
             current_time = time.time()-start_time
             p.add_data([current_time], [current_data], l)
             data[l].append(current_data)
             times[i].append(current_time)
             i += 1
-        EnviarDatos.communication_available.set()
+        Commander.communication_available.set()
                 
         time.sleep(0.1)
 
@@ -199,4 +199,4 @@ def get_data():
 
 
 if __name__ == "__main__":
-    get_data()
+    main()
