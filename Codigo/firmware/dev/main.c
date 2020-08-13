@@ -117,6 +117,7 @@ ISR( USART_RX_vect )
       if( parity_error )
         break;
       error_set( error );
+      error_sound_alarm();
       break;
 
     case( 'z' ):
