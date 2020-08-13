@@ -13,7 +13,7 @@ void usart_init()
   UBRR0L = ( unsigned char )ubrr;
 
   /* setting 8 data bit and 1 stop bit */
-  UCSR0C = ( 3 << UCSZ00 );
+  UCSR0C = ( 3 << UCSZ00 ) | ( 1 << UPM01 );
 
   /* enables receiving and sending with interruptions */
   UCSR0B = ( ( 1 << RXEN0 ) | ( 1 << TXEN0 ) | ( 1 << RXCIE0 ) );
@@ -37,10 +37,12 @@ void usart_buffer_transmit( void* dato, int size )
 }
 
 
-int8_t usart_receive( void )
+int8_t usart_receive( bool* parity_error )
 {
   while( !( UCSR0A & ( 1 << RXC0 ) ) )
   {
   }
+
+  *parity_error = UCSR0A & ( 1 << UPE0 );
   return UDR0;
 }

@@ -134,7 +134,7 @@ def find_arduino(baud_rate):
     for p in ports:
         if p.device == '/dev/ttyACM0' or p.device == '/dev/ttyUSB0':  # arduino found
             print("Device found at " + p.device)
-            ser = serial.Serial(p.device, baud_rate)
+            ser = serial.Serial(p.device, baud_rate, parity=serial.PARITY_EVEN)
             time.sleep(3)
             return ser
 

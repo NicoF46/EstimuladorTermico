@@ -9,7 +9,7 @@
 #include "status.h"
 #include "error.h"
 
-float Kp = 42.09506265030314;
+float Kp = 21.09506265030314;
 float Ki = 0.021557975007171537;
 float Kd = 4.4487479401778325;
 float bias = 0;
@@ -57,26 +57,38 @@ int main( void )
 
 ISR( USART_RX_vect )
 {
-  uint8_t command = usart_receive();
+  bool parity_error;
+  uint8_t command = usart_receive( &parity_error );
+  if( parity_error )
+  {
+    sei();
+    return;
+  }
 
   switch( command )
   {
     case( 'a' ):
-      ValorPWM = usart_receive();
+      ValorPWM = usart_receive( &parity_error );
+      if( parity_error )
+        break;
       modo_frio();
       PWM_set_modo( ValorPWM, FRIO );
       status_set( COLD );
       break;
 
     case( 'b' ):
-      ValorPWM = usart_receive();
+      ValorPWM = usart_receive( &parity_error );
+      if( parity_error )
+        break;
       modo_calor();
       PWM_set_modo( ValorPWM, CALOR );
       status_set( HOT );
       break;
 
     case( 'd' ):
-      TemperaturaReferencia = usart_receive();
+      TemperaturaReferencia = usart_receive( &parity_error );
+      if( parity_error )
+        break;
       usart_buffer_transmit( &TemperaturaReferencia, sizeof( TemperaturaReferencia ) );
       modo_frio();
       status_set( COLD );
@@ -84,7 +96,9 @@ ISR( USART_RX_vect )
       break;
 
     case( 'e' ):
-      TemperaturaReferencia = usart_receive();
+      TemperaturaReferencia = usart_receive( &parity_error );
+      if( parity_error )
+        break;
       usart_buffer_transmit( &TemperaturaReferencia, sizeof( TemperaturaReferencia ) );
       modo_calor();
       status_set( HOT );
@@ -99,17 +113,19 @@ ISR( USART_RX_vect )
 
     case( 'x' ):
       h_bridge_off();
-      error_t error = usart_receive();
+      error_t error = usart_receive( &parity_error );
+      if( parity_error )
+        break;
       error_set( error );
       break;
 
     case( 'z' ):
-      error_clear_all( );
+      error_clear_all();
       break;
 
     case( 'i' ):
     {
-      uint8_t header[2] = {0, 0};
+      uint8_t header[2] = { 0, 0 };
       status_fill_header( &header[0] );
       error_fill_header( &header[1] );
       usart_buffer_transmit( &header, sizeof( header ) );
@@ -118,8 +134,8 @@ ISR( USART_RX_vect )
 
     case( 't' ):
     {
-      int8_t termistor = usart_receive();
-      if( termistor != 0 && termistor != 1 )
+      int8_t termistor = usart_receive( &parity_error );
+      if( parity_error && termistor != 0 && termistor != 1 )
         break;
 
       usart_buffer_transmit( &temps[termistor], sizeof( temps[termistor] ) );

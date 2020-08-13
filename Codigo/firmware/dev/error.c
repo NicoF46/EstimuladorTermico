@@ -58,7 +58,7 @@ void error_setup()
  */
 void error_set( error_t error )
 {
-  current_error |= (1 << error);
+  current_error |= ( 1 << error );
   LED_NO_ERROR_PORT &= ~( 1 << LED_NO_ERROR_BIT );
   LED_ERROR_PORT |= ( 1 << LED_ERROR_BIT );
 }
@@ -69,7 +69,7 @@ void error_set( error_t error )
  *
  * \param[in]  error  The error flag.
  */
-void error_clear(error_t error)
+void error_clear( error_t error )
 {
   current_error &= ~( 1 << error );
   if( current_error == 0 )
@@ -92,7 +92,7 @@ void error_clear_all()
  *
  * \return     \c false if there is no error, \c true otherwise.
  */
-bool error_is_on_error( )
+bool error_is_on_error()
 {
   return current_error != 0;
 }
@@ -139,5 +139,5 @@ void error_sound_alarm()
 static void _error_led_off()
 {
   LED_ERROR_PORT &= ~( 1 << LED_ERROR_BIT );
-  LED_NO_ERROR_PORT |= ( 1 << LED_NO_ERROR_BIT ); 
+  LED_NO_ERROR_PORT |= ( 1 << LED_NO_ERROR_BIT );
 }
