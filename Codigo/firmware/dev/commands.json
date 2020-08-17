@@ -1,0 +1,24 @@
+[
+	{
+		"name": "cold",
+		"url": "/cold",
+		"input": [
+			{
+			"id": "temp",
+			"type": "float"
+			}
+		],
+		"output": []
+	},
+	{
+		"name": "hot",
+		"url": "/hot",
+		"input": [
+			{
+			"id": "temp",
+			"type": "float"
+			}
+		],
+		"output": []
+	}
+]

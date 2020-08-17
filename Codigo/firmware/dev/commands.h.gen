@@ -1,0 +1,44 @@
+import os
+import json
+
+commands_file = os.path.join("..", "dev", "commands.json")
+with open(commands_file) as commands_raw:
+    commands = json.load(commands_raw)
+
+print('#ifndef COMMANDS_GEN_H')
+print('#define COMMANDS_GEN_H\n')
+
+print('#include <stdbool.h>')
+
+
+for command in commands:
+
+    # input
+    print('typedef struct{')
+    for member in command["input"]:
+        print(f'  {member["type"]} {member["id"]};')
+    print('}' + f'{command["name"]}_intput_t;\n')
+
+    # output
+    print('typedef struct{')
+    for member in command["output"]:
+        print(f'  {member["type"]} {member["id"]};')
+    print('}' + f'{command["name"]}_output_t;\n')
+
+    # ctx
+    print('typedef struct{')
+    print(f'  {command["name"]}_intput_t input;')
+    print(f'  {command["name"]}_output_t output;')
+    print('}' + f'{command["name"]}_ctx_t;\n')
+
+# commands ctx
+print('union command_ctx{')
+for command in commands:    
+    print(f'  {command["name"]}_ctx_t {command["name"]};')
+print('};\n')
+
+# commands declaration
+for command in commands:
+    print(f'void command_{command["name"]}( union command_ctx *ctx);')
+
+print('\n#endif')

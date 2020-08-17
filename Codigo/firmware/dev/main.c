@@ -8,10 +8,12 @@
 
 #include "status.h"
 #include "error.h"
+#include "frame.h"
+#include "commands.gen.h"
 
-float Kp = 21.09506265030314;
-float Ki = 0.021557975007171537;
-float Kd = 4.4487479401778325;
+float Kp = 20;
+float Ki = 0.04;
+float Kd = 4;
 float bias = 0;
 float N_FILTRO = 10;
 static uint8_t ValorPWM = 0;
@@ -41,6 +43,7 @@ int main( void )
     temps[0] = calculate_temperature( THERMISTOR_1_ADC_CHANNEL );
     temps[1] = calculate_temperature( THERMISTOR_2_ADC_CHANNEL );
     temp = ( temps[0] + temps[1] ) / 2.0;
+    temp = temps[0];
 
     if( modo != WAITING )
     {
@@ -86,22 +89,23 @@ ISR( USART_RX_vect )
       break;
 
     case( 'd' ):
+    {
       TemperaturaReferencia = usart_receive( &parity_error );
       if( parity_error )
         break;
-      usart_buffer_transmit( &TemperaturaReferencia, sizeof( TemperaturaReferencia ) );
-      modo_frio();
-      status_set( COLD );
+      union command_ctx ctx;
+      ctx.cold.input.temp = TemperaturaReferencia;
+      command_cold( &ctx);
       modo = FRIO;
       break;
-
+    }
     case( 'e' ):
       TemperaturaReferencia = usart_receive( &parity_error );
       if( parity_error )
         break;
-      usart_buffer_transmit( &TemperaturaReferencia, sizeof( TemperaturaReferencia ) );
-      modo_calor();
-      status_set( HOT );
+      union command_ctx ctx;
+      ctx.hot.input.temp = TemperaturaReferencia;
+      command_hot( &ctx);
       modo = CALOR;
       break;
 
@@ -126,10 +130,7 @@ ISR( USART_RX_vect )
 
     case( 'i' ):
     {
-      uint8_t header[2] = { 0, 0 };
-      status_fill_header( &header[0] );
-      error_fill_header( &header[1] );
-      usart_buffer_transmit( &header, sizeof( header ) );
+      frame_send( NULL, 0 );
       break;
     }
 
@@ -153,3 +154,6 @@ ISR( USART_RX_vect )
   }
   sei();
 }
+
+
+

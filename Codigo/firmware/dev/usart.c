@@ -37,7 +37,7 @@ void usart_buffer_transmit( void* dato, int size )
 }
 
 
-int8_t usart_receive( bool* parity_error )
+uint8_t usart_receive( bool* parity_error )
 {
   while( !( UCSR0A & ( 1 << RXC0 ) ) )
   {

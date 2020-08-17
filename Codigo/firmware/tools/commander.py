@@ -60,19 +60,13 @@ class Commander(cmd.Cmd):
         self.wait_communication_available()
         Commander.communication_available.clear()
         self.send_chunk('<cB', (b'd', int(dato)))
-        referencia = self.read_chunk(4, '<f')
-        print(f'temperatura referencia = {referencia}')
         Commander.communication_available.set()
-
 
     def do_hot(self, dato):
         self.wait_communication_available()
         Commander.communication_available.clear()
         self.send_chunk('<cB', (b'e', int(dato)))
-        referencia = self.read_chunk(4, '<f')
-        print(f'temperatura referencia = {referencia}')
         Commander.communication_available.set()
-
         
     def do_stop(self, data):
         self.wait_communication_available()
@@ -159,8 +153,8 @@ def main():
     t = threading.Thread(name='commander', target=start_cmd, args=(stop_event,))
     t.start()
 
-    p = Plotter([0, 30], [-10, 60])
-    p.set_ticks('y', [y for y in range(-10, 61, 5)])
+    p = Plotter([0, 30], [0, 25])
+    p.set_ticks('y', [y for y in range(0, 25, 1)])
     start_time = time.time()
     data = {}
     for l in T_LABELS:
