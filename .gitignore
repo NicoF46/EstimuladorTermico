@@ -7,3 +7,4 @@
 **/desktop.ini
 *-cache
 *.gen.h
+*.gen.c

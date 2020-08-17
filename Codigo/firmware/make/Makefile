@@ -13,27 +13,12 @@ TARGET      = $(OBJ_DIR)/main
 GEN_FILES = $(patsubst $(OBJ_DIR)/%.h.gen,$(OBJ_DIR)/%.gen.h,$(wildcard $(OBJ_DIR)/*.h.gen))
 OBJ_FILES = $(patsubst $(OBJ_DIR)/%.c,$(OBJ_DIR)/%.o,$(wildcard $(OBJ_DIR)/*.c))
 
-%.gen.h: %.h.gen
-	$(PYTHON) $< > $@
-
-PYGEN: $(GEN_FILES)
-
-%.o: %.c PYGEN
-	$(CC) -c $(CFLAGS) $< -o $@
-
-$(TARGET).elf: $(OBJ_FILES)
-	$(CC) $(LDFLAGS) -o $@ $^
-
-$(TARGET).hex: $(TARGET).elf
-	avr-objcopy -j .text -j .data -O ihex $(TARGET).elf $(TARGET).hex
-	avr-objcopy -j .eeprom --set-section-flags=.eeprom="alloc,load" --change-section-lma .eeprom=0 -O ihex $(TARGET).elf $(OBJ_DIR)/eeprom.hex
-
 .PHONY: all
 all: $(TARGET).elf
 
 .PHONY: clean
 clean:
-	rm -f $(TARGET).elf $(OBJ_DIR)/*.o $(OBJ_DIR)/*.hex
+	rm -f $(TARGET).elf $(OBJ_DIR)/*.o $(OBJ_DIR)/*.hex $(OBJ_DIR)/*.gen.h
 
 .PHONY: upload
 upload: $(TARGET).hex
@@ -46,3 +31,20 @@ size: $(TARGET).elf
 .PHONY: format
 format: 
 	@for f in $$(find ../dev -name '*.[hc]' ); do clang-format-6.0 -style="`tr '\n' ' ' < $(TOOLS_DIR)/clang-format`" -i $$f; done
+
+
+%.gen.h: %.h.gen
+	$(PYTHON) $<
+
+.PHONY: PYGEN
+PYGEN: $(GEN_FILES)
+
+%.o: %.c PYGEN
+	$(CC) -c $(CFLAGS) $< -o $@
+
+$(TARGET).elf: $(OBJ_FILES)
+	$(CC) $(LDFLAGS) -o $@ $^
+
+$(TARGET).hex: $(TARGET).elf
+	avr-objcopy -j .text -j .data -O ihex $(TARGET).elf $(TARGET).hex
+	avr-objcopy -j .eeprom --set-section-flags=.eeprom="alloc,load" --change-section-lma .eeprom=0 -O ihex $(TARGET).elf $(OBJ_DIR)/eeprom.hex

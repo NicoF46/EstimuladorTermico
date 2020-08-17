@@ -10,6 +10,8 @@
 #include "error.h"
 #include "frame.h"
 #include "commands.gen.h"
+#include "commands_frames.gen.h"
+
 
 float Kp = 20;
 float Ki = 0.04;
@@ -68,6 +70,8 @@ ISR( USART_RX_vect )
     return;
   }
 
+    union command_ctx cmd_ctx;
+
   switch( command )
   {
     case( 'a' ):
@@ -90,22 +94,22 @@ ISR( USART_RX_vect )
 
     case( 'd' ):
     {
-      TemperaturaReferencia = usart_receive( &parity_error );
-      if( parity_error )
+      if( !command_frame_cold_receive( &cmd_ctx ) )
         break;
-      union command_ctx ctx;
-      ctx.cold.input.temp = TemperaturaReferencia;
-      command_cold( &ctx);
+      command_cold( &cmd_ctx );
+      command_frame_cold_send( &cmd_ctx );
+
+      TemperaturaReferencia = cmd_ctx.cold.input.temp;
       modo = FRIO;
       break;
     }
     case( 'e' ):
-      TemperaturaReferencia = usart_receive( &parity_error );
-      if( parity_error )
+      if( !command_frame_hot_receive( &cmd_ctx ) )
         break;
-      union command_ctx ctx;
-      ctx.hot.input.temp = TemperaturaReferencia;
-      command_hot( &ctx);
+      command_hot( &cmd_ctx );
+      command_frame_hot_send( &cmd_ctx );
+
+      TemperaturaReferencia = cmd_ctx.hot.input.temp;
       modo = CALOR;
       break;
 
@@ -130,7 +134,8 @@ ISR( USART_RX_vect )
 
     case( 'i' ):
     {
-      frame_send( NULL, 0 );
+      usart_transmit(status_get());
+      usart_transmit(error_record_get());
       break;
     }
 
@@ -154,6 +159,3 @@ ISR( USART_RX_vect )
   }
   sei();
 }
-
-
-

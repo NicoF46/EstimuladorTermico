@@ -17,7 +17,7 @@ SEPARATOR = b't'
 DATA_SIZE = 4
 DATA_FORMAT = '<f'
 T_LABELS = ('t1', 't2')
-TIMEOUT = 0.2
+TIMEOUT = 0.5
 
 DEBUG = False
 
@@ -60,13 +60,17 @@ class Commander(cmd.Cmd):
         self.wait_communication_available()
         Commander.communication_available.clear()
         self.send_chunk('<cB', (b'd', int(dato)))
+        frame = self.read_chunk(2, '<bb')
         Commander.communication_available.set()
+        print(f'frame = {frame}')
 
     def do_hot(self, dato):
         self.wait_communication_available()
         Commander.communication_available.clear()
         self.send_chunk('<cB', (b'e', int(dato)))
+        frame = self.read_chunk(2, '<bb')
         Commander.communication_available.set()
+        print(f'frame = {frame}')
         
     def do_stop(self, data):
         self.wait_communication_available()
@@ -128,7 +132,7 @@ def find_arduino(baud_rate):
     for p in ports:
         if p.device == '/dev/ttyACM0' or p.device == '/dev/ttyUSB0':  # arduino found
             print("Device found at " + p.device)
-            ser = serial.Serial(p.device, baud_rate, parity=serial.PARITY_EVEN)
+            ser = serial.Serial(p.device, baud_rate, parity=serial.PARITY_EVEN, timeout=TIMEOUT)
             time.sleep(3)
             return ser
 

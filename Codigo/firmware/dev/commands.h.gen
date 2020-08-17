@@ -1,15 +1,16 @@
 import os
 import json
+import sys
 
 commands_file = os.path.join("..", "dev", "commands.json")
 with open(commands_file) as commands_raw:
     commands = json.load(commands_raw)
 
+commands_header = os.path.join("..", "dev", "commands.gen.h")
+sys.stdout = open(commands_header, 'w')
+
 print('#ifndef COMMANDS_GEN_H')
 print('#define COMMANDS_GEN_H\n')
-
-print('#include <stdbool.h>')
-
 
 for command in commands:
 
@@ -29,12 +30,12 @@ for command in commands:
     print('typedef struct{')
     print(f'  {command["name"]}_intput_t input;')
     print(f'  {command["name"]}_output_t output;')
-    print('}' + f'{command["name"]}_ctx_t;\n')
+    print('}' + f'command_{command["name"]}_ctx_t;\n')
 
 # commands ctx
 print('union command_ctx{')
 for command in commands:    
-    print(f'  {command["name"]}_ctx_t {command["name"]};')
+    print(f'  command_{command["name"]}_ctx_t {command["name"]};')
 print('};\n')
 
 # commands declaration
@@ -42,3 +43,54 @@ for command in commands:
     print(f'void command_{command["name"]}( union command_ctx *ctx);')
 
 print('\n#endif')
+
+
+# functions declaration to send and receives command's frames
+commands_frames = os.path.join("..", "dev", "commands_frames.gen.h")
+sys.stdout = open(commands_frames, 'w')
+
+print('#ifndef COMMANDS_FRAMES_GEN_H')
+print('#define COMMANDS_FRAMES_GEN_H\n')
+
+print('#include "commands.gen.h"\n')
+
+print('#include <stdbool.h>')
+
+for command in commands:
+
+    print(f'bool command_frame_{command["name"]}_receive( union command_ctx* ctx );')
+    print(f'void command_frame_{command["name"]}_send( union command_ctx* ctx );\n')
+
+print('\n#endif')
+
+
+
+# functions definition to send and receives command's frames
+commands_frames = os.path.join("..", "dev", "commands_frames.gen.c")
+sys.stdout = open(commands_frames, 'w')
+
+print('#include "commands_frames.gen.h"')
+print('#include "commands.gen.h"')
+print('#include "usart.h"')
+print('#include "status.h"')
+print('#include "error.h"\n')
+
+for command in commands:
+
+    print(f'bool command_frame_{command["name"]}_receive( union command_ctx* ctx )')
+    print('{')
+    print('  bool parity_error;')
+    print('  bool no_errors = true;')
+    for command_input in command["input"]:
+        print(f'  ctx->{command["name"]}.input.{command_input["id"]} = usart_receive( &parity_error );')
+        print(f'  no_errors = no_errors && !parity_error;')
+    print('  return no_errors;')
+    print('}\n')
+
+    print(f'void command_frame_{command["name"]}_send( union command_ctx* ctx )')
+    print('{')
+    print('  usart_transmit(status_get());')
+    print('  usart_transmit(error_record_get());')
+    for command_output in command["output"]:
+        print(f'  usart_buffer_transmit( &ctx->{command["name"]}.output.{command_output["id"]}, sizeof(ctx->{command["name"]}.output.{command_output["id"]}));')
+    print('}\n')

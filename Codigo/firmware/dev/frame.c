@@ -2,28 +2,43 @@
 #include "status.h"
 #include "error.h"
 #include "usart.h"
+#include "commands.gen.h"
 
 #include <avr/io.h>
 #include <string.h>
 
 #define HEADER_SIZE 2
 
+
 void frame_send( void *data, size_t data_size )
 {
-  size_t frame_size =  HEADER_SIZE + data_size;
-  uint8_t frame[frame_size];
-
-  status_fill_header( &frame[0] );
-  error_fill_header( &frame[1] );
-  if ( data )
-    memcpy( &frame[ HEADER_SIZE + 1], data, data_size);
-  
-  usart_buffer_transmit( &frame, frame_size );
 }
 
-
-// Recibe el codigo del comando a ejecutar y en base a eso obtiene los datos y ejecuta el comando.
 void frame_receive()
 {
-  return;
+  bool parity_error;
+  uint8_t command = usart_receive( &parity_error );
+  if( !parity_error )
+    return;
+
+  union command_ctx ctx;
+  switch( command )
+  {
+    case( 'd' ):
+      ctx.cold.input.temp = usart_receive( &parity_error );
+      if( parity_error )
+        break;
+      command_cold( &ctx );
+      frame_send( NULL, 0 );
+      break;
+
+    case( 'e' ):
+      ctx.hot.input.temp = usart_receive( &parity_error );
+      if( parity_error )
+        break;
+      command_hot( &ctx );
+      frame_send( NULL, 0 );
+      break;
+    }
+
 }

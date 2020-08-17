@@ -99,14 +99,13 @@ bool error_is_on_error()
 
 
 /**
- * Fills the `index` header's byte with the device's current error code.
+ * Returns the record with the error flags.
  *
- * \param[out] header  The header to be sended.
- * \param[in]  index   The index in the header where the error code is saved.
+ * \return  The errors record.
  */
-void error_fill_header( uint8_t *header )
+uint8_t error_record_get()
 {
-  *header = current_error;
+  return current_error;
 }
 
 
