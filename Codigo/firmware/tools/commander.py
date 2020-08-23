@@ -25,6 +25,10 @@ DEBUG = False
 class Commander(cmd.Cmd):
     ser = None
     communication_available = threading.Event();
+    start = 0
+    time = 0
+    t1 = None
+    t2 = None
 
     @classmethod
     def wait_communication_available(cls):
@@ -42,13 +46,24 @@ class Commander(cmd.Cmd):
         raw_data = Commander.ser.read(size)
         data = struct.unpack(data_format, raw_data)
         return data
+    
+    @classmethod
+    def set_data(cls, t1, t2):
+        Commander.t1 = t1
+        Commander.t2 = t2
+        Commander.time = time.time() - Commander.start
+
+    def do_data(self, data):
+        print(f'time = {Commander.time}')
+        print(f't1 = {Commander.t1}')
+        print(f't2 = {Commander.t2}')
+        print(f'dif = {Commander.t2 - Commander.t1}')
 
     def do_pwm_cold(self, dato):
         self.wait_communication_available()
         Commander.communication_available.clear()
         self.send_chunk('<cB', (b'a', numpy.uint8(dato)))
         Commander.communication_available.set()
-
 
     def do_pwm_hot(self, dato):
         self.wait_communication_available()
@@ -63,6 +78,7 @@ class Commander(cmd.Cmd):
         frame = self.read_chunk(2, '<bb')
         Commander.communication_available.set()
         print(f'frame = {frame}')
+        Commander.start = time.time()
 
     def do_hot(self, dato):
         self.wait_communication_available()
@@ -71,12 +87,14 @@ class Commander(cmd.Cmd):
         frame = self.read_chunk(2, '<bb')
         Commander.communication_available.set()
         print(f'frame = {frame}')
+        Commander.start = time.time()
         
     def do_stop(self, data):
         self.wait_communication_available()
         Commander.communication_available.clear()
         self.send_chunk('<c', (b's',))
         Commander.communication_available.set()
+        Commander.start = time.time()
 
 
     def do_error(self, data):
@@ -97,7 +115,7 @@ class Commander(cmd.Cmd):
         Commander.communication_available.clear()
         if not self.send_chunk('<c', (b'f',)):
             return
-        pwm = self.read_chunk(1, '<b')
+        pwm = self.read_chunk(1, '<b')[0]
         Commander.communication_available.set()
         print(f'pwm = {pwm}')
 
@@ -115,7 +133,7 @@ class Commander(cmd.Cmd):
         Commander.communication_available.clear()
         if not self.send_chunk('<c', (b'g',)):
             return
-        referencia = self.read_chunk(4, '<f')
+        referencia = self.read_chunk(4, '<f')[0]
         Commander.communication_available.set()
         print(f'temperatura referencia = {referencia}')
 
@@ -132,7 +150,9 @@ def find_arduino(baud_rate):
     for p in ports:
         if p.device == '/dev/ttyACM0' or p.device == '/dev/ttyUSB0':  # arduino found
             print("Device found at " + p.device)
-            ser = serial.Serial(p.device, baud_rate, parity=serial.PARITY_EVEN, timeout=TIMEOUT)
+            ser = serial.Serial(p.device, baud_rate, parity=serial.PARITY_EVEN)
+            ser.reset_input_buffer()
+            ser.reset_output_buffer()
             time.sleep(3)
             return ser
 
@@ -157,8 +177,8 @@ def main():
     t = threading.Thread(name='commander', target=start_cmd, args=(stop_event,))
     t.start()
 
-    p = Plotter([0, 30], [0, 25])
-    p.set_ticks('y', [y for y in range(0, 25, 1)])
+    p = Plotter([0, 30], [0, 40])
+    p.set_ticks('y', [y for y in range(0, 40, 1)])
     start_time = time.time()
     data = {}
     for l in T_LABELS:
@@ -176,15 +196,14 @@ def main():
         Commander.communication_available.clear()
         for l in T_LABELS:
             Commander.send_chunk('<cb', (b't',i))
-            current_data = Commander.read_chunk(DATA_SIZE, DATA_FORMAT)
-
+            current_data = Commander.read_chunk(DATA_SIZE, DATA_FORMAT)[0]
             current_time = time.time()-start_time
             p.add_data([current_time], [current_data], l)
             data[l].append(current_data)
             times[i].append(current_time)
             i += 1
         Commander.communication_available.set()
-                
+        Commander.set_data(data['t1'][-1], data['t2'][-1])
         time.sleep(0.1)
 
     ser.close()

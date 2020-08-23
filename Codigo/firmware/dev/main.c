@@ -70,7 +70,7 @@ ISR( USART_RX_vect )
     return;
   }
 
-    union command_ctx cmd_ctx;
+  union command_ctx cmd_ctx;
 
   switch( command )
   {
