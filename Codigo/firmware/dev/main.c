@@ -6,50 +6,45 @@
 #include <avr/interrupt.h>
 #include "funciones.h"
 
+// #include "serial_interruption.gen.h"
+
 #include "status.h"
 #include "error.h"
-#include "frame.h"
 #include "commands.gen.h"
 #include "commands_frames.gen.h"
-
+#include "temperature.h"
 
 float Kp = 20;
 float Ki = 0.04;
-float Kd = 4;
+float Kd = 2;
 float bias = 0;
 float N_FILTRO = 10;
 static uint8_t ValorPWM = 0;
 uint8_t alert_system_register = 0;
-float TemperaturaReferencia = 25.0;
 modo_t modo = WAITING;
-float temps[] = { 0, 0 };
 
 
 int main( void )
 {
   status_setup();
-  status_set( STANDBY );
   error_setup();
+  temperature_reader_setup();
 
   PWM_configuration_init();
   h_bridge_setup();
   h_bridge_off();
   usart_init();
-  ADC_configuration_init();
   sei();
 
   float temp;
 
   while( true )
   {
-    temps[0] = calculate_temperature( THERMISTOR_1_ADC_CHANNEL );
-    temps[1] = calculate_temperature( THERMISTOR_2_ADC_CHANNEL );
-    temp = ( temps[0] + temps[1] ) / 2.0;
-    temp = temps[0];
+    temp = temperature_read();
 
     if( modo != WAITING )
     {
-      ValorPWM = ControladorPID( TemperaturaReferencia, temp, Kp, Ki, Kd, 0, 0, modo );
+      ValorPWM = ControladorPID( temperature_reference_get(), temp, Kp, Ki, Kd, 0, 0, modo );
       PWM_set_modo( ValorPWM, modo );
     }
 
@@ -75,21 +70,17 @@ ISR( USART_RX_vect )
   switch( command )
   {
     case( 'a' ):
-      ValorPWM = usart_receive( &parity_error );
-      if( parity_error )
+      if( !command_frame_pwm_cold_receive( &cmd_ctx ) )
         break;
-      modo_frio();
-      PWM_set_modo( ValorPWM, FRIO );
-      status_set( COLD );
+      command_pwm_cold( &cmd_ctx );
+      command_frame_pwm_cold_send( &cmd_ctx );
       break;
 
     case( 'b' ):
-      ValorPWM = usart_receive( &parity_error );
-      if( parity_error )
+      if( !command_frame_pwm_hot_receive( &cmd_ctx ) )
         break;
-      modo_calor();
-      PWM_set_modo( ValorPWM, CALOR );
-      status_set( HOT );
+      command_pwm_hot( &cmd_ctx );
+      command_frame_pwm_hot_send( &cmd_ctx );
       break;
 
     case( 'd' ):
@@ -99,7 +90,6 @@ ISR( USART_RX_vect )
       command_cold( &cmd_ctx );
       command_frame_cold_send( &cmd_ctx );
 
-      TemperaturaReferencia = cmd_ctx.cold.input.temp;
       modo = FRIO;
       break;
     }
@@ -109,7 +99,6 @@ ISR( USART_RX_vect )
       command_hot( &cmd_ctx );
       command_frame_hot_send( &cmd_ctx );
 
-      TemperaturaReferencia = cmd_ctx.hot.input.temp;
       modo = CALOR;
       break;
 
@@ -141,11 +130,13 @@ ISR( USART_RX_vect )
 
     case( 't' ):
     {
-      int8_t termistor = usart_receive( &parity_error );
-      if( parity_error && termistor != 0 && termistor != 1 )
+      uint8_t termistor = usart_receive( &parity_error );
+      if( parity_error && termistor < 0 && termistor > 2 )
         break;
-
-      usart_buffer_transmit( &temps[termistor], sizeof( temps[termistor] ) );
+      float temp = temperature_read_thermistor( termistor );
+      if ( termistor == 2 )
+        temp = temperature_read();
+      usart_buffer_transmit( &temp, sizeof( temp ) );
       break;
     }
 
@@ -154,8 +145,11 @@ ISR( USART_RX_vect )
       break;
 
     case( 'g' ):
-      usart_buffer_transmit( &TemperaturaReferencia, sizeof( TemperaturaReferencia ) );
+    {
+      float ref = temperature_reference_get();
+      usart_buffer_transmit( &ref, sizeof( ref ) );
       break;
+    }
   }
   sei();
 }

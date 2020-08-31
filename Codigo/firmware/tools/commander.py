@@ -16,7 +16,7 @@ SEPARATOR_SIZE = 1
 SEPARATOR = b't'
 DATA_SIZE = 4
 DATA_FORMAT = '<f'
-T_LABELS = ('t1', 't2')
+T_LABELS = ('t1', 't2', 't_average')
 TIMEOUT = 0.5
 
 DEBUG = False
@@ -59,17 +59,65 @@ class Commander(cmd.Cmd):
         print(f't2 = {Commander.t2}')
         print(f'dif = {Commander.t2 - Commander.t1}')
 
+
+    def do_cold_sequence(self, data):
+        if data == '':
+            print("Missing data")
+            return
+        data = list(map(int, data.split(' ')))
+        if len(data)%2 != 0:
+            print("The data len must be even")
+            return
+        
+        for i in range(0, len(data), 2):
+            print(f'pwm = {data[i]}')
+            print(f'time = {data[i+1]}')
+
+            self.wait_communication_available()
+            Commander.communication_available.clear()
+            self.send_chunk('<cB', (b'a', numpy.uint8(data[i])))
+            Commander.communication_available.set()
+            time.sleep(data[i+1])
+
+    def do_hot_sequence(self, data):
+        if data is '':
+            print("Missing data")
+            return
+        data = list(map(int, data.split(' ')))
+        if len(data)%2 != 0:
+            print("The data len must be even")
+            return
+        
+        for i in range(0, len(data), 2):
+            print(f'pwm = {data[i]}')
+            print(f'time = {data[i+1]}')
+
+            self.wait_communication_available()
+            Commander.communication_available.clear()
+            self.send_chunk('<cB', (b'b', numpy.uint8(data[i])))
+            Commander.communication_available.set()
+            time.sleep(data[i+1])
+
+
     def do_pwm_cold(self, dato):
         self.wait_communication_available()
         Commander.communication_available.clear()
         self.send_chunk('<cB', (b'a', numpy.uint8(dato)))
+        frame = self.read_chunk(2, '<bb')
         Commander.communication_available.set()
+        print(f'frame = {frame}')
+        Commander.start = time.time()
+
 
     def do_pwm_hot(self, dato):
         self.wait_communication_available()
         Commander.communication_available.clear()
         self.send_chunk('<cB', (b'b', numpy.uint8(dato)))
+        frame = self.read_chunk(2, '<bb')
         Commander.communication_available.set()
+        print(f'frame = {frame}')
+        Commander.start = time.time()
+
 
     def do_cold(self, dato):
         self.wait_communication_available()
@@ -184,7 +232,7 @@ def main():
     for l in T_LABELS:
         p.add_line(l)
         data[l] = []
-    times = [[],[]]
+    times = [[],[], []]
 
     Commander.communication_available.set()
 
@@ -202,6 +250,8 @@ def main():
             data[l].append(current_data)
             times[i].append(current_time)
             i += 1
+
+
         Commander.communication_available.set()
         Commander.set_data(data['t1'][-1], data['t2'][-1])
         time.sleep(0.1)
@@ -212,7 +262,9 @@ def main():
     if len(sys.argv) > 1:
         with open(sys.argv[1], 'w') as dataFile:
             wr = csv.writer(dataFile)
-            wr.writerows([times, data])
+            wr.writerow(["tiempo_t1", "t1", "tiempo_t2", "t2"])
+            for i in range(len(times[0])):
+                wr.writerow([times[0][i], data['t1'][i], times[1][i], data['t2'][i]])
 
 
 if __name__ == "__main__":
