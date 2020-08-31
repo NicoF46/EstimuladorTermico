@@ -56,7 +56,7 @@ void error_setup()
  *
  * \param[in]  error  The error flag.
  */
-void error_set( error_t error )
+void error_set( const error_t error )
 {
   current_error |= ( 1 << error );
   LED_NO_ERROR_PORT &= ~( 1 << LED_NO_ERROR_BIT );
@@ -69,7 +69,7 @@ void error_set( error_t error )
  *
  * \param[in]  error  The error flag.
  */
-void error_clear( error_t error )
+void error_clear( const error_t error )
 {
   current_error &= ~( 1 << error );
   if( current_error == 0 )

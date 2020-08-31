@@ -34,7 +34,7 @@ void status_setup()
  *
  * \param[in]  status  The new device's status.
  */
-void status_set( status_t status )
+void status_set( const status_t status )
 {
   switch( status )
   {

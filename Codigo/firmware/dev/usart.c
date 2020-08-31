@@ -27,7 +27,7 @@ void usart_transmit( uint8_t dato )
   UDR0 = dato;
 }
 
-void usart_buffer_transmit( void* dato, int size )
+void usart_buffer_transmit( void* dato, const int size )
 {
   int i = 0;
   uint8_t Buffer[size];

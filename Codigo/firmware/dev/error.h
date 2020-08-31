@@ -25,8 +25,8 @@ typedef enum
 ------------------------------------------------------------------------------*/
 
 void error_setup();
-void error_set( error_t error );
-void error_clear( error_t error );
+void error_set( const error_t error );
+void error_clear( const error_t error );
 void error_clear_all();
 bool error_is_on_error();
 uint8_t error_record_get();
