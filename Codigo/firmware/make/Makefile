@@ -18,7 +18,7 @@ all: $(TARGET).elf
 
 .PHONY: clean
 clean:
-	rm -f $(TARGET).elf $(OBJ_DIR)/*.o $(OBJ_DIR)/*.hex $(OBJ_DIR)/*.gen.h
+	rm -f $(TARGET).elf $(OBJ_DIR)/*.o $(OBJ_DIR)/*.hex $(OBJ_DIR)/*.gen.h $(OBJ_DIR)/*.gen.c
 
 .PHONY: upload
 upload: $(TARGET).hex
