@@ -13,6 +13,7 @@
 #include "commands.gen.h"
 #include "commands_frames.gen.h"
 #include "temperature.h"
+#include "power_board.h"
 
 float Kp = 20;
 float Ki = 0.04;
@@ -21,7 +22,6 @@ float bias = 0;
 float N_FILTRO = 10;
 static uint8_t ValorPWM = 0;
 uint8_t alert_system_register = 0;
-modo_t modo = WAITING;
 
 
 int main( void )
@@ -29,23 +29,19 @@ int main( void )
   status_setup();
   error_setup();
   temperature_reader_setup();
-
-  PWM_configuration_init();
-  h_bridge_setup();
-  h_bridge_off();
   usart_init();
+  power_board_setup();
   sei();
 
   float temp;
 
   while( true )
   {
-    temp = temperature_read();
-
-    if( modo != WAITING )
+    if( status_get() == COLD || status_get() == HOT )
     {
-      ValorPWM = ControladorPID( temperature_reference_get(), temp, Kp, Ki, Kd, 0, 0, modo );
-      PWM_set_modo( ValorPWM, modo );
+      temp = temperature_read();
+      ValorPWM = ControladorPID( temperature_reference_get(), temp, Kp, Ki, Kd, 0, 0 );
+      power_board_pwm_set( ValorPWM );
     }
 
     _delay_ms( DELAY_VALUE );
@@ -90,7 +86,6 @@ ISR( USART_RX_vect )
       command_cold( &cmd_ctx );
       command_frame_cold_send( &cmd_ctx );
 
-      modo = FRIO;
       break;
     }
     case( 'e' ):
@@ -99,24 +94,23 @@ ISR( USART_RX_vect )
       command_hot( &cmd_ctx );
       command_frame_hot_send( &cmd_ctx );
 
-      modo = CALOR;
       break;
 
     case( 's' ):
-      h_bridge_off();
+      power_board_mode_set( MODE_OFF );
       status_set( STANDBY );
-      modo = WAITING;
       break;
 
     case( 'x' ):
-      h_bridge_off();
+    {
+      power_board_mode_set( MODE_OFF );
       error_t error = usart_receive( &parity_error );
       if( parity_error )
         break;
       error_set( error );
       error_sound_alarm();
       break;
-
+    }
     case( 'z' ):
       error_clear_all();
       break;
@@ -133,6 +127,7 @@ ISR( USART_RX_vect )
       uint8_t termistor = usart_receive( &parity_error );
       if( parity_error && termistor < 0 && termistor > 2 )
         break;
+      
       float temp = temperature_read_thermistor( termistor );
       if ( termistor == 2 )
         temp = temperature_read();
@@ -140,6 +135,12 @@ ISR( USART_RX_vect )
       break;
     }
 
+    case('u'):
+    {
+      float temp = temperature_read();
+      usart_buffer_transmit( &temp, sizeof( temp ) );
+      break; 
+    }
     case( 'f' ):
       usart_buffer_transmit( &ValorPWM, sizeof( ValorPWM ) );
       break;

@@ -7,10 +7,13 @@ with open(commands_file) as commands_raw:
     commands = json.load(commands_raw)
 
 commands_header = os.path.join("..", "dev", "commands.gen.h")
+print(f'[PYFILEGEN] {commands_header}')
 sys.stdout = open(commands_header, 'w')
 
 print('#ifndef COMMANDS_GEN_H')
 print('#define COMMANDS_GEN_H\n')
+
+print('#include <stdint.h>\n')
 
 for command in commands:
 
@@ -47,6 +50,8 @@ print('\n#endif')
 
 # functions declaration to send and receives command's frames
 commands_frames = os.path.join("..", "dev", "commands_frames.gen.h")
+sys.stdout = sys.__stdout__
+print(f'[PYFILEGEN] {commands_frames}')
 sys.stdout = open(commands_frames, 'w')
 
 print('#ifndef COMMANDS_FRAMES_GEN_H')
@@ -67,6 +72,8 @@ print('\n#endif')
 
 # functions definition to send and receives command's frames
 commands_frames = os.path.join("..", "dev", "commands_frames.gen.c")
+sys.stdout = sys.__stdout__
+print(f'[PYFILEGEN] {commands_frames}')
 sys.stdout = open(commands_frames, 'w')
 
 print('#include "commands_frames.gen.h"')
@@ -77,15 +84,17 @@ print('#include "error.h"\n')
 
 for command in commands:
 
-    print(f'bool command_frame_{command["name"]}_receive( union command_ctx* ctx )')
-    print('{')
-    print('  bool parity_error;')
-    print('  bool no_errors = true;')
-    for command_input in command["input"]:
-        print(f'  ctx->{command["name"]}.input.{command_input["id"]} = usart_receive( &parity_error );')
-        print(f'  no_errors = no_errors && !parity_error;')
-    print('  return no_errors;')
-    print('}\n')
+    if( len(command["input"]) > 0):
+
+        print(f'bool command_frame_{command["name"]}_receive( union command_ctx* ctx )')
+        print('{')
+        print('  bool no_errors = true;')
+        print('  bool parity_error;')
+        for command_input in command["input"]:
+            print(f'  ctx->{command["name"]}.input.{command_input["id"]} = usart_receive( &parity_error );')
+            print(f'  no_errors = no_errors && !parity_error;')    
+        print('  return no_errors;')
+        print('}\n')
 
     print(f'void command_frame_{command["name"]}_send( union command_ctx* ctx )')
     print('{')
@@ -94,3 +103,65 @@ for command in commands:
     for command_output in command["output"]:
         print(f'  usart_buffer_transmit( &ctx->{command["name"]}.output.{command_output["id"]}, sizeof(ctx->{command["name"]}.output.{command_output["id"]}));')
     print('}\n')
+
+
+
+
+
+
+# interruption definition to receive frames and run commands
+
+# serial_interruption = os.path.join("..", "dev", "serial_interruption.gen.h")
+# sys.stdout = sys.__stdout__
+# print(f'[PYFILEGEN] {serial_interruption}')
+# sys.stdout = open(serial_interruption, 'w')
+
+# print('#ifndef SERIAL_INTERRUPTION_GEN_H')
+# print('#define SERIAL_INTERRUPTION_GEN_H\n')
+
+# print('#include <avr/io.h>')
+# print('#include <avr/interrupt.h>\n')
+
+# print('ISR( USART_RX_vect );')
+
+# print('\n#endif')
+
+
+
+# serial_interruption = os.path.join("..", "dev", "serial_interruption.gen.c")
+# sys.stdout = sys.__stdout__
+# print(f'[PYFILEGEN] {serial_interruption}')
+# sys.stdout = open(serial_interruption, 'w')
+
+
+# print('#include "serial_interruption.gen.h"')
+# print('#include "commands.gen.h"')
+# print('#include "commands_frames.gen.h"\n')
+# print('#include "usart.h"\n')
+# print('#include <stdio.h>')
+# print('#include <stdint.h>')
+# print('#include <stdbool.h> \n')
+
+
+# print('ISR( USART_RX_vect )')
+# print('{')
+# print('  bool parity_error;')
+# print('  uint8_t command = usart_receive( &parity_error );')
+# print('  if( parity_error )')
+# print('  {')
+# print('    sei();')
+# print('    return;')
+# print('  }')
+# print('  union command_ctx cmd_ctx;')
+# print('  switch( command )')
+# print('  {')
+# for i in range(len(commands)):
+#     print(f'    case({i+1}):')
+#     print(f'      if( !command_frame_{commands[i]["name"]}_receive( &cmd_ctx ) )')
+#     print('      break;')
+#     print(f'    command_{commands[i]["name"]}( &cmd_ctx );')
+#     print(f'    command_frame_{commands[i]["name"]}_send( &cmd_ctx );')
+#     print('    break;')
+# print('  }')
+# print('  sei();')
+# print('}')

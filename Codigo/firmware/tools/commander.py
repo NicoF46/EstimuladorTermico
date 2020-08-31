@@ -16,7 +16,7 @@ SEPARATOR_SIZE = 1
 SEPARATOR = b't'
 DATA_SIZE = 4
 DATA_FORMAT = '<f'
-T_LABELS = ('t1', 't2', 't_average')
+T_LABELS = ('t1', 't2')
 TIMEOUT = 0.5
 
 DEBUG = False
@@ -185,6 +185,15 @@ class Commander(cmd.Cmd):
         Commander.communication_available.set()
         print(f'temperatura referencia = {referencia}')
 
+    def do_temp_get(self, data):
+        self.wait_communication_available()
+        Commander.communication_available.clear()
+        if not self.send_chunk('<c', (b'u',)):
+            return
+        referencia = self.read_chunk(4, '<f')[0]
+        Commander.communication_available.set()
+        print(f'average temperature  = {referencia}')
+
 
     def do_exit(self, data):
         return True
@@ -232,7 +241,7 @@ def main():
     for l in T_LABELS:
         p.add_line(l)
         data[l] = []
-    times = [[],[], []]
+    times = [[] for l in T_LABELS]
 
     Commander.communication_available.set()
 

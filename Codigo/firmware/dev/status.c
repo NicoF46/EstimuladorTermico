@@ -39,6 +39,7 @@ void status_set( status_t status )
   switch( status )
   {
     case COLD:
+    case PWM_COLD:
     case COLD_REACHED:
       current_status = COLD;
       LED_HOT_PORT &= ~( 1 << LED_HOT_BIT );
@@ -46,6 +47,7 @@ void status_set( status_t status )
       break;
 
     case HOT:
+    case PWM_HOT:
     case HOT_REACHED:
       current_status = HOT;
       LED_COLD_PORT &= ~( 1 << LED_COLD_BIT );
@@ -56,7 +58,10 @@ void status_set( status_t status )
       current_status = STANDBY;
       LED_COLD_PORT &= ~( 1 << LED_COLD_BIT );
       LED_HOT_PORT &= ~( 1 << LED_HOT_BIT );
+      break;
   }
+
+  current_status = status;
 }
 
 

@@ -1,8 +1,7 @@
-#ifndef STATUS_H
-#define STATUS_H
+#ifndef POWER_BOARD_H
+#define POWER_BOARD_H
 
 #include <stdint.h>
-#include <stddef.h>
 
 /*-----------------------------------------------------------------------------
   Library data types
@@ -10,21 +9,18 @@
 
 typedef enum
 {
-  STANDBY,
-  COLD,
-  HOT,
-  PWM_COLD,
-  PWM_HOT,
-  COLD_REACHED,
-  HOT_REACHED
-} status_t;
+  MODE_OFF,
+  MODE_COLD,
+  MODE_HOT
+} power_board_mode_t;
 
 /* ----------------------------------------------------------------------------
   Function prototypes
 ------------------------------------------------------------------------------*/
 
-void status_setup();
-void status_set( status_t status );
-status_t status_get();
+void power_board_setup();
+void power_board_mode_set( const power_board_mode_t mode );
+power_board_mode_t power_board_mode_get( );
+void power_board_pwm_set( const uint8_t pwm );
 
 #endif

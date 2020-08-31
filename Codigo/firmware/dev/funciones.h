@@ -45,14 +45,4 @@
 #define TEMPERATURE_DIFFERENCE_TOLERANCE 5
 #define ERROR_TEMPERATURE_DIFFERENCE 1
 
-void h_bridge_off();
-void h_bridge_setup();
-void leds_setup();
-modo_t definir_modo( float, float );
-void modo_frio();
-void modo_calor();
-uint8_t ControladorPID( float, float, float, float, float, float, float, modo_t );
-void CalibracionPID( float, float*, float*, float*, float*, float*, uint8_t* );
-void ApagarLedsIndicacion();
-float read_temperature( uint8_t* );
-float calculate_temperature( uint8_t );
+uint8_t ControladorPID( float, float, float, float, float, float, float );
