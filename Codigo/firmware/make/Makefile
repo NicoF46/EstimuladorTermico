@@ -32,11 +32,10 @@ size: $(TARGET).elf
 format: 
 	@for f in $$(find ../dev -name '*.[hc]' ); do clang-format-6.0 -style="`tr '\n' ' ' < $(TOOLS_DIR)/clang-format`" -i $$f; done
 
-
 %.gen.h: %.h.gen $(JSON_FILES)
 	$(PYTHON) $<
 
-%.o: %.c $(GEN_FILES) $(GEN_FILES) $(JSON_FILES)
+%.o: %.c $(GEN_FILES) $(JSON_FILES)
 	$(CC) -c $(CFLAGS) $< -o $@
 
 $(TARGET).elf: $(OBJ_FILES) $(GEN_FILES) $(JSON_FILES)
