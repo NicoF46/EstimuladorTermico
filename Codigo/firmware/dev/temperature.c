@@ -24,9 +24,8 @@ static float t_reference;
   Internal function Prototypes
 ------------------------------------------------------------------------------*/
 
-uint16_t _adc_read(uint8_t channel);
-float _calculate_temperature( uint16_t adc_read );
-float _temperature_get( uint8_t channel);
+static uint16_t _adc_read(uint8_t channel);
+static float _calculate_temperature( uint16_t adc_read );
 
 /* ----------------------------------------------------------------------------
   Function definition
@@ -97,7 +96,7 @@ void temperature_reference_set(const float temp)
   Internal function definition
 ------------------------------------------------------------------------------*/
 
-uint16_t _adc_read(uint8_t channel)
+static uint16_t _adc_read(uint8_t channel)
 {
   // selects the channel to be read
   ADMUX &= ( ( 1 << REFS1 ) | ( 1 << REFS0 ) | ( 1 << ADLAR ) );
@@ -110,7 +109,7 @@ uint16_t _adc_read(uint8_t channel)
   return ADC;
 }
 
-float _calculate_temperature( uint16_t adc_read )
+static float _calculate_temperature( uint16_t adc_read )
 {
   float v_out = ( ( float )( adc_read ) ) * VCC / MAX_ADC;
   float thermistor_resistance = ( VCC - v_out ) / ( v_out / THERMISTOR_R0 );

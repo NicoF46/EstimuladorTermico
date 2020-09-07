@@ -14,8 +14,8 @@ import numpy
 BAUD_RATE = 9600
 SEPARATOR_SIZE = 1
 SEPARATOR = b't'
-DATA_SIZE = 4
-DATA_FORMAT = '<f'
+DATA_SIZE = 6
+DATA_FORMAT = '<bbf'
 T_LABELS = ('t1', 't2')
 TIMEOUT = 0.5
 
@@ -29,6 +29,7 @@ class Commander(cmd.Cmd):
     time = 0
     t1 = None
     t2 = None
+    t_ref = None
 
     @classmethod
     def wait_communication_available(cls):
@@ -122,20 +123,22 @@ class Commander(cmd.Cmd):
     def do_cold(self, dato):
         self.wait_communication_available()
         Commander.communication_available.clear()
-        self.send_chunk('<cB', (b'd', int(dato)))
+        self.send_chunk('<bB', (2, int(dato)))
         frame = self.read_chunk(2, '<bb')
         Commander.communication_available.set()
         print(f'frame = {frame}')
         Commander.start = time.time()
+        Commander.t_ref = int(dato)
 
     def do_hot(self, dato):
         self.wait_communication_available()
         Commander.communication_available.clear()
-        self.send_chunk('<cB', (b'e', int(dato)))
+        self.send_chunk('<bB', (3, int(dato)))
         frame = self.read_chunk(2, '<bb')
         Commander.communication_available.set()
         print(f'frame = {frame}')
         Commander.start = time.time()
+        Commander.t_ref = int(dato)
         
     def do_stop(self, data):
         self.wait_communication_available()
@@ -170,7 +173,7 @@ class Commander(cmd.Cmd):
     def do_status(self, data):
         self.wait_communication_available()
         Commander.communication_available.clear()
-        if not self.send_chunk('<c', (b'i',)):
+        if not self.send_chunk('<b', (0,)):
             return
         status = self.read_chunk(2, '<bb')
         Commander.communication_available.set()
@@ -241,7 +244,8 @@ def main():
     for l in T_LABELS:
         p.add_line(l)
         data[l] = []
-    times = [[] for l in T_LABELS]
+    times = []
+    t_refs = []
 
     Commander.communication_available.set()
 
@@ -251,13 +255,16 @@ def main():
 
         i = 0
         Commander.communication_available.clear()
+        current_time = time.time()-start_time
+        times.append(current_time)
+        t_refs.append(Commander.t_ref)
         for l in T_LABELS:
-            Commander.send_chunk('<cb', (b't',i))
-            current_data = Commander.read_chunk(DATA_SIZE, DATA_FORMAT)[0]
-            current_time = time.time()-start_time
+            Commander.send_chunk('<bb', (1,i))
+            current_data = Commander.read_chunk(DATA_SIZE, DATA_FORMAT)[2]
+            
             p.add_data([current_time], [current_data], l)
             data[l].append(current_data)
-            times[i].append(current_time)
+
             i += 1
 
 
@@ -271,9 +278,9 @@ def main():
     if len(sys.argv) > 1:
         with open(sys.argv[1], 'w') as dataFile:
             wr = csv.writer(dataFile)
-            wr.writerow(["tiempo_t1", "t1", "tiempo_t2", "t2"])
-            for i in range(len(times[0])):
-                wr.writerow([times[0][i], data['t1'][i], times[1][i], data['t2'][i]])
+            wr.writerow(["time", "t1", "t2", "t_ref"])
+            for i in range(len(times)):
+                wr.writerow([times[i], data['t1'][i], data['t2'][i], t_refs[i]])
 
 
 if __name__ == "__main__":

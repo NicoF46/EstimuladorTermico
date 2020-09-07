@@ -1,24 +1,26 @@
 #include "power_board.h"
+#include "app_utils.h"
 
 #include <avr/io.h>
-#include <util/delay.h>
 
 /* ----------------------------------------------------------------------------
   Internal data
 ------------------------------------------------------------------------------*/
 
 typedef void (*mode_set)(void);
-void _standby_mode_set();
-void _cold_mode_set();
-void _hot_mode_set();
+static void _standby_mode_set();
+static void _cold_mode_set();
+static void _hot_mode_set();
 static mode_set mode_set_functions[3] = {&_standby_mode_set, &_cold_mode_set, &_hot_mode_set}; 
-
 static power_board_mode_t current_mode = MODE_OFF;
 
 /* ----------------------------------------------------------------------------
   Function definition
 ------------------------------------------------------------------------------*/
 
+/**
+ * Configures the registers needed to use the power board.
+ */
 void power_board_setup()
 {
   DDRD |= ( ( 1 << PD5 ) | ( 1 << PD6 ) );
@@ -36,17 +38,36 @@ void power_board_setup()
   return mode_set_functions[current_mode]();
 }
 
+/**
+ * Sets an operation mode for the controll board. 
+ * Modes:
+ *  - MODE_OFF: Turns off the power board.
+ *  - MODE_COLD: Configures the power board to use the cold mode.
+ *  - MODE_HOT: Configures the power board to use the hot mode.
+ *
+ * \param[in]  mode  The mode
+ */
 void power_board_mode_set( const power_board_mode_t mode )
 {
   current_mode = mode;
   return mode_set_functions[mode]();
 }
 
+/**
+ * Returns the current mode used by the power board.
+ *
+ * \return     The power board mode.
+ */
 power_board_mode_t power_board_mode_get( )
 {
   return current_mode;
 }
 
+/**
+ * Sets the pwm used by the power board.
+ *
+ * \param[in]  pwm   The pwm
+ */
 void power_board_pwm_set( const uint8_t pwm )
 {
   if( current_mode == MODE_COLD )
@@ -59,7 +80,10 @@ void power_board_pwm_set( const uint8_t pwm )
   Internal function definition
 ------------------------------------------------------------------------------*/
 
-void _standby_mode_set()
+/**
+ * Turns off the power board.
+ */
+static void _standby_mode_set()
 {
   PORTD &= ~( 1 << PD5 );
   PORTD &= ~( 1 << PD6 );
@@ -68,25 +92,31 @@ void _standby_mode_set()
   OCR1A = 0;
 }
 
-void _cold_mode_set()
+/**
+ * Sets the cold mode.
+ */
+static void _cold_mode_set()
 {
   /* HOT MODE OFF */
   PORTD &= ~( 1 << PD6 );
   OCR1A = 0;
   DDRB &= ~( 1 << PB1 );
-  _delay_ms( 10 );
+  delay_ms( 10 );
   /* COLD MODE ON */
   PORTD |= ( 1 << PD5 );
   DDRB |= ( 1 << PB2 );
 }
 
-void _hot_mode_set()
+/**
+ * Sets the hot mode.
+ */
+static void _hot_mode_set()
 {
   /* COLD MODE OFF */
   PORTD &= ~( 1 << PD5 );
   OCR1B = 0;
   DDRB &= ~( 1 << PB2 );
-  _delay_ms( 10 );
+  delay_ms( 10 );
   /* HOT MODE ON */
   PORTD |= ( 1 << PD6 );
   DDRB |= ( 1 << PB1 );

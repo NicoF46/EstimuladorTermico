@@ -21,18 +21,18 @@ for command in commands:
     print('typedef struct{')
     for member in command["input"]:
         print(f'  {member["type"]} {member["id"]};')
-    print('}' + f'{command["name"]}_intput_t;\n')
+    print('}' + f'command_{command["name"]}_intput_t;\n')
 
     # output
     print('typedef struct{')
     for member in command["output"]:
         print(f'  {member["type"]} {member["id"]};')
-    print('}' + f'{command["name"]}_output_t;\n')
+    print('}' + f'command_{command["name"]}_output_t;\n')
 
     # ctx
     print('typedef struct{')
-    print(f'  {command["name"]}_intput_t input;')
-    print(f'  {command["name"]}_output_t output;')
+    print(f'  command_{command["name"]}_intput_t input;')
+    print(f'  command_{command["name"]}_output_t output;')
     print('}' + f'command_{command["name"]}_ctx_t;\n')
 
 # commands ctx
@@ -43,10 +43,9 @@ print('};\n')
 
 # commands declaration
 for command in commands:
-    print(f'void command_{command["name"]}( union command_ctx *ctx);')
+    print(f'void command_{command["name"]}( command_{command["name"]}_ctx_t *ctx );')
 
 print('\n#endif')
-
 
 # functions declaration to send and receives command's frames
 commands_frames = os.path.join("..", "dev", "commands_frames.gen.h")
@@ -59,16 +58,14 @@ print('#define COMMANDS_FRAMES_GEN_H\n')
 
 print('#include "commands.gen.h"\n')
 
-print('#include <stdbool.h>')
+print('#include <stdbool.h>\n')
 
 for command in commands:
 
-    print(f'bool command_frame_{command["name"]}_receive( union command_ctx* ctx );')
-    print(f'void command_frame_{command["name"]}_send( union command_ctx* ctx );\n')
+    print(f'bool command_frame_{command["name"]}_receive( command_{command["name"]}_intput_t* input );')
+    print(f'void command_frame_{command["name"]}_send( const command_{command["name"]}_output_t output );\n')
 
 print('\n#endif')
-
-
 
 # functions definition to send and receives command's frames
 commands_frames = os.path.join("..", "dev", "commands_frames.gen.c")
@@ -86,82 +83,80 @@ for command in commands:
 
     if( len(command["input"]) > 0):
 
-        print(f'bool command_frame_{command["name"]}_receive( union command_ctx* ctx )')
+        print(f'bool command_frame_{command["name"]}_receive( command_{command["name"]}_intput_t* input )')
         print('{')
         print('  bool no_errors = true;')
         print('  bool parity_error;')
         for command_input in command["input"]:
-            print(f'  ctx->{command["name"]}.input.{command_input["id"]} = usart_receive( &parity_error );')
+            print(f'  input->{command_input["id"]} = usart_receive( &parity_error );')
             print(f'  no_errors = no_errors && !parity_error;')    
         print('  return no_errors;')
         print('}\n')
 
-    print(f'void command_frame_{command["name"]}_send( union command_ctx* ctx )')
+    print(f'void command_frame_{command["name"]}_send( const command_{command["name"]}_output_t output )')
     print('{')
     print('  usart_transmit(status_get());')
     print('  usart_transmit(error_record_get());')
     for command_output in command["output"]:
-        print(f'  usart_buffer_transmit( &ctx->{command["name"]}.output.{command_output["id"]}, sizeof(ctx->{command["name"]}.output.{command_output["id"]}));')
+        print(f'  usart_buffer_transmit( &output.{command_output["id"]}, sizeof(output.{command_output["id"]}));')
     print('}\n')
 
+#interruption declaration to receive frames and run commands
+serial_interruption = os.path.join("..", "dev", "serial_interruption.gen.h")
+sys.stdout = sys.__stdout__
+print(f'[PYFILEGEN] {serial_interruption}')
+sys.stdout = open(serial_interruption, 'w')
+
+print('#ifndef SERIAL_INTERRUPTION_GEN_H')
+print('#define SERIAL_INTERRUPTION_GEN_H\n')
+
+print('#include <avr/io.h>')
+print('#include <avr/interrupt.h>\n')
+
+print('ISR( USART_RX_vect );')
+
+print('\n#endif')
+
+#interruption definition to receive frames and run commands
+serial_interruption = os.path.join("..", "dev", "serial_interruption.gen.c")
+sys.stdout = sys.__stdout__
+print(f'[PYFILEGEN] {serial_interruption}')
+sys.stdout = open(serial_interruption, 'w')
 
 
+print('#include "serial_interruption.gen.h"')
+print('#include "commands.gen.h"')
+print('#include "commands_frames.gen.h"')
+print('#include "usart.h"\n')
+print('#include <stdio.h>')
+print('#include <stdint.h>')
+print('#include <stdbool.h> \n')
 
+print('ISR( USART_RX_vect )')
+print('{')
+print('  bool parity_error;')
+print('  uint8_t command = usart_receive( &parity_error );')
+print('  if( parity_error )')
+print('  {')
+print('    usart_flush();')
+print('    sei();')
+print('    return;')
+print('  }')
+print('  union command_ctx cmd_ctx;')
+print('  switch( command )')
+print('  {')
+for i in range(len(commands)):
+    print(f'    case({i}):')
+    if( len(commands[i]["input"]) > 0 ):
+        print(f'      if( !command_frame_{commands[i]["name"]}_receive( &(cmd_ctx.{commands[i]["name"]}.input) ) )')
+        print('      {')
+        print('        usart_flush();')
+        print('        break;')
+        print('      }')
 
-
-# interruption definition to receive frames and run commands
-
-# serial_interruption = os.path.join("..", "dev", "serial_interruption.gen.h")
-# sys.stdout = sys.__stdout__
-# print(f'[PYFILEGEN] {serial_interruption}')
-# sys.stdout = open(serial_interruption, 'w')
-
-# print('#ifndef SERIAL_INTERRUPTION_GEN_H')
-# print('#define SERIAL_INTERRUPTION_GEN_H\n')
-
-# print('#include <avr/io.h>')
-# print('#include <avr/interrupt.h>\n')
-
-# print('ISR( USART_RX_vect );')
-
-# print('\n#endif')
-
-
-
-# serial_interruption = os.path.join("..", "dev", "serial_interruption.gen.c")
-# sys.stdout = sys.__stdout__
-# print(f'[PYFILEGEN] {serial_interruption}')
-# sys.stdout = open(serial_interruption, 'w')
-
-
-# print('#include "serial_interruption.gen.h"')
-# print('#include "commands.gen.h"')
-# print('#include "commands_frames.gen.h"\n')
-# print('#include "usart.h"\n')
-# print('#include <stdio.h>')
-# print('#include <stdint.h>')
-# print('#include <stdbool.h> \n')
-
-
-# print('ISR( USART_RX_vect )')
-# print('{')
-# print('  bool parity_error;')
-# print('  uint8_t command = usart_receive( &parity_error );')
-# print('  if( parity_error )')
-# print('  {')
-# print('    sei();')
-# print('    return;')
-# print('  }')
-# print('  union command_ctx cmd_ctx;')
-# print('  switch( command )')
-# print('  {')
-# for i in range(len(commands)):
-#     print(f'    case({i+1}):')
-#     print(f'      if( !command_frame_{commands[i]["name"]}_receive( &cmd_ctx ) )')
-#     print('      break;')
-#     print(f'    command_{commands[i]["name"]}( &cmd_ctx );')
-#     print(f'    command_frame_{commands[i]["name"]}_send( &cmd_ctx );')
-#     print('    break;')
-# print('  }')
-# print('  sei();')
-# print('}')
+    print(f'      command_{commands[i]["name"]}( &(cmd_ctx.{commands[i]["name"]}) );')
+    print(f'      command_frame_{commands[i]["name"]}_send( cmd_ctx.{commands[i]["name"]}.output );')
+    print('      break;')
+print('  }')
+print('  sei();')
+print('}')
