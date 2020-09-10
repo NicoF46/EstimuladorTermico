@@ -7,11 +7,11 @@
   Internal data
 ------------------------------------------------------------------------------*/
 
-typedef void (*mode_set)(void);
+typedef void ( *mode_set )( void );
 static void _standby_mode_set();
 static void _cold_mode_set();
 static void _hot_mode_set();
-static mode_set mode_set_functions[3] = {&_standby_mode_set, &_cold_mode_set, &_hot_mode_set}; 
+static mode_set mode_set_functions[3] = { &_standby_mode_set, &_cold_mode_set, &_hot_mode_set };
 static power_board_mode_t current_mode = MODE_OFF;
 
 /* ----------------------------------------------------------------------------
@@ -39,7 +39,7 @@ void power_board_setup()
 }
 
 /**
- * Sets an operation mode for the controll board. 
+ * Sets an operation mode for the controll board.
  * Modes:
  *  - MODE_OFF: Turns off the power board.
  *  - MODE_COLD: Configures the power board to use the cold mode.
@@ -58,7 +58,7 @@ void power_board_mode_set( const power_board_mode_t mode )
  *
  * \return     The power board mode.
  */
-power_board_mode_t power_board_mode_get( )
+power_board_mode_t power_board_mode_get()
 {
   return current_mode;
 }

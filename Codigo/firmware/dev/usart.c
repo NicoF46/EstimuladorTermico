@@ -59,10 +59,10 @@ uint8_t usart_receive( bool* parity_error )
 
 void usart_flush( void )
 {
-  uint8_t *dummy = malloc( sizeof(*dummy) );
+  uint8_t* dummy = malloc( sizeof( *dummy ) );
   while( !( UCSR0A & ( 1 << RXC0 ) ) )
   {
-   *dummy = UDR0;
+    *dummy = UDR0;
   }
-  free(dummy);
+  free( dummy );
 }

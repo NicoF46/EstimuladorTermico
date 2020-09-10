@@ -56,7 +56,6 @@ void controller_loop()
 
     delay_ms( DELAY );
   }
-
 }
 
 
@@ -67,14 +66,14 @@ void controller_loop()
  *  - PWM_HOT_MIN
  *  - PWM_COLD_MAX
  *  - PWM_COLD_MIN
- *  
+ *
  * This constants depends on the current mode that is used. The Ik parameter
  * is also truncated on this cases.
  *
  * \param[in]  ref    The reference
  * \param[in]  input  The input
  *
- * \return     The PWM nedded to fix the current error. 
+ * \return     The PWM nedded to fix the current error.
  */
 uint8_t controller_pid( const float ref, const float input )
 {
@@ -95,16 +94,18 @@ uint8_t controller_pid( const float ref, const float input )
     min_output = PWM_HOT_MIN;
   }
 
-  output = _pid(ref, input);
+  output = _pid( ref, input );
 
   previous_input = input;
   previous_ref = ref;
 
-  if( output > max_output ){
+  if( output > max_output )
+  {
     output = max_output;
     Ik = 0;
   }
-  else if( output < min_output ){
+  else if( output < min_output )
+  {
     Ik = 0;
     output = min_output;
   }
@@ -116,7 +117,7 @@ uint8_t controller_pid( const float ref, const float input )
 
   if( mode == MODE_COLD )
     output = output * ( -1 );
-  
+
   return output;
 }
 
@@ -179,7 +180,8 @@ void controller_pid_constants_get( float* out_Kp, float* out_Kd, float* out_Ki )
  */
 static float _pid( const float ref, const float input )
 {
-  if( !n ) n = 1;
+  if( !n )
+    n = 1;
   float h = ( ( DELAY )*pow( 10, -3 ) );
   float gamma = Kd / n;
   Pk = Kp * ( ref - input );

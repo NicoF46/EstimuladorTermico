@@ -11,7 +11,7 @@
  *
  * \param      ctx   The command context
  */
-void command_status( command_status_ctx_t *ctx)
+void command_status( command_status_ctx_t *ctx )
 {
   return;
 }
@@ -21,32 +21,32 @@ void command_status( command_status_ctx_t *ctx)
  *
  * \param      ctx   The command context
  */
-void command_thermistor_temp( command_thermistor_temp_ctx_t *ctx)
+void command_thermistor_temp( command_thermistor_temp_ctx_t *ctx )
 {
-  ctx->output.temp = temperature_read_thermistor(ctx->input.thermistor);
+  ctx->output.temp = temperature_read_thermistor( ctx->input.thermistor );
 }
 
 /**
- * Regulates the device to reach the input temperature using cold mode. 
+ * Regulates the device to reach the input temperature using cold mode.
  *
  * \param      ctx   The command context
  */
-void command_cold( command_cold_ctx_t *ctx)
+void command_cold( command_cold_ctx_t *ctx )
 {
   power_board_mode_set( MODE_COLD );
-  temperature_reference_set(ctx->input.temp);
+  temperature_reference_set( ctx->input.temp );
   status_set( COLD );
 }
 
 /**
- * Regulates the device to reach the input temperature using hot mode. 
+ * Regulates the device to reach the input temperature using hot mode.
  *
  * \param      ctx   The command context
  */
-void command_hot( command_hot_ctx_t *ctx)
+void command_hot( command_hot_ctx_t *ctx )
 {
   power_board_mode_set( MODE_HOT );
-  temperature_reference_set(ctx->input.temp);
+  temperature_reference_set( ctx->input.temp );
   status_set( HOT );
 }
 
@@ -55,10 +55,10 @@ void command_hot( command_hot_ctx_t *ctx)
  *
  * \param      ctx   The command context
  */
-void command_pwm_cold( command_pwm_cold_ctx_t *ctx)
+void command_pwm_cold( command_pwm_cold_ctx_t *ctx )
 {
   power_board_mode_set( MODE_COLD );
-  power_board_pwm_set(ctx->input.pwm);
+  power_board_pwm_set( ctx->input.pwm );
   status_set( PWM_COLD );
 }
 
@@ -67,9 +67,14 @@ void command_pwm_cold( command_pwm_cold_ctx_t *ctx)
  *
  * \param      ctx   The command context
  */
-void command_pwm_hot( command_pwm_hot_ctx_t *ctx)
+void command_pwm_hot( command_pwm_hot_ctx_t *ctx )
 {
   power_board_mode_set( MODE_HOT );
   power_board_pwm_set( ctx->input.pwm );
   status_set( PWM_HOT );
+}
+
+void command_read_temperature( command_read_temperature_ctx_t *ctx )
+{
+  ctx->output.temperature = temperature_read();
 }

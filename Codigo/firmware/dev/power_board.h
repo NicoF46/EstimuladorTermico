@@ -20,7 +20,7 @@ typedef enum
 
 void power_board_setup();
 void power_board_mode_set( const power_board_mode_t mode );
-power_board_mode_t power_board_mode_get( );
+power_board_mode_t power_board_mode_get();
 void power_board_pwm_set( const uint8_t pwm );
 
 #endif
