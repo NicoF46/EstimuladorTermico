@@ -94,3 +94,34 @@ void command_stop( command_stop_ctx_t *ctx )
   power_board_mode_set( MODE_OFF );
   status_set( STANDBY );
 }
+
+
+/**
+ * Sets up the device's error flag. The input integer is maped with the enum error_t.
+ *
+ * \param      ctx   The command context
+ */
+void command_error_set( command_error_set_ctx_t *ctx )
+{
+  error_set( ctx->input.code );
+}
+
+/**
+ * Clears the device's error flag. The input integer is maped with the enum error_t.
+ *
+ * \param      ctx   The command context
+ */
+void command_error_clear( command_error_clear_ctx_t *ctx )
+{
+  error_clear( ctx->input.code );
+}
+
+/**
+ * Clears all the error flags.
+ *
+ * \param      ctx   The command context
+ */
+void command_error_clear_all( command_error_clear_all_ctx_t *ctx )
+{
+  error_clear_all();
+}

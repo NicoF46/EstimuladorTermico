@@ -164,6 +164,33 @@ class Commander(cmd.Cmd):
         print(f'frame = {frame}')
         Commander.start = time.time()
 
+    def do_error_set(self, data):
+        self.wait_communication_available()
+        Commander.communication_available.clear()
+        self.send_chunk('<bB', (8, numpy.uint8(data)))
+        frame = self.read_chunk(2, '<bb')
+        Commander.communication_available.set()
+        print(f'frame = {frame}')
+        Commander.start = time.time()
+
+    def do_error_clear(self, data):
+        self.wait_communication_available()
+        Commander.communication_available.clear()
+        self.send_chunk('<bB', (9, numpy.uint8(data)))
+        frame = self.read_chunk(2, '<bb')
+        Commander.communication_available.set()
+        print(f'frame = {frame}')
+        Commander.start = time.time()
+
+    def do_error_clear_all(self, data):
+        self.wait_communication_available()
+        Commander.communication_available.clear()
+        self.send_chunk('<b', (10,))
+        frame = self.read_chunk(2, '<bb')
+        Commander.communication_available.set()
+        print(f'frame = {frame}')
+        Commander.start = time.time()
+
     def do_exit(self, data):
         return True
 
