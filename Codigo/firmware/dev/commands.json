@@ -74,5 +74,10 @@
 			"type": "float"
 			}
 		]
+	},
+	{
+		"name": "stop",
+		"input": [],
+		"output": []
 	}
 ]

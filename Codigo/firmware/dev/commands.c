@@ -74,7 +74,23 @@ void command_pwm_hot( command_pwm_hot_ctx_t *ctx )
   status_set( PWM_HOT );
 }
 
+/**
+ * Returns the average temperature.
+ *
+ * \param      ctx   The command context
+ */
 void command_read_temperature( command_read_temperature_ctx_t *ctx )
 {
   ctx->output.temperature = temperature_read();
+}
+
+/**
+ * Power off the power board and sets the current status to STANDBY.
+ *
+ * \param      ctx   The context
+ */
+void command_stop( command_stop_ctx_t *ctx )
+{
+  power_board_mode_set( MODE_OFF );
+  status_set( STANDBY );
 }

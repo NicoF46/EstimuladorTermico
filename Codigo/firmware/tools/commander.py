@@ -99,26 +99,14 @@ class Commander(cmd.Cmd):
             Commander.communication_available.set()
             time.sleep(data[i+1])
 
-
-    def do_pwm_cold(self, dato):
+    def do_status(self, data):
         self.wait_communication_available()
         Commander.communication_available.clear()
-        self.send_chunk('<cB', (b'a', numpy.uint8(dato)))
-        frame = self.read_chunk(2, '<bb')
+        if not self.send_chunk('<b', (0,)):
+            return
+        status = self.read_chunk(2, '<bb')
         Commander.communication_available.set()
-        print(f'frame = {frame}')
-        Commander.start = time.time()
-
-
-    def do_pwm_hot(self, dato):
-        self.wait_communication_available()
-        Commander.communication_available.clear()
-        self.send_chunk('<cB', (b'b', numpy.uint8(dato)))
-        frame = self.read_chunk(2, '<bb')
-        Commander.communication_available.set()
-        print(f'frame = {frame}')
-        Commander.start = time.time()
-
+        print(f'status = {status}')
 
     def do_cold(self, dato):
         self.wait_communication_available()
@@ -139,64 +127,42 @@ class Commander(cmd.Cmd):
         print(f'frame = {frame}')
         Commander.start = time.time()
         Commander.t_ref = int(dato)
-        
+
+    def do_pwm_cold(self, dato):
+        self.wait_communication_available()
+        Commander.communication_available.clear()
+        self.send_chunk('<bB', (4, numpy.uint8(dato)))
+        frame = self.read_chunk(2, '<bb')
+        Commander.communication_available.set()
+        print(f'frame = {frame}')
+        Commander.start = time.time()
+
+    def do_pwm_hot(self, dato):
+        self.wait_communication_available()
+        Commander.communication_available.clear()
+        self.send_chunk('<bB', (5, numpy.uint8(dato)))
+        frame = self.read_chunk(2, '<bb')
+        Commander.communication_available.set()
+        print(f'frame = {frame}')
+        Commander.start = time.time()
+
+    def do_temperature_read(self, dato):
+        self.wait_communication_available()
+        Commander.communication_available.clear()
+        self.send_chunk('<b', (6,))
+        frame = self.read_chunk(6, '<bbf')
+        Commander.communication_available.set()
+        print(f'frame = {frame}')
+
+
     def do_stop(self, data):
         self.wait_communication_available()
         Commander.communication_available.clear()
-        self.send_chunk('<c', (b's',))
+        self.send_chunk('<b', (7,))
+        frame = self.read_chunk(2, '<bb')
         Commander.communication_available.set()
+        print(f'frame = {frame}')
         Commander.start = time.time()
-
-
-    def do_error(self, data):
-        self.wait_communication_available()
-        Commander.communication_available.clear()
-        self.send_chunk('<cB', (b'x',numpy.uint8(data)))
-        Commander.communication_available.set()
-
-
-    def do_no_error(self, data):
-        self.wait_communication_available()
-        Commander.communication_available.clear()
-        self.send_chunk('<c', (b'z',))
-        Commander.communication_available.set()
-
-    def do_pwm_get(self, data):
-        self.wait_communication_available()
-        Commander.communication_available.clear()
-        if not self.send_chunk('<c', (b'f',)):
-            return
-        pwm = self.read_chunk(1, '<b')[0]
-        Commander.communication_available.set()
-        print(f'pwm = {pwm}')
-
-    def do_status(self, data):
-        self.wait_communication_available()
-        Commander.communication_available.clear()
-        if not self.send_chunk('<b', (0,)):
-            return
-        status = self.read_chunk(2, '<bb')
-        Commander.communication_available.set()
-        print(f'status = {status}')
-
-    def do_temp_referencia(self, data):
-        self.wait_communication_available()
-        Commander.communication_available.clear()
-        if not self.send_chunk('<c', (b'g',)):
-            return
-        referencia = self.read_chunk(4, '<f')[0]
-        Commander.communication_available.set()
-        print(f'temperatura referencia = {referencia}')
-
-    def do_temp_get(self, data):
-        self.wait_communication_available()
-        Commander.communication_available.clear()
-        if not self.send_chunk('<c', (b'u',)):
-            return
-        referencia = self.read_chunk(4, '<f')[0]
-        Commander.communication_available.set()
-        print(f'average temperature  = {referencia}')
-
 
     def do_exit(self, data):
         return True

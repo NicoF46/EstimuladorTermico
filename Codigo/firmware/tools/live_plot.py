@@ -1,5 +1,7 @@
-import matplotlib.pyplot as plt
 import math
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use("TkAgg")
 
 class Plotter:
 
@@ -41,7 +43,6 @@ class Plotter:
         self.x_vecs[line_key] +=  x_data
         self.y_vecs[line_key] +=  y_data
         self.lines[line_key].set_data(self.x_vecs[line_key], self.y_vecs[line_key])
-
         plt.pause(self.pause_interval)
 
     def ylim(self, y_lim):
