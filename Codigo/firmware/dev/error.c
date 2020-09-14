@@ -9,15 +9,15 @@
   Internal data
 ------------------------------------------------------------------------------*/
 
-#define LED_NO_ERROR_BIT PB0
-#define LED_NO_ERROR_PORT PORTB
-#define LED_NO_ERROR_DIRECTION DDRB
+#define LED_NO_ERROR_BIT PC3
+#define LED_NO_ERROR_PORT PORTC
+#define LED_NO_ERROR_DIRECTION DDRC
 
-#define LED_ERROR_BIT PD7
-#define LED_ERROR_PORT PORTD
-#define LED_ERROR_DIRECTION DDRD
+#define LED_ERROR_BIT PC2
+#define LED_ERROR_PORT PORTC
+#define LED_ERROR_DIRECTION DDRC
 
-#define BUZZER_BIT PB4
+#define BUZZER_BIT PB3
 #define BUZZER_PORT PORTB
 #define BUZZER_DIRECTION DDRB
 

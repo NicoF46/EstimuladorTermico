@@ -5,13 +5,13 @@
   Internal data
 ------------------------------------------------------------------------------*/
 
-#define LED_COLD_BIT PC3
-#define LED_COLD_PORT PORTC
-#define LED_COLD_DIRECTION DDRC
+#define LED_COLD_BIT PB0
+#define LED_COLD_PORT PORTB
+#define LED_COLD_DIRECTION DDRB
 
-#define LED_HOT_BIT PC2
-#define LED_HOT_PORT PORTC
-#define LED_HOT_DIRECTION DDRC
+#define LED_HOT_BIT PD7
+#define LED_HOT_PORT PORTD
+#define LED_HOT_DIRECTION DDRD
 
 static status_t current_status = STANDBY;
 

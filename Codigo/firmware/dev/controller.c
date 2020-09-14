@@ -3,6 +3,7 @@
 #include "app_utils.h"
 #include "status.h"
 #include "temperature.h"
+#include "error.h"
 
 #include <math.h>
 #include <stdint.h>
@@ -53,6 +54,9 @@ void controller_loop()
       uint8_t pwm = controller_pid( temperature_reference_get(), temp );
       power_board_pwm_set( pwm );
     }
+
+    if( error_is_on_error() )
+      error_sound_alarm();
 
     delay_ms( DELAY );
   }
