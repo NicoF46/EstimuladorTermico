@@ -34,6 +34,13 @@ static uint8_t current_error = 0;
 ------------------------------------------------------------------------------*/
 
 static void _error_led_off();
+static void _error_led_on();
+static void _no_error_led_off();
+static void _no_error_led_on();
+static void _error_mode();
+static void _no_error_mode();
+static void _buzzer_on();
+static void _buzzer_off();
 
 /* ----------------------------------------------------------------------------
   Function definition
@@ -47,8 +54,29 @@ void error_setup()
   LED_NO_ERROR_DIRECTION |= ( 1 << LED_NO_ERROR_BIT );
   LED_ERROR_DIRECTION |= ( 1 << LED_ERROR_BIT );
   BUZZER_DIRECTION |= ( 1 << BUZZER_BIT );
-  _error_led_off();
 }
+
+
+/**
+ * Turns on leds and buzzer for testing purpose.
+ */
+void error_test_start()
+{
+  _error_led_on();
+  _no_error_led_on();
+  _buzzer_on();
+}
+
+/**
+ * Turns off leds and buzzer for testing purpose.
+ */
+void error_test_end()
+{
+  _error_led_off();
+  _no_error_led_off();
+  _buzzer_off();
+}
+
 
 
 /**
@@ -59,8 +87,7 @@ void error_setup()
 void error_set( const error_t error )
 {
   current_error |= ( 1 << error );
-  LED_NO_ERROR_PORT &= ~( 1 << LED_NO_ERROR_BIT );
-  LED_ERROR_PORT |= ( 1 << LED_ERROR_BIT );
+  _error_mode();
 }
 
 
@@ -73,7 +100,7 @@ void error_clear( const error_t error )
 {
   current_error &= ~( 1 << error );
   if( current_error == 0 )
-    _error_led_off();
+    _no_error_mode();
 }
 
 
@@ -83,7 +110,7 @@ void error_clear( const error_t error )
 void error_clear_all()
 {
   current_error = 0;
-  _error_led_off();
+  _no_error_mode();
 }
 
 
@@ -116,19 +143,16 @@ uint8_t error_record_get()
 void error_sound_alarm()
 {
   sei();
-  bool sound_on = true;
 
   for( size_t n = 0; n < BUZZER_MELODY_REPETITION; n++ )
   {
     for( size_t i = 0; i < BUZZER_MELODY_SIZE && current_error != 0; i++ )
     {
-      sound_on ? ( BUZZER_PORT |= ( 1 << BUZZER_BIT ) ) : ( BUZZER_PORT &= ~( 1 << BUZZER_BIT ) );
+      i%2 == 0 ? ( _buzzer_on() ) : ( _buzzer_off() );
       delay_ms( BUZZER_MELODY[i] );
-
-      sound_on = !sound_on;
     }
   }
-  BUZZER_PORT &= ~( 1 << BUZZER_BIT );
+  _buzzer_off();
 }
 
 /* ----------------------------------------------------------------------------
@@ -138,5 +162,41 @@ void error_sound_alarm()
 static void _error_led_off()
 {
   LED_ERROR_PORT &= ~( 1 << LED_ERROR_BIT );
+}
+
+static void _error_led_on()
+{
+  LED_ERROR_PORT |= ( 1 << LED_ERROR_BIT );
+}
+
+static void _no_error_led_off()
+{
+  LED_NO_ERROR_PORT &= ~( 1 << LED_NO_ERROR_BIT );
+}
+
+static void _no_error_led_on()
+{
   LED_NO_ERROR_PORT |= ( 1 << LED_NO_ERROR_BIT );
+}
+
+static void _error_mode()
+{
+  _no_error_led_off();
+  _error_led_on();
+}
+
+static void _no_error_mode()
+{
+  _error_led_off();
+  _no_error_led_on();
+}
+
+static void _buzzer_on()
+{
+  BUZZER_PORT |= ( 1 << BUZZER_BIT );
+}
+
+static void _buzzer_off()
+{
+  BUZZER_PORT &= ~( 1 << BUZZER_BIT );
 }

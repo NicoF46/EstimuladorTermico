@@ -1,5 +1,6 @@
 #include "status.h"
 #include <avr/io.h>
+#include <stdbool.h>
 
 /* ----------------------------------------------------------------------------
   Internal data
@@ -16,6 +17,18 @@
 static status_t current_status = STANDBY;
 
 /* ----------------------------------------------------------------------------
+  Internal function Prototypes
+------------------------------------------------------------------------------*/
+
+static void _cold_led_on();
+static void _cold_led_off();
+static void _hot_led_on();
+static void _hot_led_off();
+static void _cold_mode();
+static void _hot_mode();
+static void _standby_mode();
+
+/* ----------------------------------------------------------------------------
   Function definition
 ------------------------------------------------------------------------------*/
 
@@ -28,6 +41,23 @@ void status_setup()
   LED_HOT_DIRECTION |= ( 1 << LED_HOT_BIT );
 }
 
+/**
+ * Turns on every led for testing purpose.
+ */
+void status_test_start()
+{
+  _cold_led_on();
+  _hot_led_on();
+}
+
+/**
+ * Turns off every led for testing purpose.
+ */
+void status_test_end()
+{
+  _cold_led_off();
+  _hot_led_off();
+}
 
 /**
  * Sets the devices current status.
@@ -42,22 +72,19 @@ void status_set( const status_t status )
     case PWM_COLD:
     case COLD_REACHED:
       current_status = COLD;
-      LED_HOT_PORT &= ~( 1 << LED_HOT_BIT );
-      LED_COLD_PORT |= ( 1 << LED_COLD_BIT );
+      _cold_mode();
       break;
 
     case HOT:
     case PWM_HOT:
     case HOT_REACHED:
       current_status = HOT;
-      LED_COLD_PORT &= ~( 1 << LED_COLD_BIT );
-      LED_HOT_PORT |= ( 1 << LED_HOT_BIT );
+      _hot_mode();
       break;
 
     case STANDBY:
       current_status = STANDBY;
-      LED_COLD_PORT &= ~( 1 << LED_COLD_BIT );
-      LED_HOT_PORT &= ~( 1 << LED_HOT_BIT );
+      _standby_mode();
       break;
   }
 
@@ -85,4 +112,46 @@ status_t status_get()
 void status_fill_header( uint8_t *header )
 {
   *header = current_status;
+}
+
+/* ----------------------------------------------------------------------------
+  Internal function definition
+------------------------------------------------------------------------------*/
+
+static void _cold_led_on()
+{
+  LED_COLD_PORT |= ( 1 << LED_COLD_BIT );
+}
+
+static void _cold_led_off()
+{
+  LED_COLD_PORT &= ~( 1 << LED_COLD_BIT );
+}
+
+static void _hot_led_on()
+{
+  LED_HOT_PORT |= ( 1 << LED_HOT_BIT );
+}
+
+static void _hot_led_off()
+{
+  LED_HOT_PORT &= ~( 1 << LED_HOT_BIT );
+}
+
+static void _cold_mode()
+{
+  _hot_led_off();
+  _cold_led_on();
+}
+
+static void _hot_mode()
+{
+  _cold_led_off();
+  _hot_led_on();
+}
+
+static void _standby_mode()
+{
+  _cold_led_off();
+  _hot_led_off();
 }
