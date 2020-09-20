@@ -74,7 +74,54 @@ void command_pwm_hot( command_pwm_hot_ctx_t *ctx )
   status_set( PWM_HOT );
 }
 
+/**
+ * Returns the average temperature.
+ *
+ * \param      ctx   The command context
+ */
 void command_read_temperature( command_read_temperature_ctx_t *ctx )
 {
   ctx->output.temperature = temperature_read();
+}
+
+/**
+ * Power off the power board and sets the current status to STANDBY.
+ *
+ * \param      ctx   The context
+ */
+void command_stop( command_stop_ctx_t *ctx )
+{
+  power_board_mode_set( MODE_OFF );
+  status_set( STANDBY );
+}
+
+
+/**
+ * Sets up the device's error flag. The input integer is maped with the enum error_t.
+ *
+ * \param      ctx   The command context
+ */
+void command_error_set( command_error_set_ctx_t *ctx )
+{
+  error_set( ctx->input.code );
+}
+
+/**
+ * Clears the device's error flag. The input integer is maped with the enum error_t.
+ *
+ * \param      ctx   The command context
+ */
+void command_error_clear( command_error_clear_ctx_t *ctx )
+{
+  error_clear( ctx->input.code );
+}
+
+/**
+ * Clears all the error flags.
+ *
+ * \param      ctx   The command context
+ */
+void command_error_clear_all( command_error_clear_all_ctx_t *ctx )
+{
+  error_clear_all();
 }
