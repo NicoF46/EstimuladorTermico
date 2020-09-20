@@ -8,7 +8,7 @@
 #include "controller.h"
 #include "app_utils.h"
 
-#define TEST_DURATION 1000
+#define TEST_DURATION 250
 
 int main( void )
 {
