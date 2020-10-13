@@ -7,8 +7,9 @@
 #include "power_board.h"
 #include "controller.h"
 #include "app_utils.h"
+#include "keep_alive.h"
 
-#define TEST_DURATION 100
+#define TEST_DURATION 250
 
 int main( void )
 {
@@ -20,12 +21,13 @@ int main( void )
 
   status_test_start();
   error_test_start();
-  delay_ms(TEST_DURATION);
+  delay_ms( TEST_DURATION );
   status_test_end();
   error_test_end();
 
   error_clear_all();
   status_set( STANDBY );
+  keep_alive_reset();
 
   controller_loop();
 

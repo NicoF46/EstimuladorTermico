@@ -3,8 +3,8 @@
 #include "temperature.h"
 #include "power_board.h"
 #include "controller.h"
-
 #include "error.h"
+#include "keep_alive.h"
 
 /**
  * Do nothing, this command is used to return the status and error flag-
@@ -82,6 +82,7 @@ void command_pwm_hot( command_pwm_hot_ctx_t *ctx )
 void command_read_temperature( command_read_temperature_ctx_t *ctx )
 {
   ctx->output.temperature = temperature_read();
+  keep_alive_reset();
 }
 
 /**

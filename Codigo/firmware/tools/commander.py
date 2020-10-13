@@ -30,6 +30,7 @@ class Commander(cmd.Cmd):
     t1 = None
     t2 = None
     t_ref = None
+    pwm = None
 
     @classmethod
     def wait_communication_available(cls):
@@ -72,11 +73,13 @@ class Commander(cmd.Cmd):
         
         for i in range(0, len(data), 2):
             print(f'pwm = {data[i]}')
+            Commander.pwm = data[i]
             print(f'time = {data[i+1]}')
 
             self.wait_communication_available()
             Commander.communication_available.clear()
-            self.send_chunk('<cB', (b'a', numpy.uint8(data[i])))
+            self.send_chunk('<bB', (4, numpy.uint8(Commander.pwm)))
+            frame = self.read_chunk(2, '<bb')
             Commander.communication_available.set()
             time.sleep(data[i+1])
 
@@ -91,11 +94,13 @@ class Commander(cmd.Cmd):
         
         for i in range(0, len(data), 2):
             print(f'pwm = {data[i]}')
+            Commander.pwm = data[i]
             print(f'time = {data[i+1]}')
 
             self.wait_communication_available()
             Commander.communication_available.clear()
-            self.send_chunk('<cB', (b'b', numpy.uint8(data[i])))
+            self.send_chunk('<bB', (5, numpy.uint8(Commander.pwm)))
+            frame = self.read_chunk(2, '<bb')
             Commander.communication_available.set()
             time.sleep(data[i+1])
 
@@ -111,7 +116,7 @@ class Commander(cmd.Cmd):
     def do_cold(self, dato):
         self.wait_communication_available()
         Commander.communication_available.clear()
-        self.send_chunk('<bB', (2, int(dato)))
+        self.send_chunk('<bb', (2, numpy.int8(dato)))
         frame = self.read_chunk(2, '<bb')
         Commander.communication_available.set()
         print(f'frame = {frame}')
@@ -121,7 +126,7 @@ class Commander(cmd.Cmd):
     def do_hot(self, dato):
         self.wait_communication_available()
         Commander.communication_available.clear()
-        self.send_chunk('<bB', (3, int(dato)))
+        self.send_chunk('<bb', (3, numpy.int8(dato)))
         frame = self.read_chunk(2, '<bb')
         Commander.communication_available.set()
         print(f'frame = {frame}')
@@ -132,6 +137,7 @@ class Commander(cmd.Cmd):
         self.wait_communication_available()
         Commander.communication_available.clear()
         self.send_chunk('<bB', (4, numpy.uint8(dato)))
+        Commander.pwm = dato
         frame = self.read_chunk(2, '<bb')
         Commander.communication_available.set()
         print(f'frame = {frame}')
@@ -141,6 +147,7 @@ class Commander(cmd.Cmd):
         self.wait_communication_available()
         Commander.communication_available.clear()
         self.send_chunk('<bB', (5, numpy.uint8(dato)))
+        Commander.pwm = dato
         frame = self.read_chunk(2, '<bb')
         Commander.communication_available.set()
         print(f'frame = {frame}')
@@ -230,14 +237,15 @@ def main():
     t = threading.Thread(name='commander', target=start_cmd, args=(stop_event,))
     t.start()
 
-    p = Plotter([0, 30], [0, 40])
-    p.set_ticks('y', [y for y in range(0, 40, 1)])
+    p = Plotter([0, 30], [0, 60])
+    p.set_ticks('y', [y for y in range(0, 60, 1)])
     start_time = time.time()
     data = {}
     for l in T_LABELS:
         p.add_line(l)
         data[l] = []
     times = []
+    pwm = []
     t_refs = []
 
     Commander.communication_available.set()
@@ -250,6 +258,7 @@ def main():
         Commander.communication_available.clear()
         current_time = time.time()-start_time
         times.append(current_time)
+        pwm.append(Commander.pwm)
         t_refs.append(Commander.t_ref)
         for l in T_LABELS:
             Commander.send_chunk('<bb', (1,i))
@@ -271,9 +280,9 @@ def main():
     if len(sys.argv) > 1:
         with open(sys.argv[1], 'w') as dataFile:
             wr = csv.writer(dataFile)
-            wr.writerow(["time", "t1", "t2", "t_ref"])
+            wr.writerow(["time", "t1", "t2", "t_ref", "pwm"])
             for i in range(len(times)):
-                wr.writerow([times[i], data['t1'][i], data['t2'][i], t_refs[i]])
+                wr.writerow([times[i], data['t1'][i], data['t2'][i], t_refs[i], pwm[i]])
 
 
 if __name__ == "__main__":

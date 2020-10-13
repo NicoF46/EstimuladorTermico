@@ -4,6 +4,7 @@
 #include "status.h"
 #include "temperature.h"
 #include "error.h"
+#include "keep_alive.h"
 
 #include <math.h>
 #include <stdint.h>
@@ -48,13 +49,15 @@ void controller_loop()
 
   while( true )
   {
-    if( status_get() == COLD || status_get() == HOT )
+    if( status_get() != STANDBY && !error_is_on_error() )
     {
       temp = temperature_read();
       uint8_t pwm = controller_pid( temperature_reference_get(), temp );
       power_board_pwm_set( pwm );
     }
 
+
+    // hardware_monitor_check()
     if( error_is_on_error() )
       error_sound_alarm();
 

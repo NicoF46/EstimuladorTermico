@@ -78,7 +78,6 @@ void error_test_end()
 }
 
 
-
 /**
  * Sets the device's error flag.
  *
@@ -148,7 +147,7 @@ void error_sound_alarm()
   {
     for( size_t i = 0; i < BUZZER_MELODY_SIZE && current_error != 0; i++ )
     {
-      i%2 == 0 ? ( _buzzer_on() ) : ( _buzzer_off() );
+      i % 2 == 0 ? ( _buzzer_on() ) : ( _buzzer_off() );
       delay_ms( BUZZER_MELODY[i] );
     }
   }
