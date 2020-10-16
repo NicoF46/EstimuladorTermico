@@ -24,6 +24,7 @@ void command_status( command_status_ctx_t *ctx )
 void command_thermistor_temp( command_thermistor_temp_ctx_t *ctx )
 {
   ctx->output.temp = temperature_read_thermistor( ctx->input.thermistor );
+  keep_alive_reset();
 }
 
 /**
