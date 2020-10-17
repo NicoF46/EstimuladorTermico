@@ -237,8 +237,8 @@ def main():
     t = threading.Thread(name='commander', target=start_cmd, args=(stop_event,))
     t.start()
 
-    p = Plotter([0, 30], [0, 60])
-    p.set_ticks('y', [y for y in range(0, 60, 1)])
+    p = Plotter([0, 30], [-6, 60])
+    p.set_ticks('y', [y for y in range(-6, 60, 1)])
     start_time = time.time()
     data = {}
     for l in T_LABELS:
@@ -263,12 +263,10 @@ def main():
         for l in T_LABELS:
             Commander.send_chunk('<bb', (1,i))
             current_data = Commander.read_chunk(DATA_SIZE, DATA_FORMAT)[2]
-            
             p.add_data([current_time], [current_data], l)
             data[l].append(current_data)
 
             i += 1
-
 
         Commander.communication_available.set()
         Commander.set_data(data['t1'][-1], data['t2'][-1])

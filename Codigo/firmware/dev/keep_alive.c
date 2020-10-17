@@ -19,7 +19,7 @@ static int delay = 300;
  *
  * \param[in]  new_delay  The new delay
  */
-void keep_alive_setup( const unsigned int new_delay )
+void keep_alive_delay_set( const unsigned int new_delay )
 {
   delay = new_delay;
   keep_alive = 0;

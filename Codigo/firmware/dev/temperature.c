@@ -1,8 +1,8 @@
 #include "temperature.h"
 
 #include <avr/io.h>
-#include <math.h>
 #include <stdint.h>
+#include <math.h>
 
 /* ----------------------------------------------------------------------------
   Internal data
@@ -17,6 +17,8 @@ const static uint8_t THERMISTORS_CHANNELS[THERMISTORS_QUANTITY] = { 6, 7 };
 #define THERMISTOR_BETA 3435  // kelvin
 #define THERMISTOR_R0 10000   // 10k
 #define THERMISTOR_T0 298.15  // kelvin
+
+#define ABS( n ) ( ( n ) < 0 ? -( n ) : ( n ) )
 
 static float t_reference;
 
@@ -80,16 +82,50 @@ size_t temperature_thermistor_quantity()
   return THERMISTORS_QUANTITY;
 }
 
+/**
+ * Returns the abs difference between the thermistors temperature.
+ *
+ * \return     the difference between thermistors.
+ */
+float temperature_thermistors_diff()
+{
+  return ABS( temperature_read_thermistor( 0 ) - temperature_read_thermistor( 1 ) );
+}
 
+/**
+ * Gets the temperature reference.
+ *
+ * \return     the temperature reference.
+ */
 float temperature_reference_get()
 {
   return t_reference;
 }
 
 
+/**
+ * Sets the temperature reference used to regulate the device.
+ *
+ * \param[in]  temp  The new temperature reference.
+ */
 void temperature_reference_set( const float temp )
 {
   t_reference = temp;
+}
+
+
+/**
+ * Checks if the thermistor indicated by `thermistor_number` is on error.
+ * A thermistor is on error if it's resistance is 0 or Infinite.
+ *
+ * \param[in]  thermistor_number  The thermistor number-
+ *
+ * \return     true if the themperature is invalid, false otherwise-
+ */
+bool temperature_thermistor_is_on_error( const uint8_t thermistor_number )
+{
+  return temperature_read_thermistor( thermistor_number ) < -10 ||
+         temperature_read_thermistor( thermistor_number ) > 60;
 }
 
 /* ----------------------------------------------------------------------------

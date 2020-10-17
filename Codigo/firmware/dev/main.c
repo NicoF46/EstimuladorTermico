@@ -10,7 +10,6 @@
 #include "keep_alive.h"
 
 #define TEST_DURATION 250
-#define DELAY 300
 
 int main( void )
 {
@@ -19,7 +18,6 @@ int main( void )
   temperature_reader_setup();
   usart_init();
   power_board_setup();
-  keep_alive_setup( DELAY );
 
   status_test_start();
   error_test_start();

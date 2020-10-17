@@ -37,6 +37,7 @@ static float previous_input = 0;
 ------------------------------------------------------------------------------*/
 
 static float _pid( const float ref, const float input );
+static void _stop();
 
 /* ----------------------------------------------------------------------------
   Function definition
@@ -44,6 +45,8 @@ static float _pid( const float ref, const float input );
 
 void controller_loop()
 {
+  keep_alive_delay_set( DELAY );
+
   sei();
   float temp;
 
@@ -56,13 +59,14 @@ void controller_loop()
       power_board_pwm_set( pwm );
     }
 
-    if( error_is_on_error() )
-      error_sound_alarm();
-
     if( !keep_alive_wait() )
+      _stop();
+
+    error_check();
+    if( error_is_on_error() )
     {
-      power_board_mode_set( MODE_OFF );
-      status_set( STANDBY );
+      _stop();
+      error_wait();
     }
   }
 }
@@ -197,4 +201,13 @@ static float _pid( const float ref, const float input )
   Ik = Ik + Ki * Kp * h * ( previous_ref - previous_input );
   Dk = gamma / ( gamma + h ) * Dk - Kp * Kd / ( gamma + h ) * ( input - previous_input );
   return Ik + Dk + Pk + bias;
+}
+
+/**
+ * Stops the device.
+ */
+static void _stop()
+{
+  power_board_mode_set( MODE_OFF );
+  status_set( STANDBY );
 }
