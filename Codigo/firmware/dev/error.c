@@ -1,6 +1,7 @@
 #include "error.h"
 #include "app_utils.h"
 #include "temperature.h"
+#include "status.h"
 #include <stdbool.h>
 #include <avr/io.h>
 #include <stddef.h>
@@ -24,7 +25,8 @@
 
 #define MAX_TEMPERATURE 40
 #define MIN_TEMPERATURE 10
-#define MAX_THERMISTORS_DEVIATION 5
+#define MAX_THERMISTORS_DEVIATION 7
+#define MAX_OVERSHOOT 3
 
 #define BUZZER_MELODY_REPETION 10
 #define BUZZER_MELODY_SIZE 20
@@ -187,6 +189,9 @@ void error_check()
 
   temperature_thermistors_diff() > MAX_THERMISTORS_DEVIATION ? error_set( error_deviation )
                                                              : error_clear( error_deviation );
+
+  if ( temperature_overshoot_get(status_get()) - MAX_OVERSHOOT > 0 )
+    error_set( error_calibrate );
 }
 
 

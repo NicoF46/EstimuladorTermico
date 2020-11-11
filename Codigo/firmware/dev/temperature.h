@@ -17,5 +17,7 @@ float temperature_thermistors_diff();
 float temperature_reference_get();
 void temperature_reference_set( const float temp );
 bool temperature_thermistor_is_on_error( const uint8_t thermistor_number );
+float temperature_starting_temperature_get();
+float temperature_overshoot_get();
 
 #endif

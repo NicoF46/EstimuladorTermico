@@ -11,6 +11,7 @@ class Plotter:
         plt.ion()
         self.fig = plt.figure()
         self.axes = self.fig.add_subplot(111)
+        self.axes.yaxis.tick_right()
         self.lines = {}
         plt.show()
 

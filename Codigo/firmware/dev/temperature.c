@@ -1,4 +1,5 @@
 #include "temperature.h"
+#include "status.h"
 
 #include <avr/io.h>
 #include <stdint.h>
@@ -12,7 +13,7 @@
 const static uint8_t THERMISTORS_CHANNELS[THERMISTORS_QUANTITY] = { 6, 7 };
 
 #define VCC 5.0  // 5v
-#define MAX_ADC 1023
+#define MAX_ADC 1024
 #define ZERO_KELVIN -273.15
 #define THERMISTOR_BETA 3435  // kelvin
 #define THERMISTOR_R0 10000   // 10k
@@ -21,6 +22,7 @@ const static uint8_t THERMISTORS_CHANNELS[THERMISTORS_QUANTITY] = { 6, 7 };
 #define ABS( n ) ( ( n ) < 0 ? -( n ) : ( n ) )
 
 static float t_reference;
+static float t_start;
 
 /* ----------------------------------------------------------------------------
   Internal function Prototypes
@@ -43,6 +45,7 @@ void temperature_reader_setup()
   ADCSRA |= ( ( 1 << ADEN ) | ( 1 << ADPS2 ) | ( 1 << ADPS1 ) | ( 1 << ADPS0 ) );
 
   t_reference = temperature_read();
+  t_start = t_reference;
 }
 
 /**
@@ -111,6 +114,7 @@ float temperature_reference_get()
 void temperature_reference_set( const float temp )
 {
   t_reference = temp;
+  t_start = temperature_read();
 }
 
 
@@ -125,7 +129,42 @@ void temperature_reference_set( const float temp )
 bool temperature_thermistor_is_on_error( const uint8_t thermistor_number )
 {
   return temperature_read_thermistor( thermistor_number ) < -10 ||
-         temperature_read_thermistor( thermistor_number ) > 60;
+         temperature_read_thermistor( thermistor_number ) > 75;
+}
+
+
+/**
+ * Returns the starting temperature of the current status.
+ *
+ * \return     the starting temperature.
+ */
+float temperature_starting_temperature_get()
+{
+  return t_start;
+}
+
+
+/**
+ * Returns the overshoot of the current temperature. If the current tempeature hasn't reached
+ * the reference the overshoot is zero.
+ *
+ * \param[in]  status  The current status
+ *
+ * \return     The overshoot
+ */
+float temperature_overshoot_get( status_t status )
+{
+
+  float overshoot = 0;
+  if ( status == COLD && t_start > t_reference)
+    overshoot = t_reference - temperature_read();
+
+  else if ( status == HOT && t_start < t_reference )
+    overshoot = temperature_read() - t_reference;
+
+  if ( overshoot < 0 ) overshoot = 0;
+
+  return overshoot;
 }
 
 /* ----------------------------------------------------------------------------

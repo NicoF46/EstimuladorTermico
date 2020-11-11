@@ -237,8 +237,8 @@ def main():
     t = threading.Thread(name='commander', target=start_cmd, args=(stop_event,))
     t.start()
 
-    p = Plotter([0, 30], [-6, 60])
-    p.set_ticks('y', [y for y in range(-6, 60, 1)])
+    p = Plotter([0, 30], [5, 45])
+    p.set_ticks('y', [y for y in range(5, 45, 1)])
     start_time = time.time()
     data = {}
     for l in T_LABELS:
@@ -270,7 +270,7 @@ def main():
 
         Commander.communication_available.set()
         Commander.set_data(data['t1'][-1], data['t2'][-1])
-        time.sleep(0.1)
+        time.sleep(0.05)
 
     ser.close()
     p.close()
