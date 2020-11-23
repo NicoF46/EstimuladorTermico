@@ -1,5 +1,8 @@
 #include "error.h"
 #include "app_utils.h"
+#include "temperature.h"
+#include "status.h"
+#include "water_cooler.h"
 #include <stdbool.h>
 #include <avr/io.h>
 #include <stddef.h>
@@ -21,12 +24,18 @@
 #define BUZZER_PORT PORTB
 #define BUZZER_DIRECTION DDRB
 
+#define MAX_TEMPERATURE 40
+#define MIN_TEMPERATURE 10
+#define MAX_THERMISTORS_DEVIATION 7
+#define MAX_OVERSHOOT 3
+
+#define BUZZER_MELODY_REPETION 10
 #define BUZZER_MELODY_SIZE 20
-#define BUZZER_MELODY_REPETITION 10
 const static unsigned int BUZZER_MELODY[BUZZER_MELODY_SIZE] = { 200, 100, 200, 100, 200, 300, 200,
                                                                 100, 200, 500, 200, 100, 200, 100,
                                                                 200, 300, 200, 100, 200, 2500 };
-
+static uint8_t melody_index = 0;
+static uint8_t melody_repetitions = 0;
 static uint8_t current_error = 0;
 
 /* ----------------------------------------------------------------------------
@@ -141,17 +150,66 @@ uint8_t error_record_get()
  */
 void error_sound_alarm()
 {
-  sei();
-
-  for( size_t n = 0; n < BUZZER_MELODY_REPETITION; n++ )
+  if( melody_repetitions >= BUZZER_MELODY_REPETION )
+    return;
+  melody_index % 2 == 0 ? ( _buzzer_on() ) : ( _buzzer_off() );
+  delay_ms( BUZZER_MELODY[melody_index++] );
+  if( melody_index >= BUZZER_MELODY_SIZE )
   {
-    for( size_t i = 0; i < BUZZER_MELODY_SIZE && current_error != 0; i++ )
-    {
-      i % 2 == 0 ? ( _buzzer_on() ) : ( _buzzer_off() );
-      delay_ms( BUZZER_MELODY[i] );
-    }
+    melody_index = 0;
+    melody_repetitions++;
   }
-  _buzzer_off();
+}
+
+/**
+ * Sets to 0 the sound alarm counters.
+ */
+void error_sound_alarm_restart()
+{
+  melody_index = 0;
+  melody_repetitions = 0;
+}
+
+/**
+ *  Checks if device's components are not working.
+ *
+ */
+void error_check()
+{
+  temperature_thermistor_is_on_error( 0 ) ? error_set( error_thermistor_1 )
+                                          : error_clear( error_thermistor_1 );
+
+  temperature_thermistor_is_on_error( 1 ) ? error_set( error_thermistor_2 )
+                                          : error_clear( error_thermistor_2 );
+
+  temperature_read() > MAX_TEMPERATURE ? error_set( error_max_temperature )
+                                       : error_clear( error_max_temperature );
+
+  temperature_read() < MIN_TEMPERATURE ? error_set( error_min_temperature )
+                                       : error_clear( error_min_temperature );
+
+  temperature_thermistors_diff() > MAX_THERMISTORS_DEVIATION ? error_set( error_deviation )
+                                                             : error_clear( error_deviation );
+
+  water_cooler_is_on_error() ? error_set(error_fan) : error_clear(error_fan);
+
+  if ( temperature_overshoot_get(status_get()) - MAX_OVERSHOOT > 0 )
+    error_set( error_calibrate );
+}
+
+
+/**
+ * Waits until the error byte is equal to zero. If there is any error the error led
+ * and alarm will be on.
+ */
+void error_wait()
+{
+  error_sound_alarm_restart();
+  while( error_is_on_error() )
+  {
+    error_sound_alarm();
+    error_check();
+  }
 }
 
 /* ----------------------------------------------------------------------------
@@ -188,6 +246,7 @@ static void _no_error_mode()
 {
   _error_led_off();
   _no_error_led_on();
+  _buzzer_off();
 }
 
 static void _buzzer_on()

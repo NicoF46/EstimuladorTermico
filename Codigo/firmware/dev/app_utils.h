@@ -7,4 +7,9 @@
 
 void delay_ms( unsigned int delay );
 
+void app_utils_setup();
+unsigned int fan_rpm_get();
+void tachometer_check();
+
+
 #endif

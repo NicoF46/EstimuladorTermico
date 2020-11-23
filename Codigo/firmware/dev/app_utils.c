@@ -1,4 +1,6 @@
 #include "app_utils.h"
+#include "water_cooler.h"
+
 #include <util/delay.h>
 
 /* ----------------------------------------------------------------------------
@@ -13,5 +15,8 @@
 void delay_ms( unsigned int delay )
 {
   while( delay-- )
+  {
     _delay_ms( 1 );
+    water_cooler_tachometer_check();
+  }
 }

@@ -5,6 +5,8 @@
 #include "controller.h"
 #include "error.h"
 #include "keep_alive.h"
+#include "controller.h"
+#include "water_cooler.h"
 
 /**
  * Do nothing, this command is used to return the status and error flag-
@@ -34,8 +36,10 @@ void command_thermistor_temp( command_thermistor_temp_ctx_t *ctx )
  */
 void command_cold( command_cold_ctx_t *ctx )
 {
+  if ( error_is_on_error() ) return;
   power_board_mode_set( MODE_COLD );
   temperature_reference_set( ctx->input.temp );
+  controller_restart( power_board_pwm_get(), COLD );
   status_set( COLD );
 }
 
@@ -46,8 +50,10 @@ void command_cold( command_cold_ctx_t *ctx )
  */
 void command_hot( command_hot_ctx_t *ctx )
 {
+  if ( error_is_on_error() ) return;
   power_board_mode_set( MODE_HOT );
   temperature_reference_set( ctx->input.temp );
+  controller_restart( power_board_pwm_get(), HOT );
   status_set( HOT );
 }
 
@@ -58,6 +64,7 @@ void command_hot( command_hot_ctx_t *ctx )
  */
 void command_pwm_cold( command_pwm_cold_ctx_t *ctx )
 {
+  if ( error_is_on_error() ) return;
   power_board_mode_set( MODE_COLD );
   power_board_pwm_set( ctx->input.pwm );
   status_set( PWM_COLD );
@@ -70,6 +77,7 @@ void command_pwm_cold( command_pwm_cold_ctx_t *ctx )
  */
 void command_pwm_hot( command_pwm_hot_ctx_t *ctx )
 {
+  if ( error_is_on_error() ) return;
   power_board_mode_set( MODE_HOT );
   power_board_pwm_set( ctx->input.pwm );
   status_set( PWM_HOT );
@@ -95,6 +103,7 @@ void command_stop( command_stop_ctx_t *ctx )
 {
   power_board_mode_set( MODE_OFF );
   status_set( STANDBY );
+  controller_restart( 0, STANDBY );
 }
 
 
@@ -126,4 +135,9 @@ void command_error_clear( command_error_clear_ctx_t *ctx )
 void command_error_clear_all( command_error_clear_all_ctx_t *ctx )
 {
   error_clear_all();
+}
+
+void command_fan_rpm_get( command_fan_rpm_get_ctx_t *ctx )
+{
+  ctx->output.rpm = water_cooler_fan_rpm_get();
 }

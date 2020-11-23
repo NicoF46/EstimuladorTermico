@@ -1,7 +1,6 @@
 #include "controller.h"
 #include "power_board.h"
 #include "app_utils.h"
-#include "status.h"
 #include "temperature.h"
 #include "error.h"
 #include "keep_alive.h"
@@ -15,15 +14,22 @@
   Internal data
 ------------------------------------------------------------------------------*/
 
-#define DELAY 300
-#define PWM_HOT_MAX 128
+#define DELAY 100
+#define PWM_HOT_MAX 120
 #define PWM_HOT_MIN 0
 #define PWM_COLD_MAX 0
 #define PWM_COLD_MIN -255
 
-static float Kp = 20;
-static float Ki = 0.04;
-static float Kd = 2;
+// mejorcitos frios:
+static float KP_COLD = 10.01;
+static float KI_COLD = 0.0305;
+static float KD_COLD = 0.0023;
+// mejorcitos calores:
+static float KP_HOT = 7.241;
+static float KI_HOT = 0.0285;
+static float KD_HOT = 0.0032;
+
+
 static float n = 1;
 static float bias = 0;
 static float Pk = 0;
@@ -32,11 +38,32 @@ static float Ik = 0;
 static float previous_ref = 0;
 static float previous_input = 0;
 
+
+
+
+
+
+
+
+
+
+// TODO: SI CAMBIA DE MODO, EL APARATO TIENE QUE DETENERSE HASTA ALCANZAR UNA DIF DE TEMPERATURA RAZONABLE CON LA OBJETIVO, Y LUEGO ARRANCAR EN EL NUEVO MODO CON BIAS = 0.
+
+
+
+
+
+
+
+
+
+
 /* ----------------------------------------------------------------------------
   Internal function Prototypes
 ------------------------------------------------------------------------------*/
 
 static float _pid( const float ref, const float input );
+static void _stop();
 
 /* ----------------------------------------------------------------------------
   Function definition
@@ -44,26 +71,29 @@ static float _pid( const float ref, const float input );
 
 void controller_loop()
 {
+  keep_alive_delay_set( DELAY );
+
   sei();
   float temp;
 
   while( true )
   {
-    if( status_get() != STANDBY )
+    if( !error_is_on_error() && ( status_get() == COLD || status_get() == HOT ) )
     {
       temp = temperature_read();
       uint8_t pwm = controller_pid( temperature_reference_get(), temp );
       power_board_pwm_set( pwm );
     }
 
-    if( error_is_on_error() )
-      error_sound_alarm();
-
     if( !keep_alive_wait() )
-    {
-      power_board_mode_set( MODE_OFF );
-      status_set( STANDBY );
-    }
+      _stop();
+
+   error_check();
+   if( error_is_on_error() )
+   {
+     _stop();
+     error_wait();
+   }
   }
 }
 
@@ -109,15 +139,9 @@ uint8_t controller_pid( const float ref, const float input )
   previous_ref = ref;
 
   if( output > max_output )
-  {
     output = max_output;
-    Ik = 0;
-  }
   else if( output < min_output )
-  {
-    Ik = 0;
     output = min_output;
-  }
 
   if( mode == MODE_COLD && Ik <= min_output )
     Ik = min_output;
@@ -131,48 +155,14 @@ uint8_t controller_pid( const float ref, const float input )
 }
 
 
-/**
- * Returns the last PID calculated values.
- *
- * \param      Pk_out  The pk out
- * \param      Dk_out  The dk out
- * \param      Ik_out  The ik out
- */
-void controller_pid_values_get( float* Pk_out, float* Dk_out, float* Ik_out )
+void controller_restart( float current_pwm, status_t new_status )
 {
-  *Pk_out = Pk;
-  *Dk_out = Dk;
-  *Ik_out = Ik;
-}
-
-
-/**
- * Sets the PID constants.
- *
- * \param[in]  new_Kp  The new kp
- * \param[in]  new_Kd  The new kd
- * \param[in]  new_Ki  The new ki
- */
-void controller_pid_constants_set( const float new_Kp, const float new_Kd, const float new_Ki )
-{
-  Kp = new_Kp;
-  Kd = new_Kd;
-  Ki = new_Ki;
-}
-
-
-/**
- * Gets the PID constants
- *
- * \param      out_Kp  The out kp
- * \param      out_Kd  The out kd
- * \param      out_Ki  The out ki
- */
-void controller_pid_constants_get( float* out_Kp, float* out_Kd, float* out_Ki )
-{
-  *out_Kp = Kp;
-  *out_Kd = Kd;
-  *out_Ki = Ki;
+  Pk = 0;
+  Ik = 0;
+  Dk = 0;
+  bias = 0;
+  if ( new_status == status_get() )
+    bias = new_status == COLD ? -current_pwm : current_pwm;  
 }
 
 /* ----------------------------------------------------------------------------
@@ -189,6 +179,17 @@ void controller_pid_constants_get( float* out_Kp, float* out_Kd, float* out_Ki )
  */
 static float _pid( const float ref, const float input )
 {
+
+  float Kp = KP_COLD;
+  float Ki = KI_COLD;
+  float Kd = KD_COLD;
+  if( status_get() == HOT )
+  {
+    Kp = KP_HOT;
+    Ki = KI_HOT;
+    Kd = KD_HOT;
+  }
+
   if( !n )
     n = 1;
   float h = ( ( DELAY )*pow( 10, -3 ) );
@@ -197,4 +198,13 @@ static float _pid( const float ref, const float input )
   Ik = Ik + Ki * Kp * h * ( previous_ref - previous_input );
   Dk = gamma / ( gamma + h ) * Dk - Kp * Kd / ( gamma + h ) * ( input - previous_input );
   return Ik + Dk + Pk + bias;
+}
+
+/**
+ * Stops the device.
+ */
+static void _stop()
+{
+  power_board_mode_set( MODE_OFF );
+  status_set( STANDBY );
 }

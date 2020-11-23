@@ -33,5 +33,8 @@ void error_clear_all();
 bool error_is_on_error();
 uint8_t error_record_get();
 void error_sound_alarm();
+void error_sound_alarm_restart();
+void error_check();
+void error_wait();
 
 #endif

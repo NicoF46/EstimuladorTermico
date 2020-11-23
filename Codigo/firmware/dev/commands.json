@@ -104,5 +104,15 @@
 		"name": "error_clear_all",
 		"input": [],
 		"output": []
+	},
+	{
+		"name": "fan_rpm_get",
+		"input": [],
+		"output": [
+			{
+				"id": "rpm",
+				"type": "int"
+			}
+		]
 	}
 ]

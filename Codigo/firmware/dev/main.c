@@ -8,9 +8,9 @@
 #include "controller.h"
 #include "app_utils.h"
 #include "keep_alive.h"
+#include "water_cooler.h"
 
 #define TEST_DURATION 250
-#define DELAY 300
 
 int main( void )
 {
@@ -19,7 +19,7 @@ int main( void )
   temperature_reader_setup();
   usart_init();
   power_board_setup();
-  keep_alive_setup( DELAY );
+  water_cooler_setup();
 
   status_test_start();
   error_test_start();

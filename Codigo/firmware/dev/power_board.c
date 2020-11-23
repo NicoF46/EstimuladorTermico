@@ -63,6 +63,7 @@ power_board_mode_t power_board_mode_get()
   return current_mode;
 }
 
+
 /**
  * Sets the pwm used by the power board.
  *
@@ -75,6 +76,22 @@ void power_board_pwm_set( const uint8_t pwm )
   else if( current_mode == MODE_HOT )
     OCR1A = pwm;
 }
+
+
+/**
+ * Gets the pwm used by the power board.
+ *
+ * \param[in]  pwm   The pwm
+ */
+uint8_t power_board_pwm_get( )
+{
+  if( current_mode == MODE_COLD )
+    return OCR1B;
+  else if( current_mode == MODE_HOT )
+    return OCR1A;
+  return 0;
+}
+
 
 /* ----------------------------------------------------------------------------
   Internal function definition
