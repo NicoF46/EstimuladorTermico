@@ -198,6 +198,15 @@ class Commander(cmd.Cmd):
         print(f'frame = {frame}')
         Commander.start = time.time()
 
+    def do_fan_rpm(self, data):
+        self.wait_communication_available()
+        Commander.communication_available.clear()
+        self.send_chunk('<b', (11,))
+        frame = self.read_chunk(4, '<bbH')
+        Commander.communication_available.set()
+        print(f'frame = {frame}')
+        Commander.start = time.time()
+
     def do_exit(self, data):
         return True
 

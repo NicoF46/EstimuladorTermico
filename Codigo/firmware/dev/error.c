@@ -2,6 +2,7 @@
 #include "app_utils.h"
 #include "temperature.h"
 #include "status.h"
+#include "water_cooler.h"
 #include <stdbool.h>
 #include <avr/io.h>
 #include <stddef.h>
@@ -189,6 +190,8 @@ void error_check()
 
   temperature_thermistors_diff() > MAX_THERMISTORS_DEVIATION ? error_set( error_deviation )
                                                              : error_clear( error_deviation );
+
+  water_cooler_is_on_error() ? error_set(error_fan) : error_clear(error_fan);
 
   if ( temperature_overshoot_get(status_get()) - MAX_OVERSHOOT > 0 )
     error_set( error_calibrate );

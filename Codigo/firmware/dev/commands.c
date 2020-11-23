@@ -6,6 +6,7 @@
 #include "error.h"
 #include "keep_alive.h"
 #include "controller.h"
+#include "water_cooler.h"
 
 /**
  * Do nothing, this command is used to return the status and error flag-
@@ -134,4 +135,9 @@ void command_error_clear( command_error_clear_ctx_t *ctx )
 void command_error_clear_all( command_error_clear_all_ctx_t *ctx )
 {
   error_clear_all();
+}
+
+void command_fan_rpm_get( command_fan_rpm_get_ctx_t *ctx )
+{
+  ctx->output.rpm = water_cooler_fan_rpm_get();
 }
