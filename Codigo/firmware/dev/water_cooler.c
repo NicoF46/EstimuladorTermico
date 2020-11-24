@@ -2,6 +2,10 @@
 
 #include <avr/io.h>
 
+/* ----------------------------------------------------------------------------
+  Internal data
+------------------------------------------------------------------------------*/
+
 static unsigned int revolutions = 0;
 static unsigned int time_ms = 0;
 static unsigned int rpm = 1700;
@@ -12,23 +16,36 @@ static bool current_state = true;
 #define WC_PORT PORTC
 #define WC_DIRECTION DDRC
 #define WC_PORT_PIN PINC
+#define FAN_RPM 1700
 
 /* ----------------------------------------------------------------------------
   Function definition
 ------------------------------------------------------------------------------*/
 
+
+/**
+ * Initializes the fan tachometer pin as input.
+ */
 void water_cooler_setup()
 {
   WC_DIRECTION &= ~( 1 << WC_FAN_BIT );
 }
 
+/**
+ * Returns the last fan rpm lecture.
+ *
+ * \return the fan rpm
+ */
 unsigned int water_cooler_fan_rpm_get()
 {
   return rpm;
 }
 
 
-
+/**
+ *  Checks if the fan's tachometer pin state changes. 
+ *  After 1 second calculates the current fan rpm.
+ */
 void water_cooler_tachometer_check() 
 {
   bool new_state = (WC_PORT_PIN & (1 << WC_FAN_BIT)) != 0;
@@ -45,7 +62,13 @@ void water_cooler_tachometer_check()
   }
 }
 
+
+/**
+ *  Checks if the fan rpm are lower than the half of its standard value.
+ *
+ * \return true if the fan is on error, false otherwise.
+ */
 bool water_cooler_is_on_error()
 {
-  return rpm < 1700/2;
+  return rpm < FAN_RPM/2;
 }

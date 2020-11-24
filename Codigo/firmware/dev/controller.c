@@ -20,16 +20,12 @@
 #define PWM_COLD_MAX 0
 #define PWM_COLD_MIN -255
 
-// mejorcitos frios:
 static float KP_COLD = 10.01;
 static float KI_COLD = 0.0305;
 static float KD_COLD = 0.0023;
-// mejorcitos calores:
 static float KP_HOT = 7.241;
 static float KI_HOT = 0.0285;
 static float KD_HOT = 0.0032;
-
-
 static float n = 1;
 static float bias = 0;
 static float Pk = 0;
@@ -37,26 +33,6 @@ static float Dk = 0;
 static float Ik = 0;
 static float previous_ref = 0;
 static float previous_input = 0;
-
-
-
-
-
-
-
-
-
-
-// TODO: SI CAMBIA DE MODO, EL APARATO TIENE QUE DETENERSE HASTA ALCANZAR UNA DIF DE TEMPERATURA RAZONABLE CON LA OBJETIVO, Y LUEGO ARRANCAR EN EL NUEVO MODO CON BIAS = 0.
-
-
-
-
-
-
-
-
-
 
 /* ----------------------------------------------------------------------------
   Internal function Prototypes
