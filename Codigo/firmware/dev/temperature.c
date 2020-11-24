@@ -1,5 +1,6 @@
 #include "temperature.h"
 #include "status.h"
+#include "app_utils.h"
 
 #include <avr/io.h>
 #include <stdint.h>
@@ -18,9 +19,6 @@ const static uint8_t THERMISTORS_CHANNELS[THERMISTORS_QUANTITY] = { 6, 7 };
 #define THERMISTOR_BETA 3435  // kelvin
 #define THERMISTOR_R0 10000   // 10k
 #define THERMISTOR_T0 298.15  // kelvin
-
-#define ABS( n ) ( ( n ) < 0 ? -( n ) : ( n ) )
-
 static float t_reference;
 static float t_start;
 

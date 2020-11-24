@@ -114,6 +114,17 @@ void status_fill_header( uint8_t *header )
   *header = current_status;
 }
 
+/**
+ * Sets the current status as reached, if the current status is COLD or HOT only.
+ */
+void status_temperature_reached_set()
+{
+  if ( current_status == COLD )
+    current_status = COLD_REACHED;
+  else if ( current_status == HOT )
+    current_status = HOT_REACHED;
+}
+
 /* ----------------------------------------------------------------------------
   Internal function definition
 ------------------------------------------------------------------------------*/

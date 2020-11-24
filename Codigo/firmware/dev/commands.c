@@ -37,9 +37,9 @@ void command_thermistor_temp( command_thermistor_temp_ctx_t *ctx )
 void command_cold( command_cold_ctx_t *ctx )
 {
   if ( error_is_on_error() ) return;
+  controller_restart( MODE_COLD );
   power_board_mode_set( MODE_COLD );
   temperature_reference_set( ctx->input.temp );
-  controller_restart( power_board_pwm_get(), COLD );
   status_set( COLD );
 }
 
@@ -51,9 +51,9 @@ void command_cold( command_cold_ctx_t *ctx )
 void command_hot( command_hot_ctx_t *ctx )
 {
   if ( error_is_on_error() ) return;
+  controller_restart( power_board_mode_get( MODE_HOT ) );
   power_board_mode_set( MODE_HOT );
   temperature_reference_set( ctx->input.temp );
-  controller_restart( power_board_pwm_get(), HOT );
   status_set( HOT );
 }
 
@@ -101,9 +101,9 @@ void command_read_temperature( command_read_temperature_ctx_t *ctx )
  */
 void command_stop( command_stop_ctx_t *ctx )
 {
+  controller_restart( MODE_OFF );
   power_board_mode_set( MODE_OFF );
   status_set( STANDBY );
-  controller_restart( 0, STANDBY );
 }
 
 

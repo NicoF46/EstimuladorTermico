@@ -4,6 +4,7 @@
 #include "temperature.h"
 #include "error.h"
 #include "keep_alive.h"
+#include "status.h"
 
 #include <math.h>
 #include <stdint.h>
@@ -54,19 +55,22 @@ void controller_loop()
 
   while( true )
   {
-    status_t status = status_get();
+    power_board_mode_t status = power_board_mode_get();
 
-    if( !error_is_on_error() && ( status == COLD || status == HOT ) )
+    if( !error_is_on_error() && power_board_mode_get() != MODE_OFF )
     {
       float temp = temperature_read();
       float reference = temperature_reference_get();
 
       uint8_t pwm = 0;
-      if ( (status == COLD && temp - reference < MAX_TEMP_DIFERENCE) ||
-           (status == HOT && reference - temp < MAX_TEMP_DIFERENCE) )
+      if ( (status == MODE_COLD && temp - reference < MAX_TEMP_DIFERENCE) ||
+           (status == MODE_HOT && reference - temp < MAX_TEMP_DIFERENCE) )
         pwm = controller_pid( temperature_reference_get(), temp );
       
       power_board_pwm_set( pwm );
+
+      if ( ABS(temp - reference) < 0.5 )
+        status_temperature_reached_set();
     }
 
     if( !keep_alive_wait() )
@@ -139,14 +143,14 @@ uint8_t controller_pid( const float ref, const float input )
 }
 
 
-void controller_restart( float current_pwm, status_t new_status )
+void controller_restart( power_board_mode_t new_mode )
 {
   Pk = 0;
   Ik = 0;
   Dk = 0;
   bias = 0;
-  if ( new_status == status_get() )
-    bias = new_status == COLD ? -current_pwm : current_pwm;  
+  if ( new_mode != MODE_OFF && new_mode == power_board_mode_get() )
+    bias = (new_mode == MODE_COLD ? -power_board_pwm_get() : power_board_pwm_get());
 }
 
 /* ----------------------------------------------------------------------------
