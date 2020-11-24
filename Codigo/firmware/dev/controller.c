@@ -19,6 +19,7 @@
 #define PWM_HOT_MIN 0
 #define PWM_COLD_MAX 0
 #define PWM_COLD_MIN -255
+#define MAX_TEMP_DIFERENCE 13
 
 static float KP_COLD = 10.01;
 static float KI_COLD = 0.0305;
@@ -50,14 +51,21 @@ void controller_loop()
   keep_alive_delay_set( DELAY );
 
   sei();
-  float temp;
 
   while( true )
   {
-    if( !error_is_on_error() && ( status_get() == COLD || status_get() == HOT ) )
+    status_t status = status_get();
+
+    if( !error_is_on_error() && ( status == COLD || status == HOT ) )
     {
-      temp = temperature_read();
-      uint8_t pwm = controller_pid( temperature_reference_get(), temp );
+      float temp = temperature_read();
+      float reference = temperature_reference_get();
+
+      uint8_t pwm = 0;
+      if ( (status == COLD && temp - reference < MAX_TEMP_DIFERENCE) ||
+           (status == HOT && reference - temp < MAX_TEMP_DIFERENCE) )
+        pwm = controller_pid( temperature_reference_get(), temp );
+      
       power_board_pwm_set( pwm );
     }
 
