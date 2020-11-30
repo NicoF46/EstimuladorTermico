@@ -194,5 +194,5 @@ static float _pid( const float ref, const float input )
 static void _stop()
 {
   power_board_mode_set( MODE_OFF );
-  status_set( STANDBY );
+  status_set( ERROR );
 }

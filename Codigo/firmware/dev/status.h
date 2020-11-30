@@ -13,10 +13,11 @@ typedef enum
   STANDBY,
   COLD,
   HOT,
+  COLD_REACHED,
+  HOT_REACHED,
   PWM_COLD,
   PWM_HOT,
-  COLD_REACHED,
-  HOT_REACHED
+  ERROR
 } status_t;
 
 /* ----------------------------------------------------------------------------

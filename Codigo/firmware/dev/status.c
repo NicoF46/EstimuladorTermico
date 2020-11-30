@@ -83,6 +83,7 @@ void status_set( const status_t status )
       break;
 
     case STANDBY:
+    case ERROR:
       current_status = STANDBY;
       _standby_mode();
       break;
